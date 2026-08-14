@@ -6,10 +6,10 @@ Snapshot identity: `pre-final-cleanup-2026-08-14`
 ## Main repository
 
 - Repository: `LinTianqi2023110268/DexGraspNet2_Wuji2`
-- URL: populated after the Private repository is created.
-- Snapshot commit: populated after commit creation.
+- URL: `https://github.com/LinTianqi2023110268/DexGraspNet2_Wuji2`
+- Snapshot commit: `da928ff1aed7b50d1b992b4ac2f19b2639a00768`
 - Annotated tag: `pre-final-cleanup-2026-08-14`
-- Visibility: must be `PRIVATE`.
+- Visibility: `PRIVATE` (verified through the GitHub API).
 
 ## Dependency repositories
 
@@ -45,10 +45,13 @@ upstream `main` branch.
 
 ## Submission scope
 
-- Tracked entry count before the report was added: 1,826
+- Tracked entry count: 1,827
 - Cached uncompressed blob size before the report was added: 237.65 MiB
-- Main `.git` size: populated after commit and garbage-free size inspection.
-- Ignored large-data size: populated after final audit.
+- Main `.git` working-copy size after the snapshot push: 93 MiB
+  (`git count-objects`: 90.66 MiB loose-object payload, zero garbage).
+- Primary ignored data/environment directories: 336,447,580,266 bytes
+  (313.34 GiB). This is a conservative subtotal, not a claim that every
+  ignored cache in the working tree was enumerated.
 - Large-file audit: PASS; 213/213 files over 95 MiB are ignored.
 - Secret audit: PASS; no real credential signature was found.
 - `xwechat` / `wxid` path audit: PASS; zero tracked occurrences remain.
@@ -104,7 +107,14 @@ this documentation; the command is recorded for future recovery only.
 
 ## Recursive clone verification
 
-- Temporary clone path: populated after upload verification.
-- Main clone: pending.
-- `wuji-description` pinned commit: pending verification.
-- `wuji-retargeting` pinned commit: pending verification.
+- Temporary clone path:
+  `/tmp/DexGraspNet2_Wuji2_clone_verify_5dSe07`
+- Main clone: PASS at
+  `da928ff1aed7b50d1b992b4ac2f19b2639a00768`.
+- `wuji-description`: PASS at pinned commit
+  `96cb3238d4bebd23403aecee02ba731d52524faa`.
+- `wuji-retargeting`: PASS at pinned commit
+  `52ed22779915ca36f7c9a736eea6828a342d1c36`.
+- Nested upstream submodules required by `wuji-retargeting`: PASS.
+- Expected project documents/configuration: PASS.
+- Excluded training data and Conda environment absent from clone: PASS.
