@@ -1,0 +1,31 @@
+{
+  "schema_version": 2,
+  "status": "verified_method_template",
+  "runtime_usd": "/home/lin/Projects/DexGraspNet2_Wuji2/01_environment/vendor/wuji-description/hand2/hand2_beta1/body/usd/right/wujihand2.usd",
+  "stages": [
+    "pregrasp",
+    "cover",
+    "grasp",
+    "squeeze",
+    "lift"
+  ],
+  "control_steps": [120, 120, 120, 240],
+  "root_control": "LEAP-equivalent 3-prismatic + 3-revolute force-position drives",
+  "root_effective_stiffness": 800.0,
+  "root_effective_damping": 20.0,
+  "gravity": "0 before and through SQUEEZE; -9.81 m/s^2 after SQUEEZE",
+  "approach_retreat_m": 0.1,
+  "approach_axis_definition": "positive Z of the calibrated Wuji2 semantic-palm frame at GRASP",
+  "post_squeeze_lift_distance_m": 0.2,
+  "pregrasp_thumb_opening": {
+    "requested_m": 0.03,
+    "inward_tip_axis_local": [0.0, 1.0, 0.0],
+    "opening_tip_axis_local": [0.0, -1.0, 0.0],
+    "keep_z": false,
+    "ik_steps": 20
+  },
+  "motion_separation": "PREGRASP-to-COVER moves the open hand root; COVER-to-GRASP closes fingers in place",
+  "squeeze": "official wuji-retargeting path with the shared squeeze_retry_overrides.yaml",
+  "success_criterion": "target object center rises by at least 0.03 m",
+  "verified_baseline": "scene0001_view0001_official_rank0"
+}

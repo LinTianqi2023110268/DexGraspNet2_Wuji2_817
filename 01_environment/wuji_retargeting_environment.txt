@@ -1,0 +1,19 @@
+# Audited 2026-08-10. This is a human-readable environment contract, not a
+# cross-platform conda lock file.
+prefix=/home/lin/Projects/DexGraspNet2_Wuji2/01_environment/conda/wuji_retargeting
+python=3.11.15
+numpy=2.3.5
+scipy=1.17.1
+pinocchio=3.8.0
+nlopt=2.11.0
+PyYAML=6.0.3
+trimesh=5.0.0
+pyglet=1.5.31
+urdf-parser-py=0.0.4
+transforms3d=0.4.2
+cmeel-urdfdom=4.0.1
+cmeel-tinyxml2=10.0.0
+wuji-retargeting=editable
+wuji-retargeting-commit=2918c60643cca3482ffa2d14d1f7fece1d9d7db9
+wuji-description-commit=7d547ad50ca8cff92d999ae2cc01fc69bcb7c2b6
+

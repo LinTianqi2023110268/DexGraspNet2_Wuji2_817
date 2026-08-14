@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "status": "PASS",
+  "result_type": "audited_historical_summary",
+  "target": "sem-Dog-2526b1f358f773034203f59b4fda924b segmentation 33",
+  "candidate_index": 3800,
+  "maximum_object_lift_mm": 122.10363149642944,
+  "required_object_lift_mm": 30.0,
+  "air_hold_s": 2.0,
+  "persistent_contact_finger_count": 4,
+  "final_flange_error_mm": 4.24,
+  "final_flange_error_deg": 1.25,
+  "warning": "The original slow trace was overwritten by a later fast run before output-directory isolation was fixed. This file records the result observed and reported at validation time; it is not a reconstructed trace."
+}

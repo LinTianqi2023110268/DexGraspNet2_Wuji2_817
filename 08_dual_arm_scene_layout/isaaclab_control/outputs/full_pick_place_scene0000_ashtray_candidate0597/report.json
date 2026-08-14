@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-08-12T21:40:23.382693+00:00",
+  "status": "FAIL",
+  "target": "ashtray segmentation 14",
+  "candidate_index": 597,
+  "control": "Isaac Lab 2.2 one AppLauncher/SimulationContext; ft04 right-arm Force Drive; official Wuji2 drives",
+  "cached_pipeline_inputs": {
+    "RGB-D": "/home/lin/Projects/DexGraspNet2_Wuji2/08_dual_arm_scene_layout/captures/isaaclab_scene0000_smoke/capture_manifest.json",
+    "GroundedSAM": "/home/lin/Projects/DexGraspNet2_Wuji2/08_dual_arm_scene_layout/captures/isaaclab_scene0000_smoke/groundedsam_ashtray/result.json",
+    "40K point cloud": "/home/lin/Projects/DexGraspNet2_Wuji2/08_dual_arm_scene_layout/captures/isaaclab_scene0000_smoke/dgn2/ashtray/network_input.npz",
+    "DGN2 prediction": "/home/lin/Projects/DexGraspNet2_Wuji2/08_dual_arm_scene_layout/captures/isaaclab_scene0000_smoke/dgn2/ashtray/official_leap_1024_target_ranked.npz",
+    "collision filter": "/home/lin/Projects/DexGraspNet2_Wuji2/08_dual_arm_scene_layout/captures/isaaclab_scene0000_smoke/dgn2/ashtray/official_leap_target_collision_filtered.npz",
+    "retargeted waypoints": "/home/lin/Projects/DexGraspNet2_Wuji2/06_leap_to_wuji2_final_pipeline/01_cases/live_scene0000_ashtray_fullflow_candidate0597/06_isaacsim/final_waypoints.npz",
+    "arm IK": "/home/lin/Projects/DexGraspNet2_Wuji2/06_leap_to_wuji2_final_pipeline/01_cases/live_scene0000_ashtray_fullflow_candidate0597/07_arm_execution/full_arm_waypoint_ik.npz",
+    "path collision": "/home/lin/Projects/DexGraspNet2_Wuji2/06_leap_to_wuji2_final_pipeline/01_cases/live_scene0000_ashtray_fullflow_candidate0597/07_arm_execution/full_joint_path_collision_report.json"
+  },
+  "max_object_lift_mm": 0.007957220077514648,
+  "final_object_position_world_m": [
+    -0.5515432953834534,
+    -0.15835541486740112,
+    0.48598119616508484
+  ],
+  "final_object_inside_green_zone_xy": false,
+  "trace_csv": "/home/lin/Projects/DexGraspNet2_Wuji2/08_dual_arm_scene_layout/isaaclab_control/outputs/full_pick_place_scene0000_ashtray_candidate0597/trace.csv"
+}

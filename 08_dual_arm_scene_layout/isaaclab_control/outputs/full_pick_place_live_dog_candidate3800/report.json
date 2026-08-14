@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-08-14T08:12:04.478558+00:00",
+  "status": "PASS",
+  "mode": "through_lift_only",
+  "target": "sem-Dog-2526b1f358f773034203f59b4fda924b segmentation 33",
+  "candidate_index": 3800,
+  "control": "Isaac Lab 2.2 one AppLauncher/SimulationContext; ft04 right-arm Force Drive; official Wuji2 drives",
+  "cached_pipeline_inputs": {
+    "frozen RGB-D/40K input": "/home/lin/Projects/DexGraspNet2_Wuji2/06_leap_to_wuji2_final_pipeline/01_cases/live_dynamic_scene0000_dog_candidate3800/01_input/live_top_camera_network_input.npz",
+    "DGN2 prediction": "/home/lin/Projects/DexGraspNet2_Wuji2/08_dual_arm_scene_layout/captures/live_dynamic_scene0000/dgn2/dog/official_leap_1024_target_ranked.npz",
+    "target selection": "/home/lin/Projects/DexGraspNet2_Wuji2/08_dual_arm_scene_layout/captures/live_dynamic_scene0000/dgn2/dog/official_leap_target_collision_filtered.npz",
+    "retargeted waypoints": "/home/lin/Projects/DexGraspNet2_Wuji2/06_leap_to_wuji2_final_pipeline/01_cases/live_dynamic_scene0000_dog_candidate3800/06_isaacsim/final_waypoints.npz",
+    "arm IK": "/home/lin/Projects/DexGraspNet2_Wuji2/06_leap_to_wuji2_final_pipeline/01_cases/live_dynamic_scene0000_dog_candidate3800/07_arm_execution/full_arm_waypoint_ik.npz",
+    "path collision": "/home/lin/Projects/DexGraspNet2_Wuji2/06_leap_to_wuji2_final_pipeline/01_cases/live_dynamic_scene0000_dog_candidate3800/07_arm_execution/full_joint_path_collision_report.json",
+    "GroundedSAM": "/home/lin/Projects/DexGraspNet2_Wuji2/08_dual_arm_scene_layout/captures/live_dynamic_scene0000/grounded_sam/dog/result.json"
+  },
+  "max_object_lift_mm": 121.90490961074829,
+  "action_duration_s": 63.34166666666371,
+  "action_wall_duration_s": 618.6306418680001,
+  "action_duration_limit_s": null,
+  "action_duration_pass": true,
+  "final_object_position_world_m": [
+    -0.2876334488391876,
+    -0.12495927512645721,
+    0.6278520226478577
+  ],
+  "final_object_footprint_world_xy_min_m": [
+    -0.36518947982618655,
+    -0.1636982240971197
+  ],
+  "final_object_footprint_world_xy_max_m": [
+    -0.22020651336479663,
+    -0.0745789870356525
+  ],
+  "final_object_inside_green_zone_xy": false,
+  "target_contact_force_peak_n_by_finger": {
+    "thumb": 21.262325286865234,
+    "index": 18.698057174682617,
+    "middle": 8.845276832580566,
+    "ring": 2.0934572219848633,
+    "pinky": 1.215944766998291,
+    "palm": 0.0
+  },
+  "any_contact_force_peak_n_by_hand_group": {
+    "thumb": 21.262325286865234,
+    "index": 18.698057174682617,
+    "middle": 8.845276832580566,
+    "ring": 2.0934572219848633,
+    "pinky": 1.215944766998291,
+    "palm": 0.0
+  },
+  "trace_csv": "/home/lin/Projects/DexGraspNet2_Wuji2/08_dual_arm_scene_layout/isaaclab_control/outputs/full_pick_place_live_dog_candidate3800/trace.csv",
+  "physical_replay_30fps": "/home/lin/Projects/DexGraspNet2_Wuji2/08_dual_arm_scene_layout/isaaclab_control/outputs/full_pick_place_live_dog_candidate3800/physical_replay_30fps.npz"
+}

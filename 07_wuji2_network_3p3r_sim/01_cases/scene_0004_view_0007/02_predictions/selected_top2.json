@@ -1,0 +1,158 @@
+{
+  "schema_version": 1,
+  "status": "two_candidates_per_object_selected",
+  "scene_index": 4,
+  "view_index": 7,
+  "input_balanced_raw_prediction": "07_wuji2_network_3p3r_sim/01_cases/scene_0004_view_0007/02_predictions/balanced_raw_predictions.npz",
+  "input_filter_diagnostics": "07_wuji2_network_3p3r_sim/01_cases/scene_0004_view_0007/02_predictions/balanced_filtered_predictions_all_diagnostics.npz",
+  "output_npz": "07_wuji2_network_3p3r_sim/01_cases/scene_0004_view_0007/02_predictions/selected_top2.npz",
+  "selected_total": 12,
+  "translation_diversity_m": 0.015,
+  "rotation_diversity_deg": 20.0,
+  "objects": [
+    {
+      "segmentation_id": 1,
+      "object_code": "core-bottle-109d55a137c042f5760315ac3bf2c13e",
+      "enhanced_candidate_count": 112,
+      "strict_training_candidate_count": 149,
+      "selection_filter_tier": "enhanced_full_hand_and_path",
+      "eligible_candidate_count": 112,
+      "selected_count": 2,
+      "selected_filtered_indices": [
+        27,
+        45
+      ],
+      "source_candidate_indices": [
+        149,
+        119
+      ],
+      "scores": [
+        22.326169967651367,
+        21.73748207092285
+      ],
+      "second_pose_translation_difference_m": 0.015629072902810532,
+      "second_pose_rotation_difference_deg": 14.677195104401854,
+      "diversity_relaxed": false
+    },
+    {
+      "segmentation_id": 7,
+      "object_code": "sem-Cup-d8ea3aa39bcb162798910e50f05b8001",
+      "enhanced_candidate_count": 169,
+      "strict_training_candidate_count": 169,
+      "selection_filter_tier": "enhanced_full_hand_and_path",
+      "eligible_candidate_count": 169,
+      "selected_count": 2,
+      "selected_filtered_indices": [
+        10,
+        17
+      ],
+      "source_candidate_indices": [
+        208,
+        316
+      ],
+      "scores": [
+        23.348600387573242,
+        22.94068717956543
+      ],
+      "second_pose_translation_difference_m": 0.046036847741822186,
+      "second_pose_rotation_difference_deg": 20.815300416420637,
+      "diversity_relaxed": false
+    },
+    {
+      "segmentation_id": 27,
+      "object_code": "sem-Chocolate-c79da9bcb5c6f6a5a544d74fd0364407",
+      "enhanced_candidate_count": 0,
+      "strict_training_candidate_count": 108,
+      "selection_filter_tier": "official_training_strict_pregrasp_fallback",
+      "eligible_candidate_count": 108,
+      "selected_count": 2,
+      "selected_filtered_indices": [
+        229,
+        293
+      ],
+      "source_candidate_indices": [
+        408,
+        386
+      ],
+      "scores": [
+        18.766775131225586,
+        17.96651840209961
+      ],
+      "second_pose_translation_difference_m": 0.016339815519975702,
+      "second_pose_rotation_difference_deg": 11.660150482031362,
+      "diversity_relaxed": false
+    },
+    {
+      "segmentation_id": 50,
+      "object_code": "sem-Palette-992b09034e11bba395d70476ddcdc14",
+      "enhanced_candidate_count": 0,
+      "strict_training_candidate_count": 159,
+      "selection_filter_tier": "official_training_strict_pregrasp_fallback",
+      "eligible_candidate_count": 159,
+      "selected_count": 2,
+      "selected_filtered_indices": [
+        2,
+        4
+      ],
+      "source_candidate_indices": [
+        617,
+        556
+      ],
+      "scores": [
+        24.240478515625,
+        23.76408576965332
+      ],
+      "second_pose_translation_difference_m": 0.14451187963907866,
+      "second_pose_rotation_difference_deg": 89.7214422751765,
+      "diversity_relaxed": false
+    },
+    {
+      "segmentation_id": 53,
+      "object_code": "sem-Pencil-370867e6cf6f4ef8b5f19880cadbe491",
+      "enhanced_candidate_count": 2,
+      "strict_training_candidate_count": 167,
+      "selection_filter_tier": "enhanced_full_hand_and_path",
+      "eligible_candidate_count": 2,
+      "selected_count": 2,
+      "selected_filtered_indices": [
+        13,
+        801
+      ],
+      "source_candidate_indices": [
+        850,
+        690
+      ],
+      "scores": [
+        23.197628021240234,
+        8.912071228027344
+      ],
+      "second_pose_translation_difference_m": 0.2508489066263046,
+      "second_pose_rotation_difference_deg": 152.11150388369398,
+      "diversity_relaxed": false
+    },
+    {
+      "segmentation_id": 60,
+      "object_code": "sem-Battery-1d8fb5872696c64b62fb74d013fec4f1",
+      "enhanced_candidate_count": 0,
+      "strict_training_candidate_count": 10,
+      "selection_filter_tier": "official_training_strict_pregrasp_fallback",
+      "eligible_candidate_count": 10,
+      "selected_count": 2,
+      "selected_filtered_indices": [
+        867,
+        887
+      ],
+      "source_candidate_indices": [
+        869,
+        1011
+      ],
+      "scores": [
+        -18.036392211914062,
+        -19.483983993530273
+      ],
+      "second_pose_translation_difference_m": 0.5482410034716321,
+      "second_pose_rotation_difference_deg": 177.67328089213245,
+      "diversity_relaxed": false
+    }
+  ]
+}

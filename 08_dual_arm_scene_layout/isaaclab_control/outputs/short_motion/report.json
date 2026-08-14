@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-08-12T12:20:25.764695+00:00",
+  "status": "FAIL",
+  "stage": "/home/lin/Projects/DexGraspNet2_Wuji2/08_dual_arm_scene_layout/scenes/manual_layout_calibrated.usda",
+  "test_world_translation_m": [
+    0.0,
+    0.0,
+    0.02
+  ],
+  "final_return_position_error_m": 0.2366596758365631,
+  "final_return_orientation_error_deg": 52.25706704693659,
+  "max_measured_joint_velocity_rad_s": 8.350675582885742,
+  "limits": {
+    "max_joint_velocity_rad_s": 0.35,
+    "max_joint_acceleration_rad_s2": 0.7,
+    "position_tolerance_m": 0.003,
+    "orientation_tolerance_deg": 2.0
+  },
+  "trace_csv": "/home/lin/Projects/DexGraspNet2_Wuji2/08_dual_arm_scene_layout/isaaclab_control/outputs/short_motion/trace.csv"
+}

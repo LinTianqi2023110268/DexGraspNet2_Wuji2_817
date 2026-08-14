@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "case_id": "sceneXXXX_objectYY_name_candidateZZZZ",
+  "scene_id": "scene_XXXX",
+  "view_id": "view_XXXX",
+  "target_segmentation_id": 0,
+  "target_object_code": "replace_me",
+  "source_candidate_index": 0,
+  "source_hand": "LEAP Hand",
+  "target_hand": "Wuji Hand 2 Beta1 right",
+  "pipeline_status": "input_prepared",
+  "physics_status": "not_tested"
+}

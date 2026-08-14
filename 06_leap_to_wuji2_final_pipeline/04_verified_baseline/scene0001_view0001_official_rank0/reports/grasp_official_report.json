@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "status": "PASS",
+  "method": "official wuji-retargeting GRASP with reviewed four-finger correspondence",
+  "filter_enabled": false,
+  "pinky_fixed_zero": true,
+  "output": "/home/lin/Projects/DexGraspNet2_Wuji2/06_leap_to_wuji2_final_pipeline/01_cases/scene0001_view0001_official_rank0/02_retargeting/grasp_official.npz"
+}

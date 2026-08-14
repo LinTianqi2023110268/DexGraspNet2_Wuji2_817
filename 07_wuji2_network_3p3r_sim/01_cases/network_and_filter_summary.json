@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "status": "five_scene_network_and_filter_complete",
+  "device_requested": "cuda:0",
+  "cases": [
+    {
+      "scene_index": 0,
+      "view_index": 1,
+      "raw_prediction": "07_wuji2_network_3p3r_sim/01_cases/scene_0000_view_0001/02_predictions/raw_predictions.npz",
+      "filtered_prediction": "07_wuji2_network_3p3r_sim/01_cases/scene_0000_view_0001/02_predictions/filtered_predictions.npz",
+      "raw_candidate_count": 1024,
+      "filtered_candidate_count": 216,
+      "balanced_raw_prediction": "07_wuji2_network_3p3r_sim/01_cases/scene_0000_view_0001/02_predictions/balanced_raw_predictions.npz",
+      "balanced_filtered_prediction": "07_wuji2_network_3p3r_sim/01_cases/scene_0000_view_0001/02_predictions/balanced_filtered_predictions.npz",
+      "balanced_filtered_candidate_count": 240
+    },
+    {
+      "scene_index": 1,
+      "view_index": 1,
+      "raw_prediction": "07_wuji2_network_3p3r_sim/01_cases/scene_0001_view_0001/02_predictions/raw_predictions.npz",
+      "filtered_prediction": "07_wuji2_network_3p3r_sim/01_cases/scene_0001_view_0001/02_predictions/filtered_predictions.npz",
+      "raw_candidate_count": 1024,
+      "filtered_candidate_count": 273,
+      "balanced_raw_prediction": "07_wuji2_network_3p3r_sim/01_cases/scene_0001_view_0001/02_predictions/balanced_raw_predictions.npz",
+      "balanced_filtered_prediction": "07_wuji2_network_3p3r_sim/01_cases/scene_0001_view_0001/02_predictions/balanced_filtered_predictions.npz",
+      "balanced_filtered_candidate_count": 342
+    },
+    {
+      "scene_index": 2,
+      "view_index": 7,
+      "raw_prediction": "07_wuji2_network_3p3r_sim/01_cases/scene_0002_view_0007/02_predictions/raw_predictions.npz",
+      "filtered_prediction": "07_wuji2_network_3p3r_sim/01_cases/scene_0002_view_0007/02_predictions/filtered_predictions.npz",
+      "raw_candidate_count": 1024,
+      "filtered_candidate_count": 425,
+      "balanced_raw_prediction": "07_wuji2_network_3p3r_sim/01_cases/scene_0002_view_0007/02_predictions/balanced_raw_predictions.npz",
+      "balanced_filtered_prediction": "07_wuji2_network_3p3r_sim/01_cases/scene_0002_view_0007/02_predictions/balanced_filtered_predictions.npz",
+      "balanced_filtered_candidate_count": 336
+    },
+    {
+      "scene_index": 3,
+      "view_index": 5,
+      "raw_prediction": "07_wuji2_network_3p3r_sim/01_cases/scene_0003_view_0005/02_predictions/raw_predictions.npz",
+      "filtered_prediction": "07_wuji2_network_3p3r_sim/01_cases/scene_0003_view_0005/02_predictions/filtered_predictions.npz",
+      "raw_candidate_count": 1024,
+      "filtered_candidate_count": 299,
+      "balanced_raw_prediction": "07_wuji2_network_3p3r_sim/01_cases/scene_0003_view_0005/02_predictions/balanced_raw_predictions.npz",
+      "balanced_filtered_prediction": "07_wuji2_network_3p3r_sim/01_cases/scene_0003_view_0005/02_predictions/balanced_filtered_predictions.npz",
+      "balanced_filtered_candidate_count": 345
+    },
+    {
+      "scene_index": 4,
+      "view_index": 7,
+      "raw_prediction": "07_wuji2_network_3p3r_sim/01_cases/scene_0004_view_0007/02_predictions/raw_predictions.npz",
+      "filtered_prediction": "07_wuji2_network_3p3r_sim/01_cases/scene_0004_view_0007/02_predictions/filtered_predictions.npz",
+      "raw_candidate_count": 1024,
+      "filtered_candidate_count": 278,
+      "balanced_raw_prediction": "07_wuji2_network_3p3r_sim/01_cases/scene_0004_view_0007/02_predictions/balanced_raw_predictions.npz",
+      "balanced_filtered_prediction": "07_wuji2_network_3p3r_sim/01_cases/scene_0004_view_0007/02_predictions/balanced_filtered_predictions.npz",
+      "balanced_filtered_candidate_count": 283
+    }
+  ]
+}

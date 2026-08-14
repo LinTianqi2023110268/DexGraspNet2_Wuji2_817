@@ -1,0 +1,84 @@
+{
+  "status": "wuji2_single_view_inference_complete",
+  "official_blueprint": "DexGraspNet2 GraspnessSample.sample",
+  "checkpoint": "/home/lin/Projects/DexGraspNet2_Wuji2/04_training/experiments/wuji2_dexgraspnet2_train60_100seminal_256view_force_adjusted_legacy_v1_scratch/checkpoints/wuji2_scratch_050000.pth",
+  "checkpoint_iteration": 50000,
+  "strict_checkpoint_load": true,
+  "scene": 4,
+  "view": 7,
+  "point_count": 40000,
+  "proposal_count": 1024,
+  "joint_count": 20,
+  "joint_order": [
+    "r_thumb_cmc_flex",
+    "r_thumb_cmc_abd",
+    "r_thumb_mcp",
+    "r_thumb_ip",
+    "r_index_finger_mcp_flex",
+    "r_index_finger_mcp_abd",
+    "r_index_finger_pip",
+    "r_index_finger_dip",
+    "r_middle_finger_mcp_flex",
+    "r_middle_finger_mcp_abd",
+    "r_middle_finger_pip",
+    "r_middle_finger_dip",
+    "r_ring_finger_mcp_flex",
+    "r_ring_finger_mcp_abd",
+    "r_ring_finger_pip",
+    "r_ring_finger_dip",
+    "r_pinky_mcp_flex",
+    "r_pinky_mcp_abd",
+    "r_pinky_pip",
+    "r_pinky_dip"
+  ],
+  "categorical": false,
+  "score_formula": "log_prob + 5.0 * graspness",
+  "diffusion_prediction_type": "v_prediction",
+  "diffusion_inference_timesteps": 200,
+  "elapsed_seconds": 1.4641461372375488,
+  "cuda_peak_memory_mib": 175.97607421875,
+  "objectness_metrics_on_labeled_view": {
+    "accuracy": 0.4941,
+    "object_precision": 1.0,
+    "object_recall": 0.4941,
+    "object_iou": 0.4941,
+    "tp": 19764,
+    "tn": 0,
+    "fp": 0,
+    "fn": 20236
+  },
+  "seed_exact_match_max_distance_m": 0.0,
+  "seed_segmentation_histogram": {
+    "1": 132,
+    "7": 310,
+    "27": 210,
+    "50": 164,
+    "53": 208
+  },
+  "rotation_orthogonality_error_max": 2.9700393611165055e-07,
+  "rotation_determinant_min_max": [
+    0.9999998807907104,
+    1.0000001192092896
+  ],
+  "qpos_min_max_rad": [
+    -0.9064898490905762,
+    1.2120484113693237
+  ],
+  "score_min_max": [
+    -19.94597053527832,
+    24.25985336303711
+  ],
+  "best_candidate": {
+    "index": 841,
+    "seed_segmentation": 7,
+    "score": 24.25985336303711,
+    "graspness": 0.5026178359985352,
+    "log_prob": 21.746763229370117,
+    "translation_world_m": [
+      0.06223863363265991,
+      -0.033514201641082764,
+      0.20054033398628235
+    ]
+  },
+  "output_npz": "/home/lin/Projects/DexGraspNet2_Wuji2/07_wuji2_network_3p3r_sim/01_cases/scene_0004_view_0007/02_predictions/raw_predictions.npz"
+}

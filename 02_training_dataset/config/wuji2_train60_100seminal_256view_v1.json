@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "extends": "wuji2_train60_object_pool_v1.json",
+  "experiment_name": "wuji2_dexgraspnet2_train60_100seminal_256view_v1",
+  "random_seed": 20260802,
+  "paths": {
+    "output_root": "02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1"
+  },
+  "scope": {
+    "scene_count": 100,
+    "objects_per_scene": 6,
+    "views_per_scene": 256,
+    "points_per_view": 40000
+  },
+  "dataset_split": {
+    "train_scene_indices": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99],
+    "validation_scene_indices": [],
+    "test_scene_indices": [],
+    "policy": "All 100 seminal scenes belong to the paper-aligned training set. Validation and test scenes are generated as separate scene families."
+  },
+  "stable_pose_scene_generation": {
+    "candidate_count": 160,
+    "candidate_evaluation_order": "descending",
+    "maximum_scene_attempts_per_candidate": 2000,
+    "source": "The validated 40-scene Trimesh stable-pose, six-object random-anchor footprint-packing and Isaac Sim stability pipeline is reused. The final 40 analytic candidates add an explicitly recorded upright-pose bias requested after visual inspection; all poses still come from the Trimesh stable-pose library and require Isaac Sim acceptance.",
+    "upright_pose_bias": {
+      "enabled": true,
+      "start_candidate_index": 120,
+      "minimum_upright_objects_per_scene": 2,
+      "relative_height_threshold": 0.8,
+      "minimum_height_to_horizontal_span": 0.8,
+      "minimum_pose_height_range_ratio": 1.25,
+      "policy": "Candidates 0000-0119 retain probability-weighted stable-pose sampling. Candidates 0120-0159 contain at least two objects forced to a tall Trimesh-stable pose. Upright means height >= 80% of that object's tallest stable orientation, height/max(XY span) >= 0.8, and tallest/shortest stable height >= 1.25. Forced poses remain probability-weighted within the qualifying subset and must pass unchanged Isaac Sim physical acceptance."
+    }
+  },
+  "camera": {
+    "reference_view_indices": [
+      0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+      16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
+      32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47,
+      48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63,
+      64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79,
+      80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95,
+      96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111,
+      112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127,
+      128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143,
+      144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159,
+      160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175,
+      176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191,
+      192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207,
+      208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223,
+      224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239,
+      240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255
+    ]
+  },
+  "network_training": {
+    "initial_iterations": 50000,
+    "batch_size": 8,
+    "num_workers": 16,
+    "save_every": 5000,
+    "training_view_count": 25600,
+    "validation_view_count": 0,
+    "test_view_count": 0,
+    "training_policy": "Paper-aligned settings for the completed large dataset; checkpoint selection uses separately generated scene-family-disjoint validation data."
+  }
+}

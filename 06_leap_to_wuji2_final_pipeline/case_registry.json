@@ -1,0 +1,29 @@
+{
+  "schema_version": 2,
+  "current_execution_method": "wuji2_leap_root_drive",
+  "verified_representative": {
+    "case_id": "scene0001_view0001_official_rank0",
+    "target": "Battery",
+    "source_candidate_index": 49,
+    "path": "04_verified_baseline/scene0001_view0001_official_rank0",
+    "physical_status": "VERIFIED_PHYSICAL",
+    "integrity_status": "PRE_EXISTING_INTEGRITY_EXCEPTION",
+    "target_lift_delta_m": 0.2041405439376831
+  },
+  "active_current_case": {
+    "case_id": "scene0009_view0004_official_rank0_pinky_ring",
+    "path": "01_cases/active/scene0009_view0004_official_rank0_pinky_ring",
+    "status": "TEMPORARY_REGENERABLE",
+    "physics_status": "NOT_TESTED"
+  },
+  "route_c_provenance": {
+    "case_id": "live_dynamic_scene0000_dog_candidate3800",
+    "path": "99_archive/route_c_provenance/live_dynamic_scene0000_dog_candidate3800",
+    "compatibility_link": "01_cases/live_dynamic_scene0000_dog_candidate3800"
+  },
+  "archive": {
+    "regenerable_cases": "99_archive/regenerable_cases",
+    "failed_cases": "99_archive/failed_cases",
+    "index": "99_archive/README.md"
+  }
+}

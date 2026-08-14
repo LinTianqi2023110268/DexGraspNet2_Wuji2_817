@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "extends": "wuji2_train60_100seminal_256view_v1.json",
+  "experiment_name": "wuji2_dexgraspnet2_test60_10upright_10view_v1",
+  "random_seed": 20260808,
+  "paths": {
+    "output_root": "02_training_dataset/data/scene_datasets/wuji2_test60_10upright_10view_v1"
+  },
+  "scope": {
+    "scene_count": 10,
+    "objects_per_scene": 6,
+    "views_per_scene": 10,
+    "points_per_view": 40000
+  },
+  "dataset_split": {
+    "train_scene_indices": [],
+    "validation_scene_indices": [],
+    "test_scene_indices": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+    "policy": "All ten scenes are an independently seeded, scene-family-disjoint test set. No training scene or training view is reused."
+  },
+  "stable_pose_scene_generation": {
+    "candidate_count": 32,
+    "candidate_evaluation_order": "descending",
+    "maximum_scene_attempts_per_candidate": 2000,
+    "source": "The validated training-set pipeline is reused unchanged: Trimesh stable poses and six-object random-anchor footprint packing, followed by Isaac Sim 5.0 physical acceptance. Every analytic candidate additionally enables the recorded upright-pose preference requested for this held-out test family.",
+    "upright_pose_bias": {
+      "enabled": true,
+      "start_candidate_index": 0,
+      "minimum_upright_objects_per_scene": 2,
+      "relative_height_threshold": 0.8,
+      "minimum_height_to_horizontal_span": 0.8,
+      "minimum_pose_height_range_ratio": 1.25,
+      "policy": "Every candidate contains at least two objects forced to a tall Trimesh-stable orientation. A qualifying pose has height at least 80 percent of that object's tallest stable pose, height/max(XY span) at least 0.8, and tallest/shortest stable-height ratio at least 1.25. The pose remains probability-weighted within the qualifying stable subset and still requires unchanged Isaac Sim acceptance."
+    }
+  },
+  "grasp_label_generation": {
+    "collision_random_seed": 20260808
+  },
+  "camera": {
+    "reference_view_indices": [0, 28, 57, 85, 113, 142, 170, 198, 227, 255],
+    "test_view_policy": "Ten approximately uniform indices are selected across the same ordered 256-view official camera trajectory used by the training set. Intrinsics, pose fitting, image size and 40000-point sampling remain unchanged."
+  },
+  "network_training": {
+    "training_view_count": 0,
+    "validation_view_count": 0,
+    "test_view_count": 100,
+    "training_policy": "This dataset is evaluation-only. It must never be passed to the optimizer or used for checkpoint selection."
+  }
+}

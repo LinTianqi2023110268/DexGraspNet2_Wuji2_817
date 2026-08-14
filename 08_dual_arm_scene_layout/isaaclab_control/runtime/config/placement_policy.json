@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "purpose": "Footprint-aware multi-object allocation in the calibrated green placement zone",
+  "edge_margin_m": 0.01,
+  "inter_object_clearance_m": 0.02,
+  "release_hand_height_above_grasp_m": 0.01,
+  "transfer_clearance_m": 0.18,
+  "retreat_clearance_m": 0.12,
+  "grid_step_xy_m": [0.025, 0.025],
+  "footprint_xy_mode": "orientation_invariant_radius",
+  "preferred_world_y_m": -0.05,
+  "occupancy_registry": "08_dual_arm_scene_layout/isaaclab_control/outputs/placement_registry.json",
+  "commit_on_physical_success": true
+}

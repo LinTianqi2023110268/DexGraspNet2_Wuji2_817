@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "status": "PASS",
+  "mode": "cached_evidence_render_only",
+  "source_capture": "/home/lin/Projects/DexGraspNet2_Wuji2/08_dual_arm_scene_layout/captures/live_dynamic_scene0000",
+  "target": "dog",
+  "selected_candidate": 3800,
+  "outputs": [
+    "/home/lin/Projects/DexGraspNet2_Wuji2/08_dual_arm_scene_layout/isaaclab_control/report_demo/assets/generated/00_full_pipeline_dashboard.png",
+    "/home/lin/Projects/DexGraspNet2_Wuji2/08_dual_arm_scene_layout/isaaclab_control/report_demo/assets/generated/04_network_point_cloud.png",
+    "/home/lin/Projects/DexGraspNet2_Wuji2/08_dual_arm_scene_layout/isaaclab_control/report_demo/assets/generated/05_official_grasp_scores.png",
+    "/home/lin/Projects/DexGraspNet2_Wuji2/08_dual_arm_scene_layout/isaaclab_control/report_demo/assets/generated/06_candidate_gate_funnel.png"
+  ]
+}

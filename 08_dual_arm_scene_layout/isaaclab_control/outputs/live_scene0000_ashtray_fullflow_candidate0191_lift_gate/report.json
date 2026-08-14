@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-08-12T22:14:42.302810+00:00",
+  "status": "FAIL",
+  "mode": "through_lift_only",
+  "target": "ashtray segmentation 14",
+  "candidate_index": 191,
+  "control": "Isaac Lab 2.2 one AppLauncher/SimulationContext; ft04 right-arm Force Drive; official Wuji2 drives",
+  "cached_pipeline_inputs": {
+    "RGB-D": "/home/lin/Projects/DexGraspNet2_Wuji2/08_dual_arm_scene_layout/captures/isaaclab_scene0000_smoke/capture_manifest.json",
+    "GroundedSAM": "/home/lin/Projects/DexGraspNet2_Wuji2/08_dual_arm_scene_layout/captures/isaaclab_scene0000_smoke/groundedsam_ashtray/result.json",
+    "40K point cloud": "/home/lin/Projects/DexGraspNet2_Wuji2/08_dual_arm_scene_layout/captures/isaaclab_scene0000_smoke/dgn2/ashtray/network_input.npz",
+    "DGN2 prediction": "/home/lin/Projects/DexGraspNet2_Wuji2/08_dual_arm_scene_layout/captures/isaaclab_scene0000_smoke/dgn2/ashtray/official_leap_1024_target_ranked.npz",
+    "collision filter": "/home/lin/Projects/DexGraspNet2_Wuji2/08_dual_arm_scene_layout/captures/isaaclab_scene0000_smoke/dgn2/ashtray/official_leap_target_collision_filtered.npz",
+    "retargeted waypoints": "/home/lin/Projects/DexGraspNet2_Wuji2/06_leap_to_wuji2_final_pipeline/01_cases/live_scene0000_ashtray_fullflow_candidate0191/06_isaacsim/final_waypoints.npz",
+    "arm IK": "/home/lin/Projects/DexGraspNet2_Wuji2/06_leap_to_wuji2_final_pipeline/01_cases/live_scene0000_ashtray_fullflow_candidate0191/07_arm_execution/full_arm_waypoint_ik.npz",
+    "path collision": "/home/lin/Projects/DexGraspNet2_Wuji2/06_leap_to_wuji2_final_pipeline/01_cases/live_scene0000_ashtray_fullflow_candidate0191/07_arm_execution/full_joint_path_collision_report.json"
+  },
+  "max_object_lift_mm": 0.00864267349243164,
+  "final_object_position_world_m": [
+    -0.5845599174499512,
+    -0.14137983322143555,
+    0.48598116636276245
+  ],
+  "final_object_inside_green_zone_xy": false,
+  "trace_csv": "/home/lin/Projects/DexGraspNet2_Wuji2/08_dual_arm_scene_layout/isaaclab_control/outputs/live_scene0000_ashtray_fullflow_candidate0191_lift_gate/trace.csv"
+}

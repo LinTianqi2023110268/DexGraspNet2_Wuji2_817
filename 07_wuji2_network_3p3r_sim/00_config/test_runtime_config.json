@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "extends": "../../02_training_dataset/config/wuji2_test60_10upright_10view_v1.json",
+  "experiment_name": "wuji2_heldout_5scene_1view_runtime_v1",
+  "grasp_label_generation": {
+    "pregrasp_fingertip_opening_m": 0.0375,
+    "squeeze_fingertip_normals": {
+      "r_thumb_tip": [0.0, 1.0, 0.0],
+      "r_index_finger_tip": [0.0, 1.0, 0.0],
+      "r_middle_finger_tip": [0.0, 1.0, 0.0],
+      "r_ring_finger_tip": [0.0, 1.0, 0.0],
+      "r_pinky_tip": [0.0, 1.0, 0.0]
+    }
+  },
+  "test_runtime_policy": {
+    "scene_count": 5,
+    "views_per_scene": 1,
+    "poses_per_visible_object": 2,
+    "network_grasp_count": 1024,
+    "pregrasp_opening_m": 0.0375,
+    "approach_retreat_m": 0.1,
+    "squeeze_width_m": 0.02,
+    "lift_height_m": 0.07
+  }
+}

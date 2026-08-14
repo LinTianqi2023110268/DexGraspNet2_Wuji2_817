@@ -1,0 +1,8 @@
+[submodule "01_environment/vendor/wuji-description"]
+	path = 01_environment/vendor/wuji-description
+	url = https://github.com/LinTianqi2023110268/DexGraspNet2_Wuji2-wuji-description.git
+	branch = dexgraspnet2-wuji2
+[submodule "01_environment/vendor/wuji-retargeting"]
+	path = 01_environment/vendor/wuji-retargeting
+	url = https://github.com/LinTianqi2023110268/DexGraspNet2_Wuji2-wuji-retargeting.git
+	branch = dexgraspnet2-wuji2

@@ -1,0 +1,407 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-08-12T17:57:28.916965+00:00",
+  "status": "FAIL",
+  "meaning": "Initial static pose is not stable; IK remains disabled",
+  "stage": "/home/lin/Projects/DexGraspNet2_Wuji2/08_dual_arm_scene_layout/scenes/manual_layout_calibrated_mass_fixed.usda",
+  "robot_prim": "/World/Layout/DualArmMount/DualArm",
+  "duration_s": 10.0,
+  "settled_window_s": 3.0,
+  "physics_dt_s": 0.008333333333333333,
+  "parameter_policy": "Native assembled USD values preserved; no drive/dynamics/contact override",
+  "right_arm_pd_groups": [],
+  "right_arm_natural_frequency_groups": [],
+  "right_arm_drive_type_override": "force",
+  "right_arm_force_natural_frequency_groups": [
+    {
+      "name": "right_arm_j1",
+      "joint_names_expr": [
+        "arm_r_joint_1"
+      ],
+      "natural_frequency_rad_s": 20.0,
+      "damping_ratio": 1.0
+    },
+    {
+      "name": "right_arm_j2_j4",
+      "joint_names_expr": [
+        "arm_r_joint_[2-4]"
+      ],
+      "natural_frequency_rad_s": 20.0,
+      "damping_ratio": 1.0
+    },
+    {
+      "name": "right_arm_j5_j7",
+      "joint_names_expr": [
+        "arm_r_joint_[5-7]"
+      ],
+      "natural_frequency_rad_s": 20.0,
+      "damping_ratio": 1.0
+    }
+  ],
+  "resolved_force_drive_gains": [
+    {
+      "name": "right_arm_j1",
+      "joint_names_expr": [
+        "arm_r_joint_1"
+      ],
+      "natural_frequency_rad_s": 20.0,
+      "damping_ratio": 1.0,
+      "matched_joint_names": [
+        "arm_r_joint_1"
+      ],
+      "equivalent_mass_diagonal": [
+        0.15207497775554657
+      ],
+      "stiffness_by_joint": {
+        "arm_r_joint_1": 60.829994201660156
+      },
+      "damping_by_joint": {
+        "arm_r_joint_1": 6.082999229431152
+      },
+      "gain_source": "force_drive_mass_matrix_natural_frequency",
+      "gain_formula": "K=Mii*f^2, D=2*zeta*Mii*f using current generalized mass matrix diagonal"
+    },
+    {
+      "name": "right_arm_j2_j4",
+      "joint_names_expr": [
+        "arm_r_joint_[2-4]"
+      ],
+      "natural_frequency_rad_s": 20.0,
+      "damping_ratio": 1.0,
+      "matched_joint_names": [
+        "arm_r_joint_2",
+        "arm_r_joint_3",
+        "arm_r_joint_4"
+      ],
+      "equivalent_mass_diagonal": [
+        0.4859815835952759,
+        0.08404003828763962,
+        0.15735945105552673
+      ],
+      "stiffness_by_joint": {
+        "arm_r_joint_2": 194.3926239013672,
+        "arm_r_joint_3": 33.61601638793945,
+        "arm_r_joint_4": 62.943782806396484
+      },
+      "damping_by_joint": {
+        "arm_r_joint_2": 19.43926239013672,
+        "arm_r_joint_3": 3.3616015911102295,
+        "arm_r_joint_4": 6.294378280639648
+      },
+      "gain_source": "force_drive_mass_matrix_natural_frequency",
+      "gain_formula": "K=Mii*f^2, D=2*zeta*Mii*f using current generalized mass matrix diagonal"
+    },
+    {
+      "name": "right_arm_j5_j7",
+      "joint_names_expr": [
+        "arm_r_joint_[5-7]"
+      ],
+      "natural_frequency_rad_s": 20.0,
+      "damping_ratio": 1.0,
+      "matched_joint_names": [
+        "arm_r_joint_5",
+        "arm_r_joint_6",
+        "arm_r_joint_7"
+      ],
+      "equivalent_mass_diagonal": [
+        0.006225524470210075,
+        0.027659989893436432,
+        0.01779610477387905
+      ],
+      "stiffness_by_joint": {
+        "arm_r_joint_5": 2.4902098178863525,
+        "arm_r_joint_6": 11.063995361328125,
+        "arm_r_joint_7": 7.118442058563232
+      },
+      "damping_by_joint": {
+        "arm_r_joint_5": 0.24902097880840302,
+        "arm_r_joint_6": 1.1063995361328125,
+        "arm_r_joint_7": 0.7118442058563232
+      },
+      "gain_source": "force_drive_mass_matrix_natural_frequency",
+      "gain_formula": "K=Mii*f^2, D=2*zeta*Mii*f using current generalized mass matrix diagonal"
+    }
+  ],
+  "initial_gravity_compensation_by_joint_nm": {
+    "arm_r_joint_1": 5.0438642501831055,
+    "arm_r_joint_2": -6.198451042175293,
+    "arm_r_joint_3": 2.1642000675201416,
+    "arm_r_joint_4": 3.1988344192504883,
+    "arm_r_joint_5": 0.45757269859313965,
+    "arm_r_joint_6": -1.3546693325042725,
+    "arm_r_joint_7": -0.23104137182235718
+  },
+  "physx_drive_type_by_joint": {
+    "arm_r_joint_1": 1,
+    "arm_r_joint_2": 1,
+    "arm_r_joint_3": 1,
+    "arm_r_joint_4": 1,
+    "arm_r_joint_5": 1,
+    "arm_r_joint_6": 1,
+    "arm_r_joint_7": 1
+  },
+  "physx_measurements": {
+    "actuation": "ArticulationView.get_dof_actuation_forces; this is the external actuation-force buffer and is normally zero for implicit USD drives",
+    "projected_joint": "ArticulationView.get_dof_projected_joint_forces"
+  },
+  "limits": {
+    "right_arm_settled_max_target_error_deg": 1.0,
+    "right_hand_settled_max_target_error_deg": 2.0,
+    "settled_max_joint_speed_rad_s": 0.02,
+    "settled_body_translation_span_m": 0.001,
+    "settled_body_rotation_span_deg": 0.5
+  },
+  "right_arm": {
+    "status": "FAIL",
+    "settled_max_target_error_deg": 10.817771911621094,
+    "settled_max_joint_speed_rad_s": 0.11733026057481766,
+    "all_time_max_joint_speed_rad_s": 1.2611541748046875,
+    "all_time_peak_physx_actuation_force_nm": 0.0,
+    "all_time_peak_physx_projected_joint_force_nm": 8.458284378051758,
+    "per_joint": [
+      {
+        "name": "arm_r_joint_1",
+        "final_error_deg": 5.429184436798096,
+        "settled_max_speed_rad_s": 0.11733026057481766,
+        "peak_physx_actuation_force_nm": 0.0,
+        "peak_physx_projected_joint_force_nm": 6.588782787322998,
+        "effort_limit_nm": 130.0
+      },
+      {
+        "name": "arm_r_joint_2",
+        "final_error_deg": 2.100447177886963,
+        "settled_max_speed_rad_s": 0.04690011218190193,
+        "peak_physx_actuation_force_nm": 0.0,
+        "peak_physx_projected_joint_force_nm": 8.458284378051758,
+        "effort_limit_nm": 70.0
+      },
+      {
+        "name": "arm_r_joint_3",
+        "final_error_deg": 4.138095855712891,
+        "settled_max_speed_rad_s": 0.05160703510046005,
+        "peak_physx_actuation_force_nm": 0.0,
+        "peak_physx_projected_joint_force_nm": 3.1183199882507324,
+        "effort_limit_nm": 70.0
+      },
+      {
+        "name": "arm_r_joint_4",
+        "final_error_deg": 2.9887404441833496,
+        "settled_max_speed_rad_s": 0.03537013381719589,
+        "peak_physx_actuation_force_nm": 0.0,
+        "peak_physx_projected_joint_force_nm": 3.8017687797546387,
+        "effort_limit_nm": 70.0
+      },
+      {
+        "name": "arm_r_joint_5",
+        "final_error_deg": 10.817771911621094,
+        "settled_max_speed_rad_s": 0.0492650605738163,
+        "peak_physx_actuation_force_nm": 0.0,
+        "peak_physx_projected_joint_force_nm": 0.638595700263977,
+        "effort_limit_nm": 12.0
+      },
+      {
+        "name": "arm_r_joint_6",
+        "final_error_deg": 7.100942611694336,
+        "settled_max_speed_rad_s": 0.08237382769584656,
+        "peak_physx_actuation_force_nm": 0.0,
+        "peak_physx_projected_joint_force_nm": 1.791378140449524,
+        "effort_limit_nm": 12.0
+      },
+      {
+        "name": "arm_r_joint_7",
+        "final_error_deg": 3.0855824947357178,
+        "settled_max_speed_rad_s": 0.06253433972597122,
+        "peak_physx_actuation_force_nm": 0.0,
+        "peak_physx_projected_joint_force_nm": 0.5438296794891357,
+        "effort_limit_nm": 12.0
+      }
+    ]
+  },
+  "wuji2_hand": {
+    "status": "FAIL",
+    "settled_max_target_error_deg": 0.31523752212524414,
+    "settled_max_joint_speed_rad_s": 0.023652661591768265,
+    "all_time_max_joint_speed_rad_s": 0.07664056867361069,
+    "all_time_peak_physx_actuation_force_nm": 0.0,
+    "all_time_peak_physx_projected_joint_force_nm": 0.045202549546957016,
+    "per_joint": [
+      {
+        "name": "r_index_finger_mcp_flex",
+        "final_error_deg": 0.18597275018692017,
+        "settled_max_speed_rad_s": 0.008063370361924171,
+        "peak_physx_actuation_force_nm": 0.0,
+        "peak_physx_projected_joint_force_nm": 0.04397708922624588,
+        "effort_limit_nm": 2.0
+      },
+      {
+        "name": "r_middle_finger_mcp_flex",
+        "final_error_deg": 0.15063299238681793,
+        "settled_max_speed_rad_s": 0.0110203567892313,
+        "peak_physx_actuation_force_nm": 0.0,
+        "peak_physx_projected_joint_force_nm": 0.045202549546957016,
+        "effort_limit_nm": 2.0
+      },
+      {
+        "name": "r_pinky_mcp_flex",
+        "final_error_deg": 0.14205406606197357,
+        "settled_max_speed_rad_s": 0.014449205249547958,
+        "peak_physx_actuation_force_nm": 0.0,
+        "peak_physx_projected_joint_force_nm": 0.03849500045180321,
+        "effort_limit_nm": 2.0
+      },
+      {
+        "name": "r_ring_finger_mcp_flex",
+        "final_error_deg": 0.08042808622121811,
+        "settled_max_speed_rad_s": 0.00914950855076313,
+        "peak_physx_actuation_force_nm": 0.0,
+        "peak_physx_projected_joint_force_nm": 0.04513317719101906,
+        "effort_limit_nm": 2.0
+      },
+      {
+        "name": "r_thumb_cmc_flex",
+        "final_error_deg": 0.11101911216974258,
+        "settled_max_speed_rad_s": 0.005224016960710287,
+        "peak_physx_actuation_force_nm": 0.0,
+        "peak_physx_projected_joint_force_nm": 0.032765135169029236,
+        "effort_limit_nm": 2.0
+      },
+      {
+        "name": "r_index_finger_mcp_abd",
+        "final_error_deg": 0.00022402731701731682,
+        "settled_max_speed_rad_s": 9.660774594522081e-06,
+        "peak_physx_actuation_force_nm": 0.0,
+        "peak_physx_projected_joint_force_nm": 0.015346103347837925,
+        "effort_limit_nm": 2.0
+      },
+      {
+        "name": "r_middle_finger_mcp_abd",
+        "final_error_deg": 0.011447401717305183,
+        "settled_max_speed_rad_s": 0.0005051432526670396,
+        "peak_physx_actuation_force_nm": 0.0,
+        "peak_physx_projected_joint_force_nm": 0.013142989948391914,
+        "effort_limit_nm": 2.0
+      },
+      {
+        "name": "r_pinky_mcp_abd",
+        "final_error_deg": 0.012782872654497623,
+        "settled_max_speed_rad_s": 0.0005559121491387486,
+        "peak_physx_actuation_force_nm": 0.0,
+        "peak_physx_projected_joint_force_nm": 0.007948077283799648,
+        "effort_limit_nm": 2.0
+      },
+      {
+        "name": "r_ring_finger_mcp_abd",
+        "final_error_deg": 0.025477498769760132,
+        "settled_max_speed_rad_s": 0.0013609477318823338,
+        "peak_physx_actuation_force_nm": 0.0,
+        "peak_physx_projected_joint_force_nm": 0.011434914544224739,
+        "effort_limit_nm": 2.0
+      },
+      {
+        "name": "r_thumb_cmc_abd",
+        "final_error_deg": 0.11580204218626022,
+        "settled_max_speed_rad_s": 0.0043527111411094666,
+        "peak_physx_actuation_force_nm": 0.0,
+        "peak_physx_projected_joint_force_nm": 0.029481738805770874,
+        "effort_limit_nm": 2.0
+      },
+      {
+        "name": "r_index_finger_pip",
+        "final_error_deg": 0.17085233330726624,
+        "settled_max_speed_rad_s": 0.007994305342435837,
+        "peak_physx_actuation_force_nm": 0.0,
+        "peak_physx_projected_joint_force_nm": 0.009390311315655708,
+        "effort_limit_nm": 2.0
+      },
+      {
+        "name": "r_middle_finger_pip",
+        "final_error_deg": 0.22732217609882355,
+        "settled_max_speed_rad_s": 0.014280484057962894,
+        "peak_physx_actuation_force_nm": 0.0,
+        "peak_physx_projected_joint_force_nm": 0.00965807307511568,
+        "effort_limit_nm": 2.0
+      },
+      {
+        "name": "r_pinky_pip",
+        "final_error_deg": 0.3027905821800232,
+        "settled_max_speed_rad_s": 0.023652661591768265,
+        "peak_physx_actuation_force_nm": 0.0,
+        "peak_physx_projected_joint_force_nm": 0.008490883745253086,
+        "effort_limit_nm": 2.0
+      },
+      {
+        "name": "r_ring_finger_pip",
+        "final_error_deg": 0.315237432718277,
+        "settled_max_speed_rad_s": 0.02324703335762024,
+        "peak_physx_actuation_force_nm": 0.0,
+        "peak_physx_projected_joint_force_nm": 0.009640336968004704,
+        "effort_limit_nm": 2.0
+      },
+      {
+        "name": "r_thumb_mcp",
+        "final_error_deg": 0.08007404208183289,
+        "settled_max_speed_rad_s": 0.0008681582985445857,
+        "peak_physx_actuation_force_nm": 0.0,
+        "peak_physx_projected_joint_force_nm": 0.00359727768227458,
+        "effort_limit_nm": 2.0
+      },
+      {
+        "name": "r_index_finger_dip",
+        "final_error_deg": 1.663381226535421e-05,
+        "settled_max_speed_rad_s": 1.3984173392600496e-06,
+        "peak_physx_actuation_force_nm": 0.0,
+        "peak_physx_projected_joint_force_nm": 0.001238891389220953,
+        "effort_limit_nm": 2.0
+      },
+      {
+        "name": "r_middle_finger_dip",
+        "final_error_deg": 0.018216820433735847,
+        "settled_max_speed_rad_s": 0.000691638037096709,
+        "peak_physx_actuation_force_nm": 0.0,
+        "peak_physx_projected_joint_force_nm": 0.0012738198274746537,
+        "effort_limit_nm": 2.0
+      },
+      {
+        "name": "r_pinky_dip",
+        "final_error_deg": 0.028981193900108337,
+        "settled_max_speed_rad_s": 0.0014216471463441849,
+        "peak_physx_actuation_force_nm": 0.0,
+        "peak_physx_projected_joint_force_nm": 0.0012615083251148462,
+        "effort_limit_nm": 2.0
+      },
+      {
+        "name": "r_ring_finger_dip",
+        "final_error_deg": 0.04965365305542946,
+        "settled_max_speed_rad_s": 0.0028305831365287304,
+        "peak_physx_actuation_force_nm": 0.0,
+        "peak_physx_projected_joint_force_nm": 0.0012708510039374232,
+        "effort_limit_nm": 2.0
+      },
+      {
+        "name": "r_thumb_ip",
+        "final_error_deg": 0.025430424138903618,
+        "settled_max_speed_rad_s": 0.0014828055864199996,
+        "peak_physx_actuation_force_nm": 0.0,
+        "peak_physx_projected_joint_force_nm": 0.0006270026206038892,
+        "effort_limit_nm": 2.0
+      }
+    ]
+  },
+  "right_flange": {
+    "name": "arm_r_link_tf",
+    "status": "PASS",
+    "settled_translation_span_m": 0.0,
+    "settled_rotation_span_deg": 0.05595291033387184,
+    "all_time_translation_from_first_sample_m": 0.08909530192613602,
+    "all_time_rotation_from_first_sample_deg": 26.72896957397461
+  },
+  "wuji2_wrist": {
+    "name": "r_wrist",
+    "status": "PASS",
+    "settled_translation_span_m": 0.0,
+    "settled_rotation_span_deg": 0.05595291033387184,
+    "all_time_translation_from_first_sample_m": 0.09868675470352173,
+    "all_time_rotation_from_first_sample_deg": 26.7289981842041
+  },
+  "joint_trace_csv": "/home/lin/Projects/DexGraspNet2_Wuji2/08_dual_arm_scene_layout/isaaclab_control/outputs/force_nf_scan/nf20/joint_trace.csv"
+}

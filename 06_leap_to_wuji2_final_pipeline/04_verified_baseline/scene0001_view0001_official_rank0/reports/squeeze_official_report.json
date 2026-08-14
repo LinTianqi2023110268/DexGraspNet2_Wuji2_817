@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "method": "official wuji-retargeting static SQUEEZE endpoint; no custom IK",
+  "immutable_contract": {
+    "grasp_q20_unchanged": true,
+    "root_6d_unchanged": true,
+    "pinky_fixed_zero": true
+  },
+  "base_config": "/home/lin/Projects/DexGraspNet2_Wuji2/06_leap_to_wuji2_final_pipeline/00_shared/config/grasp_retarget.yaml",
+  "base_config_sha256": "f814186b7de178761cd5f16ed2a2d3efc13eba5dd6939f901c782cdf02f086b6",
+  "override_config": "/home/lin/Projects/DexGraspNet2_Wuji2/06_leap_to_wuji2_final_pipeline/00_shared/config/squeeze_retry_overrides.yaml",
+  "override_config_sha256": "e3c1cbbce69cea4179243c7651018d31a6069529b6922da539d82c7e60d08410",
+  "effective_overrides": {
+    "scaling": 0.87,
+    "w_pos": 3.0,
+    "w_dir": 12.0,
+    "w_full_hand": 0.15,
+    "norm_delta": 0.0,
+    "wrist_offset_cm": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "thumb_offset_cm": [
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "static_endpoint_filter_enabled": false,
+  "interpolation_frames": 41,
+  "squeeze_tip_error_mm": {
+    "thumb": 10.27664850626184,
+    "index": 9.002813754170452,
+    "middle": 6.35425605132863,
+    "ring": 8.916696558958668
+  },
+  "squeeze_rms_mm": 8.754201955402992,
+  "squeeze_max_mm": 10.27664850626184,
+  "trajectory_rms_mm": 6.758315848325225,
+  "maximum_joint_delta_from_grasp_rad": 0.5545926541090012,
+  "maximum_interpolated_step_rad": 0.013864816352725073,
+  "minimum_official_joint_limit_margin_rad": 0.2609707031249999,
+  "optimization_cost": 3.369236899061339,
+  "output": "/home/lin/Projects/DexGraspNet2_Wuji2/06_leap_to_wuji2_final_pipeline/01_cases/scene0001_view0001_official_rank0/04_squeeze/squeeze_official.npz"
+}

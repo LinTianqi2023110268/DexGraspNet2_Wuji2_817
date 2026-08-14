@@ -1,0 +1,66 @@
+<?xml version="1.0" ?>
+<scene>
+    <obj>
+        <obj_id>14</obj_id>
+        <obj_name>015_peach.ply</obj_name>
+        <obj_path>models/015_peach.ply</obj_path>
+        <pos_in_world>0.0614 0.0349 0.5193</pos_in_world>
+        <ori_in_world>0.4126 -0.6479 0.5821 0.2668</ori_in_world>
+    </obj>
+    <obj>
+        <obj_id>0</obj_id>
+        <obj_name>003_cracker_box.ply</obj_name>
+        <obj_path>models/003_cracker_box.ply</obj_path>
+        <pos_in_world>0.1145 -0.0702 0.3857</pos_in_world>
+        <ori_in_world>0.6450 -0.3019 -0.1336 -0.6892</ori_in_world>
+    </obj>
+    <obj>
+        <obj_id>5</obj_id>
+        <obj_name>011_banana.ply</obj_name>
+        <obj_path>models/011_banana.ply</obj_path>
+        <pos_in_world>-0.0387 -0.0075 0.4886</pos_in_world>
+        <ori_in_world>0.2136 -0.5870 -0.7098 -0.3255</ori_in_world>
+    </obj>
+    <obj>
+        <obj_id>15</obj_id>
+        <obj_name>016_pear.ply</obj_name>
+        <obj_path>models/016_pear.ply</obj_path>
+        <pos_in_world>0.0040 -0.0354 0.4256</pos_in_world>
+        <ori_in_world>0.1150 0.5985 0.7566 0.2371</ori_in_world>
+    </obj>
+    <obj>
+        <obj_id>20</obj_id>
+        <obj_name>044_flat_screwdriver.ply</obj_name>
+        <obj_path>models/044_flat_screwdriver.ply</obj_path>
+        <pos_in_world>-0.0187 0.0433 0.5478</pos_in_world>
+        <ori_in_world>0.1248 0.7881 0.4374 -0.4148</ori_in_world>
+    </obj>
+    <obj>
+        <obj_id>48</obj_id>
+        <obj_name>camel.ply</obj_name>
+        <obj_path>models/camel.ply</obj_path>
+        <pos_in_world>-0.0233 0.1289 0.6519</pos_in_world>
+        <ori_in_world>0.8774 0.2717 -0.2493 0.3070</ori_in_world>
+    </obj>
+    <obj>
+        <obj_id>66</obj_id>
+        <obj_name>head_shoulders_care.ply</obj_name>
+        <obj_path>models/head_shoulders_care.ply</obj_path>
+        <pos_in_world>-0.0448 -0.0804 0.3561</pos_in_world>
+        <ori_in_world>0.2462 -0.7030 -0.3885 0.5424</ori_in_world>
+    </obj>
+    <obj>
+        <obj_id>70</obj_id>
+        <obj_name>tape.ply</obj_name>
+        <obj_path>models/tape.ply</obj_path>
+        <pos_in_world>-0.0679 0.0751 0.5982</pos_in_world>
+        <ori_in_world>0.5467 0.4304 -0.6999 -0.1613</ori_in_world>
+    </obj>
+    <obj>
+        <obj_id>46</obj_id>
+        <obj_name>dish.ply</obj_name>
+        <obj_path>models/dish.ply</obj_path>
+        <pos_in_world>0.1204 0.1217 0.5862</pos_in_world>
+        <ori_in_world>0.1802 -0.3961 0.8160 0.3805</ori_in_world>
+    </obj>
+</scene>

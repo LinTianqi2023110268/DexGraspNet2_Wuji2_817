@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "status": "READY",
+  "source": "/home/lin/Projects/DexGraspNet2_Wuji2/06_leap_to_wuji2_final_pipeline/01_cases/scene0001_view0001_official_rank0/04_squeeze/squeeze_official.npz",
+  "base_scene_and_runtime_contract": "/home/lin/Projects/DexGraspNet2_Wuji2/06_leap_to_wuji2_final_pipeline/00_shared/isaacsim/runtime_contract_template.npz",
+  "output": "/home/lin/Projects/DexGraspNet2_Wuji2/06_leap_to_wuji2_final_pipeline/01_cases/scene0001_view0001_official_rank0/06_isaacsim/final_waypoints.npz",
+  "stages": [
+    "pregrasp",
+    "cover",
+    "grasp",
+    "squeeze",
+    "lift"
+  ],
+  "control_steps": [
+    120,
+    120,
+    120,
+    240
+  ],
+  "squeeze_dense_samples": 41,
+  "maximum_joint_step_rad": 0.013864845037460327,
+  "inside_official_wuji2_limits": true,
+  "grasp_q20_unchanged": true,
+  "root_6d_unchanged": true,
+  "pregrasp": "start from the audited open pose; move only r_thumb_tip by native IK along the direction opposite its approved local +Y inward normal; keep the other four fingers unchanged",
+  "pregrasp_thumb_extra_open_m_requested": 0.03,
+  "pregrasp_thumb_inward_direction_local_xyz": [
+    0.0,
+    1.0,
+    0.0
+  ],
+  "pregrasp_thumb_outward_direction_local_xyz": [
+    -0.0,
+    -1.0,
+    -0.0
+  ],
+  "pregrasp_thumb_outward_direction_r_wrist_xyz": [
+    0.7696783542633057,
+    0.2385975420475006,
+    0.5921709537506104
+  ],
+  "pregrasp_thumb_extra_open_m_actual": 0.02877923659980297,
+  "pregrasp_thumb_extra_open_m_projected": 0.028449557721614838,
+  "pregrasp_thumb_extra_open_target_error_m": 0.004612048622220755,
+  "pregrasp_thumb_ik_joint_delta_rad": [
+    -0.1386255919933319,
+    -0.0928686261177063,
+    -0.17105233669281006,
+    -0.05362594127655029
+  ],
+  "pregrasp_thumb_ik_steps": 20,
+  "approach": "official 100 mm along calibrated Wuji2 semantic-palm +Z",
+  "gravity": "0 before/through SQUEEZE, then -9.81 m/s^2",
+  "lift_policy": "side_lift_world_positive_z_200mm",
+  "runtime_usd": "/home/lin/Projects/DexGraspNet2_Wuji2/01_environment/vendor/wuji-description/hand2/hand2_beta1/body/usd/right/wujihand2.usd",
+  "success_criterion": "target object center rises by at least 30 mm",
+  "root_control": "LEAP-equivalent 3-prismatic + 3-revolute force-position drives; effective K=800, D=20"
+}

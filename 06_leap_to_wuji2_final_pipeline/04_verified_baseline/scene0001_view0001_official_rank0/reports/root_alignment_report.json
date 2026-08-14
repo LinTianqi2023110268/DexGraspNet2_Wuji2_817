@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "status": "PASS",
+  "method": "equal-weight four-tip Kabsch; q20 frozen",
+  "q20_unchanged": true,
+  "tip_error_mm": {
+    "thumb": 13.438002776583074,
+    "index": 4.502089905387869,
+    "middle": 6.044202099035703,
+    "ring": 4.22330512255251
+  },
+  "rms_mm": 7.9877627861594585,
+  "max_mm": 13.438002776583074,
+  "output": "/home/lin/Projects/DexGraspNet2_Wuji2/06_leap_to_wuji2_final_pipeline/01_cases/scene0001_view0001_official_rank0/03_root_alignment/root_alignment.npz"
+}

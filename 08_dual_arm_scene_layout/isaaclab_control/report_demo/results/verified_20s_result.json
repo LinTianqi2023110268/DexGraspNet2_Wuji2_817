@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "status": "PASS",
+  "source_scene": "wuji2_test60_10upright_10view_v1/scenes/scene_0000",
+  "live_capture": "live_dynamic_scene0000",
+  "target_query": "dog",
+  "target_segmentation_id": 33,
+  "candidate_index": 3800,
+  "candidate_official_target_rank_one_based": 7,
+  "candidate_official_score": 43.87664794921875,
+  "action_duration_s": 17.783333333332966,
+  "action_duration_limit_s": 20.0,
+  "maximum_object_lift_mm": 123.19731712341309,
+  "required_object_lift_mm": 30.0,
+  "final_flange_error_mm": 4.60,
+  "final_flange_error_deg": 1.51,
+  "persistent_contact_finger_count": 4,
+  "timing_scope": "physics action only; excludes Kit startup, asset loading and initial 3-second gravity settle",
+  "controller": "Isaac Lab 2.2; mass-fixed USD; ft04 implicit Force Drive; official Wuji2 drives",
+  "result_source": "08_dual_arm_scene_layout/isaaclab_control/outputs/live_dynamic_scene0000_dog_candidate3800_lift_gate/report.json",
+  "legacy_output_note": "This successful run occurred before output-directory isolation was fixed; subsequent runs use the configured report_demo_20s_dog_candidate3800 directory."
+}
+

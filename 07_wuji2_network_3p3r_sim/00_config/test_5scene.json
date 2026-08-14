@@ -1,0 +1,229 @@
+{
+  "schema_version": 1,
+  "status": "five_scenes_one_visible_view_selected",
+  "test_dataset": "02_training_dataset/data/scene_datasets/wuji2_test60_10upright_10view_v1",
+  "selection_rule": "maximize visible object count, then minimum per-object point count, then total object point count",
+  "minimum_visible_object_points": 50,
+  "scenes": [
+    {
+      "scene_index": 0,
+      "view_index": 1,
+      "scene_manifest": "02_training_dataset/data/scene_datasets/wuji2_test60_10upright_10view_v1/scenes/scene_0000/scene_manifest.json",
+      "network_input": "02_training_dataset/data/scene_datasets/wuji2_test60_10upright_10view_v1/scenes/scene_0000/network_input.npz",
+      "objects": [
+        {
+          "segmentation_id": 3,
+          "object_pool_index": 2,
+          "object_code": "sem-CanOpener-ef6762a35438931aec2282dd8bc87a",
+          "visible_point_count": 2469
+        },
+        {
+          "segmentation_id": 11,
+          "object_pool_index": 10,
+          "object_code": "sem-Notepad-491731fae7b58f4cc2e054c56e9a85a",
+          "visible_point_count": 5568
+        },
+        {
+          "segmentation_id": 14,
+          "object_pool_index": 13,
+          "object_code": "sem-Ashtray-2b210ae3bfa1abe43da807e9c1c58ac0",
+          "visible_point_count": 4256
+        },
+        {
+          "segmentation_id": 33,
+          "object_pool_index": 32,
+          "object_code": "sem-Dog-2526b1f358f773034203f59b4fda924b",
+          "visible_point_count": 2095
+        },
+        {
+          "segmentation_id": 37,
+          "object_pool_index": 36,
+          "object_code": "sem-Hammer-405f308492a6f40d2c3380317c2cc450",
+          "visible_point_count": 2028
+        },
+        {
+          "segmentation_id": 52,
+          "object_pool_index": 51,
+          "object_code": "sem-Pen-47e0235a83058335782611375da5ea9a",
+          "visible_point_count": 1879
+        }
+      ]
+    },
+    {
+      "scene_index": 1,
+      "view_index": 1,
+      "scene_manifest": "02_training_dataset/data/scene_datasets/wuji2_test60_10upright_10view_v1/scenes/scene_0001/scene_manifest.json",
+      "network_input": "02_training_dataset/data/scene_datasets/wuji2_test60_10upright_10view_v1/scenes/scene_0001/network_input.npz",
+      "objects": [
+        {
+          "segmentation_id": 4,
+          "object_pool_index": 3,
+          "object_code": "core-knife-3fb80a70e65eff5dd65ee87f16099336",
+          "visible_point_count": 1313
+        },
+        {
+          "segmentation_id": 17,
+          "object_pool_index": 16,
+          "object_code": "sem-Blender-1a6960ddfdd323ec494dc7b475c330b5",
+          "visible_point_count": 3327
+        },
+        {
+          "segmentation_id": 28,
+          "object_pool_index": 27,
+          "object_code": "sem-Clock-10a200395145c61aea2f5d52559debc",
+          "visible_point_count": 1525
+        },
+        {
+          "segmentation_id": 47,
+          "object_pool_index": 46,
+          "object_code": "sem-Microscope-3a6cd06d50e0f37e59ceafb827a4418d",
+          "visible_point_count": 2341
+        },
+        {
+          "segmentation_id": 53,
+          "object_pool_index": 52,
+          "object_code": "sem-Pencil-370867e6cf6f4ef8b5f19880cadbe491",
+          "visible_point_count": 1606
+        },
+        {
+          "segmentation_id": 60,
+          "object_pool_index": 59,
+          "object_code": "sem-Battery-1d8fb5872696c64b62fb74d013fec4f1",
+          "visible_point_count": 2310
+        }
+      ]
+    },
+    {
+      "scene_index": 2,
+      "view_index": 7,
+      "scene_manifest": "02_training_dataset/data/scene_datasets/wuji2_test60_10upright_10view_v1/scenes/scene_0002/scene_manifest.json",
+      "network_input": "02_training_dataset/data/scene_datasets/wuji2_test60_10upright_10view_v1/scenes/scene_0002/network_input.npz",
+      "objects": [
+        {
+          "segmentation_id": 1,
+          "object_pool_index": 0,
+          "object_code": "core-bottle-109d55a137c042f5760315ac3bf2c13e",
+          "visible_point_count": 3234
+        },
+        {
+          "segmentation_id": 13,
+          "object_pool_index": 12,
+          "object_code": "sem-Airplane-704645aab47a7523eeffd0b15e05669b",
+          "visible_point_count": 2205
+        },
+        {
+          "segmentation_id": 14,
+          "object_pool_index": 13,
+          "object_code": "sem-Ashtray-2b210ae3bfa1abe43da807e9c1c58ac0",
+          "visible_point_count": 3587
+        },
+        {
+          "segmentation_id": 15,
+          "object_pool_index": 14,
+          "object_code": "sem-Bear-1629215db795111ba649bd1425725662",
+          "visible_point_count": 2398
+        },
+        {
+          "segmentation_id": 36,
+          "object_pool_index": 35,
+          "object_code": "sem-FoodItem-10a4e3c7c20cde9f3480e103b4cacefa",
+          "visible_point_count": 2652
+        },
+        {
+          "segmentation_id": 41,
+          "object_pool_index": 40,
+          "object_code": "core-jar-12ec19e85b31e274725f67267e31c89",
+          "visible_point_count": 4758
+        }
+      ]
+    },
+    {
+      "scene_index": 3,
+      "view_index": 5,
+      "scene_manifest": "02_training_dataset/data/scene_datasets/wuji2_test60_10upright_10view_v1/scenes/scene_0003/scene_manifest.json",
+      "network_input": "02_training_dataset/data/scene_datasets/wuji2_test60_10upright_10view_v1/scenes/scene_0003/network_input.npz",
+      "objects": [
+        {
+          "segmentation_id": 9,
+          "object_pool_index": 8,
+          "object_code": "sem-Mug-10f6e09036350e92b3f21f1137c3c347",
+          "visible_point_count": 6714
+        },
+        {
+          "segmentation_id": 10,
+          "object_pool_index": 9,
+          "object_code": "sem-Flashlight-5c7bf45b0f847489181be2d6e974dccd",
+          "visible_point_count": 2671
+        },
+        {
+          "segmentation_id": 23,
+          "object_pool_index": 22,
+          "object_code": "sem-Candle-1be58678b919b12bc5fe7f65b41f3b19",
+          "visible_point_count": 2800
+        },
+        {
+          "segmentation_id": 24,
+          "object_pool_index": 23,
+          "object_code": "sem-Canister-714320da4aafcb4a47be2353d2b2403b",
+          "visible_point_count": 2321
+        },
+        {
+          "segmentation_id": 31,
+          "object_pool_index": 30,
+          "object_code": "sem-Detergent-547fa0085800c5c3846564a8a219239b",
+          "visible_point_count": 5039
+        },
+        {
+          "segmentation_id": 54,
+          "object_pool_index": 53,
+          "object_code": "core-pillow-1332172ba896e1c2a40f4c396e0c7dce",
+          "visible_point_count": 2238
+        }
+      ]
+    },
+    {
+      "scene_index": 4,
+      "view_index": 7,
+      "scene_manifest": "02_training_dataset/data/scene_datasets/wuji2_test60_10upright_10view_v1/scenes/scene_0004/scene_manifest.json",
+      "network_input": "02_training_dataset/data/scene_datasets/wuji2_test60_10upright_10view_v1/scenes/scene_0004/network_input.npz",
+      "objects": [
+        {
+          "segmentation_id": 1,
+          "object_pool_index": 0,
+          "object_code": "core-bottle-109d55a137c042f5760315ac3bf2c13e",
+          "visible_point_count": 2315
+        },
+        {
+          "segmentation_id": 7,
+          "object_pool_index": 6,
+          "object_code": "sem-Cup-d8ea3aa39bcb162798910e50f05b8001",
+          "visible_point_count": 4282
+        },
+        {
+          "segmentation_id": 27,
+          "object_pool_index": 26,
+          "object_code": "sem-Chocolate-c79da9bcb5c6f6a5a544d74fd0364407",
+          "visible_point_count": 5592
+        },
+        {
+          "segmentation_id": 50,
+          "object_pool_index": 49,
+          "object_code": "sem-Palette-992b09034e11bba395d70476ddcdc14",
+          "visible_point_count": 3157
+        },
+        {
+          "segmentation_id": 53,
+          "object_pool_index": 52,
+          "object_code": "sem-Pencil-370867e6cf6f4ef8b5f19880cadbe491",
+          "visible_point_count": 4326
+        },
+        {
+          "segmentation_id": 60,
+          "object_pool_index": 59,
+          "object_code": "sem-Battery-1d8fb5872696c64b62fb74d013fec4f1",
+          "visible_point_count": 20328
+        }
+      ]
+    }
+  ]
+}

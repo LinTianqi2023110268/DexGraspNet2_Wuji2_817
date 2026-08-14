@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "updated_local_date": "2026-08-14",
+  "business_cases": {
+    "A_native_wuji2": {
+      "case_id": "scene0000_view0001_object014_source0462",
+      "target": "Ashtray",
+      "path": "07_wuji2_network_3p3r_sim/04_verified_baseline/scene0000_view0001_ashtray_source0462",
+      "result": "07_wuji2_network_3p3r_sim/04_verified_baseline/scene0000_view0001_ashtray_source0462/05_isaacsim/final_result.json",
+      "target_lift_delta_m": 0.06069280207157135,
+      "status": "PASS"
+    },
+    "B_leap_to_wuji2": {
+      "case_id": "scene0001_view0001_official_rank0",
+      "target": "Battery",
+      "path": "06_leap_to_wuji2_final_pipeline/04_verified_baseline/scene0001_view0001_official_rank0",
+      "manifest": "06_leap_to_wuji2_final_pipeline/04_verified_baseline/scene0001_view0001_official_rank0/manifest.json",
+      "target_lift_delta_m": 0.2041405439376831,
+      "status": "VERIFIED_PHYSICAL",
+      "integrity_status": "PRE_EXISTING_INTEGRITY_EXCEPTION",
+      "immutable": true,
+      "checksum_audit": "PREEXISTING_DRIFT_8_OF_10_PASS",
+      "checksum_audit_note": "verified/B_verified_leap_to_wuji2/checksum_audit.md",
+      "observed_sha256": "verified/B_verified_leap_to_wuji2/observed_sha256_20260814.txt"
+    },
+    "C_dual_arm": {
+      "case_id": "full_pick_place_25s_dog_candidate3800",
+      "target": "dog",
+      "path": "08_dual_arm_scene_layout/isaaclab_control/outputs/full_pick_place_25s_dog_candidate3800",
+      "result": "08_dual_arm_scene_layout/isaaclab_control/outputs/full_pick_place_25s_dog_candidate3800/report.json",
+      "physical_replay": "08_dual_arm_scene_layout/isaaclab_control/outputs/full_pick_place_25s_dog_candidate3800/physical_replay_30fps.npz",
+      "action_duration_s": 24.85,
+      "wall_duration_s": 272.97884852599964,
+      "status": "PASS"
+    }
+  },
+  "control_diagnostics": {
+    "ft04_velocity_reality": "08_dual_arm_scene_layout/isaaclab_control/outputs/force_nf_finetune/ft04_j1_50_j3_45_j5_55_j6_50/velocity_reality_audit.json",
+    "short_motion_20mm": "08_dual_arm_scene_layout/isaaclab_control/outputs/short_motion_ft04_z20_fixed/report.json"
+  }
+}

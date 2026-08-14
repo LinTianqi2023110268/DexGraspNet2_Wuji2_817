@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "status": "VERIFIED_SUCCESS_BASELINE",
+  "frozen_local_date": "2026-08-14",
+  "route": "A_native_wuji2",
+  "case_id": "scene0000_view0001_object014_source0462",
+  "scene_id": "scene_0000",
+  "view_id": "view_0001",
+  "target": "Ashtray",
+  "target_segmentation_id": 14,
+  "source_candidate_index": 462,
+  "filtered_rank_1_based": 5,
+  "target_specific_success": true,
+  "target_lift_delta_m": 0.06069280207157135,
+  "authoritative_result": "05_isaacsim/final_result.json",
+  "source_snapshot": "07_wuji2_network_3p3r_sim/01_cases/selected_native_case",
+  "note": "The copied case.json is preserved as pre-execution provenance; this manifest records the authoritative verified status."
+}
+

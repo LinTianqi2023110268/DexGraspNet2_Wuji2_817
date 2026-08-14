@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "policy": "copy_ring_flexion_and_bias_abduction_outward",
+  "outward_abduction_offset_deg": 10.0,
+  "outward_abduction_sign": 1.0,
+  "limit_policy": "clip_to_official_urdf_limits",
+  "source_finger": "ring",
+  "target_finger": "pinky",
+  "joint_mapping": {
+    "r_pinky_mcp_flex": "r_ring_finger_mcp_flex",
+    "r_pinky_pip": "r_ring_finger_pip",
+    "r_pinky_dip": "r_ring_finger_dip"
+  },
+  "abduction_mapping": {
+    "target": "r_pinky_mcp_abd",
+    "source": "r_ring_finger_mcp_abd"
+  },
+  "calibration_note": "For the official right-hand URDF, positive pinky MCP abduction increases ring-to-pinky fingertip separation. At the audited scene0006 GRASP, +10 deg increased separation from 23.64 mm to 37.88 mm; -10 deg reduced it to 11.70 mm."
+}

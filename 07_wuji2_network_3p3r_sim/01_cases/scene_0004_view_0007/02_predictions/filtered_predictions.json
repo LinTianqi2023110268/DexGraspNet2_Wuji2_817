@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "status": "wuji2_predictions_collision_filtered_not_yet_simulated",
+  "scene_index": 4,
+  "view_index": 7,
+  "input_prediction": "/home/lin/Projects/DexGraspNet2_Wuji2/07_wuji2_network_3p3r_sim/01_cases/scene_0004_view_0007/02_predictions/raw_predictions.npz",
+  "scene_manifest": "/home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_test60_10upright_10view_v1/scenes/scene_0004/scene_manifest.json",
+  "tested_candidates": 1024,
+  "input_candidates": 1024,
+  "diagnostic_prefix_limit": null,
+  "tested_in_descending_network_score_order": true,
+  "official_endpoint_kept": 756,
+  "strict_training_clearance_kept": 714,
+  "enhanced_final_kept": 278,
+  "rejection_counts_not_mutually_exclusive": {
+    "invalid_or_background_target": 0,
+    "official_scene_collision": 200,
+    "official_table_collision": 99,
+    "strict_scene_clearance": 236,
+    "strict_table_clearance": 114,
+    "enhanced_palm_path_table": 3,
+    "enhanced_palm_path_non_target_object": 12,
+    "enhanced_final_table_collision": 514,
+    "enhanced_final_non_target_collision": 504
+  },
+  "policies": {
+    "official_simulation_evaluator": "opened/retreated pregrasp; scene and table signed penetration < 0",
+    "official_training_label": "opened/retreated pregrasp; scene and table clearance > 0.0025 m",
+    "wuji2_enhancement": "strict pregrasp clearance, valid target, palm path clearance, and full final-hand clearance from table and non-target objects; target-object contact remains allowed",
+    "pregrasp": "open fingertips 0.0375 m with configured-step IK and retreat root 0.1000 m opposite approach",
+    "approach": "Wuji2 semantic-palm center toward the current GRASP thumb/index-tip midpoint",
+    "target_assignment": "seed_segmentation from the labeled synthetic view; background ID 0 is invalid",
+    "guarantee_limit": "endpoint hand collision plus palm centerline only; not a full articulated swept-volume proof"
+  },
+  "output_npz": "/home/lin/Projects/DexGraspNet2_Wuji2/07_wuji2_network_3p3r_sim/01_cases/scene_0004_view_0007/02_predictions/filtered_predictions.npz",
+  "diagnostics_npz": "/home/lin/Projects/DexGraspNet2_Wuji2/07_wuji2_network_3p3r_sim/01_cases/scene_0004_view_0007/02_predictions/filtered_predictions_all_diagnostics.npz"
+}

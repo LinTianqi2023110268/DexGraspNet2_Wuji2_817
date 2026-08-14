@@ -1,0 +1,660 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-08-12T19:05:04.723266+00:00",
+  "status": "FAIL",
+  "meaning": "Initial static pose is not stable; IK remains disabled",
+  "stage": "/home/lin/Projects/DexGraspNet2_Wuji2/08_dual_arm_scene_layout/scenes/manual_layout_calibrated_mass_fixed.usda",
+  "robot_prim": "/World/Layout/DualArmMount/DualArm",
+  "duration_s": 10.0,
+  "settled_window_s": 3.0,
+  "physics_dt_s": 0.008333333333333333,
+  "parameter_policy": "Native assembled USD values preserved; no drive/dynamics/contact override",
+  "right_arm_explicit_pd": {},
+  "right_arm_explicit_runtime_audit": {
+    "enabled": false,
+    "gravity_feedforward": false,
+    "right_arm_stiffness_in_physx_after_setup": {
+      "arm_r_joint_1": 307.9518127441406,
+      "arm_r_joint_2": 777.5704956054688,
+      "arm_r_joint_3": 170.1810760498047,
+      "arm_r_joint_4": 251.77513122558594,
+      "arm_r_joint_5": 15.563811302185059,
+      "arm_r_joint_6": 69.14997863769531,
+      "arm_r_joint_7": 28.47376823425293
+    },
+    "right_arm_damping_in_physx_after_setup": {
+      "arm_r_joint_1": 13.686747550964355,
+      "arm_r_joint_2": 38.87852478027344,
+      "arm_r_joint_3": 7.563603401184082,
+      "arm_r_joint_4": 12.588756561279297,
+      "arm_r_joint_5": 0.6225524544715881,
+      "arm_r_joint_6": 2.7659990787506104,
+      "arm_r_joint_7": 1.4236884117126465
+    },
+    "right_arm_effort_limit_in_physx_after_setup": {
+      "arm_r_joint_1": 130.0,
+      "arm_r_joint_2": 70.0,
+      "arm_r_joint_3": 70.0,
+      "arm_r_joint_4": 70.0,
+      "arm_r_joint_5": 12.0,
+      "arm_r_joint_6": 12.0,
+      "arm_r_joint_7": 12.0
+    },
+    "right_arm_ideal_pd_limit": {},
+    "effort_limit_policy": ""
+  },
+  "right_arm_pd_groups": [],
+  "right_arm_natural_frequency_groups": [],
+  "right_arm_drive_type_override": "force",
+  "right_arm_force_natural_frequency_groups": [
+    {
+      "name": "right_arm_j1_tuned",
+      "joint_names_expr": [
+        "arm_r_joint_1"
+      ],
+      "natural_frequency_rad_s": 45.0,
+      "damping_ratio": 1.0
+    },
+    {
+      "name": "right_arm_j2_frozen",
+      "joint_names_expr": [
+        "arm_r_joint_2"
+      ],
+      "natural_frequency_rad_s": 40.0,
+      "damping_ratio": 1.0
+    },
+    {
+      "name": "right_arm_j3_tuned",
+      "joint_names_expr": [
+        "arm_r_joint_3"
+      ],
+      "natural_frequency_rad_s": 45.0,
+      "damping_ratio": 1.0
+    },
+    {
+      "name": "right_arm_j4_frozen",
+      "joint_names_expr": [
+        "arm_r_joint_4"
+      ],
+      "natural_frequency_rad_s": 40.0,
+      "damping_ratio": 1.0
+    },
+    {
+      "name": "right_arm_j5_tuned",
+      "joint_names_expr": [
+        "arm_r_joint_5"
+      ],
+      "natural_frequency_rad_s": 50.0,
+      "damping_ratio": 1.0
+    },
+    {
+      "name": "right_arm_j6_tuned",
+      "joint_names_expr": [
+        "arm_r_joint_6"
+      ],
+      "natural_frequency_rad_s": 50.0,
+      "damping_ratio": 1.0
+    },
+    {
+      "name": "right_arm_j7_frozen",
+      "joint_names_expr": [
+        "arm_r_joint_7"
+      ],
+      "natural_frequency_rad_s": 40.0,
+      "damping_ratio": 1.0
+    }
+  ],
+  "resolved_force_drive_gains": [
+    {
+      "name": "right_arm_j1_tuned",
+      "joint_names_expr": [
+        "arm_r_joint_1"
+      ],
+      "natural_frequency_rad_s": 45.0,
+      "damping_ratio": 1.0,
+      "matched_joint_names": [
+        "arm_r_joint_1"
+      ],
+      "equivalent_mass_diagonal": [
+        0.15207497775554657
+      ],
+      "stiffness_by_joint": {
+        "arm_r_joint_1": 307.9518127441406
+      },
+      "damping_by_joint": {
+        "arm_r_joint_1": 13.686747550964355
+      },
+      "gain_source": "force_drive_mass_matrix_natural_frequency",
+      "gain_formula": "K=Mii*f^2, D=2*zeta*Mii*f using current generalized mass matrix diagonal"
+    },
+    {
+      "name": "right_arm_j2_frozen",
+      "joint_names_expr": [
+        "arm_r_joint_2"
+      ],
+      "natural_frequency_rad_s": 40.0,
+      "damping_ratio": 1.0,
+      "matched_joint_names": [
+        "arm_r_joint_2"
+      ],
+      "equivalent_mass_diagonal": [
+        0.4859815835952759
+      ],
+      "stiffness_by_joint": {
+        "arm_r_joint_2": 777.5704956054688
+      },
+      "damping_by_joint": {
+        "arm_r_joint_2": 38.87852478027344
+      },
+      "gain_source": "force_drive_mass_matrix_natural_frequency",
+      "gain_formula": "K=Mii*f^2, D=2*zeta*Mii*f using current generalized mass matrix diagonal"
+    },
+    {
+      "name": "right_arm_j3_tuned",
+      "joint_names_expr": [
+        "arm_r_joint_3"
+      ],
+      "natural_frequency_rad_s": 45.0,
+      "damping_ratio": 1.0,
+      "matched_joint_names": [
+        "arm_r_joint_3"
+      ],
+      "equivalent_mass_diagonal": [
+        0.08404003828763962
+      ],
+      "stiffness_by_joint": {
+        "arm_r_joint_3": 170.1810760498047
+      },
+      "damping_by_joint": {
+        "arm_r_joint_3": 7.563603401184082
+      },
+      "gain_source": "force_drive_mass_matrix_natural_frequency",
+      "gain_formula": "K=Mii*f^2, D=2*zeta*Mii*f using current generalized mass matrix diagonal"
+    },
+    {
+      "name": "right_arm_j4_frozen",
+      "joint_names_expr": [
+        "arm_r_joint_4"
+      ],
+      "natural_frequency_rad_s": 40.0,
+      "damping_ratio": 1.0,
+      "matched_joint_names": [
+        "arm_r_joint_4"
+      ],
+      "equivalent_mass_diagonal": [
+        0.15735945105552673
+      ],
+      "stiffness_by_joint": {
+        "arm_r_joint_4": 251.77513122558594
+      },
+      "damping_by_joint": {
+        "arm_r_joint_4": 12.588756561279297
+      },
+      "gain_source": "force_drive_mass_matrix_natural_frequency",
+      "gain_formula": "K=Mii*f^2, D=2*zeta*Mii*f using current generalized mass matrix diagonal"
+    },
+    {
+      "name": "right_arm_j5_tuned",
+      "joint_names_expr": [
+        "arm_r_joint_5"
+      ],
+      "natural_frequency_rad_s": 50.0,
+      "damping_ratio": 1.0,
+      "matched_joint_names": [
+        "arm_r_joint_5"
+      ],
+      "equivalent_mass_diagonal": [
+        0.006225524470210075
+      ],
+      "stiffness_by_joint": {
+        "arm_r_joint_5": 15.563811302185059
+      },
+      "damping_by_joint": {
+        "arm_r_joint_5": 0.6225524544715881
+      },
+      "gain_source": "force_drive_mass_matrix_natural_frequency",
+      "gain_formula": "K=Mii*f^2, D=2*zeta*Mii*f using current generalized mass matrix diagonal"
+    },
+    {
+      "name": "right_arm_j6_tuned",
+      "joint_names_expr": [
+        "arm_r_joint_6"
+      ],
+      "natural_frequency_rad_s": 50.0,
+      "damping_ratio": 1.0,
+      "matched_joint_names": [
+        "arm_r_joint_6"
+      ],
+      "equivalent_mass_diagonal": [
+        0.027659989893436432
+      ],
+      "stiffness_by_joint": {
+        "arm_r_joint_6": 69.14997863769531
+      },
+      "damping_by_joint": {
+        "arm_r_joint_6": 2.7659990787506104
+      },
+      "gain_source": "force_drive_mass_matrix_natural_frequency",
+      "gain_formula": "K=Mii*f^2, D=2*zeta*Mii*f using current generalized mass matrix diagonal"
+    },
+    {
+      "name": "right_arm_j7_frozen",
+      "joint_names_expr": [
+        "arm_r_joint_7"
+      ],
+      "natural_frequency_rad_s": 40.0,
+      "damping_ratio": 1.0,
+      "matched_joint_names": [
+        "arm_r_joint_7"
+      ],
+      "equivalent_mass_diagonal": [
+        0.01779610477387905
+      ],
+      "stiffness_by_joint": {
+        "arm_r_joint_7": 28.47376823425293
+      },
+      "damping_by_joint": {
+        "arm_r_joint_7": 1.4236884117126465
+      },
+      "gain_source": "force_drive_mass_matrix_natural_frequency",
+      "gain_formula": "K=Mii*f^2, D=2*zeta*Mii*f using current generalized mass matrix diagonal"
+    }
+  ],
+  "initial_gravity_compensation_by_joint_nm": {
+    "arm_r_joint_1": 5.0438642501831055,
+    "arm_r_joint_2": -6.198451042175293,
+    "arm_r_joint_3": 2.1642000675201416,
+    "arm_r_joint_4": 3.1988344192504883,
+    "arm_r_joint_5": 0.45757269859313965,
+    "arm_r_joint_6": -1.3546693325042725,
+    "arm_r_joint_7": -0.23104137182235718
+  },
+  "physx_drive_type_by_joint": {
+    "arm_r_joint_1": 1,
+    "arm_r_joint_2": 1,
+    "arm_r_joint_3": 1,
+    "arm_r_joint_4": 1,
+    "arm_r_joint_5": 1,
+    "arm_r_joint_6": 1,
+    "arm_r_joint_7": 1
+  },
+  "physx_measurements": {
+    "actuation": "ArticulationView.get_dof_actuation_forces; this is the external actuation-force buffer and is normally zero for implicit USD drives",
+    "projected_joint": "ArticulationView.get_dof_projected_joint_forces",
+    "explicit_applied_torque": "For right-arm explicit IdealPDActuator runs only: this is the clipped torque command written to PhysX through set_dof_actuation_forces"
+  },
+  "limits": {
+    "right_arm_settled_max_target_error_deg": 1.0,
+    "right_hand_settled_max_target_error_deg": 2.0,
+    "settled_max_joint_speed_rad_s": 0.02,
+    "settled_body_translation_span_m": 0.001,
+    "settled_body_rotation_span_deg": 0.5
+  },
+  "right_arm": {
+    "status": "FAIL",
+    "settled_max_target_error_deg": 1.772246241569519,
+    "settled_max_joint_speed_rad_s": 0.09302808344364166,
+    "all_time_max_joint_speed_rad_s": 0.5043267011642456,
+    "all_time_peak_physx_actuation_force_nm": 0.0,
+    "all_time_peak_physx_projected_joint_force_nm": 7.8626484870910645,
+    "all_time_peak_explicit_raw_torque_nm": 0.0,
+    "all_time_peak_explicit_applied_torque_nm": 0.0,
+    "all_time_peak_gravity_compensation_nm": 0.0,
+    "per_joint": [
+      {
+        "name": "arm_r_joint_1",
+        "final_error_deg": 1.1429946422576904,
+        "settled_max_speed_rad_s": 0.09302808344364166,
+        "peak_physx_actuation_force_nm": 0.0,
+        "peak_physx_projected_joint_force_nm": 6.280882358551025,
+        "peak_explicit_raw_torque_nm": 0.0,
+        "peak_explicit_applied_torque_nm": 0.0,
+        "peak_gravity_compensation_nm": 0.0,
+        "peak_explicit_saturation_ratio": 0.0,
+        "effort_limit_nm": 130.0
+      },
+      {
+        "name": "arm_r_joint_2",
+        "final_error_deg": 0.5039791464805603,
+        "settled_max_speed_rad_s": 0.03374951332807541,
+        "peak_physx_actuation_force_nm": 0.0,
+        "peak_physx_projected_joint_force_nm": 7.8626484870910645,
+        "peak_explicit_raw_torque_nm": 0.0,
+        "peak_explicit_applied_torque_nm": 0.0,
+        "peak_gravity_compensation_nm": 0.0,
+        "peak_explicit_saturation_ratio": 0.0,
+        "effort_limit_nm": 70.0
+      },
+      {
+        "name": "arm_r_joint_3",
+        "final_error_deg": 0.8005164861679077,
+        "settled_max_speed_rad_s": 0.02528334967792034,
+        "peak_physx_actuation_force_nm": 0.0,
+        "peak_physx_projected_joint_force_nm": 2.9618332386016846,
+        "peak_explicit_raw_torque_nm": 0.0,
+        "peak_explicit_applied_torque_nm": 0.0,
+        "peak_gravity_compensation_nm": 0.0,
+        "peak_explicit_saturation_ratio": 0.0,
+        "effort_limit_nm": 70.0
+      },
+      {
+        "name": "arm_r_joint_4",
+        "final_error_deg": 0.8242570161819458,
+        "settled_max_speed_rad_s": 0.03901839628815651,
+        "peak_physx_actuation_force_nm": 0.0,
+        "peak_physx_projected_joint_force_nm": 3.9289193153381348,
+        "peak_explicit_raw_torque_nm": 0.0,
+        "peak_explicit_applied_torque_nm": 0.0,
+        "peak_gravity_compensation_nm": 0.0,
+        "peak_explicit_saturation_ratio": 0.0,
+        "effort_limit_nm": 70.0
+      },
+      {
+        "name": "arm_r_joint_5",
+        "final_error_deg": 1.772246241569519,
+        "settled_max_speed_rad_s": 0.0587158165872097,
+        "peak_physx_actuation_force_nm": 0.0,
+        "peak_physx_projected_joint_force_nm": 0.6500651836395264,
+        "peak_explicit_raw_torque_nm": 0.0,
+        "peak_explicit_applied_torque_nm": 0.0,
+        "peak_gravity_compensation_nm": 0.0,
+        "peak_explicit_saturation_ratio": 0.0,
+        "effort_limit_nm": 12.0
+      },
+      {
+        "name": "arm_r_joint_6",
+        "final_error_deg": 1.1905510425567627,
+        "settled_max_speed_rad_s": 0.040754534304142,
+        "peak_physx_actuation_force_nm": 0.0,
+        "peak_physx_projected_joint_force_nm": 1.8265892267227173,
+        "peak_explicit_raw_torque_nm": 0.0,
+        "peak_explicit_applied_torque_nm": 0.0,
+        "peak_gravity_compensation_nm": 0.0,
+        "peak_explicit_saturation_ratio": 0.0,
+        "effort_limit_nm": 12.0
+      },
+      {
+        "name": "arm_r_joint_7",
+        "final_error_deg": 0.5367162823677063,
+        "settled_max_speed_rad_s": 0.016766689717769623,
+        "peak_physx_actuation_force_nm": 0.0,
+        "peak_physx_projected_joint_force_nm": 0.3824538588523865,
+        "peak_explicit_raw_torque_nm": 0.0,
+        "peak_explicit_applied_torque_nm": 0.0,
+        "peak_gravity_compensation_nm": 0.0,
+        "peak_explicit_saturation_ratio": 0.0,
+        "effort_limit_nm": 12.0
+      }
+    ]
+  },
+  "wuji2_hand": {
+    "status": "FAIL",
+    "settled_max_target_error_deg": 0.3210916817188263,
+    "settled_max_joint_speed_rad_s": 0.039822015911340714,
+    "all_time_max_joint_speed_rad_s": 0.12442269176244736,
+    "all_time_peak_physx_actuation_force_nm": 0.0,
+    "all_time_peak_physx_projected_joint_force_nm": 0.045262567698955536,
+    "all_time_peak_explicit_raw_torque_nm": 0.0,
+    "all_time_peak_explicit_applied_torque_nm": 0.0,
+    "all_time_peak_gravity_compensation_nm": 0.0,
+    "per_joint": [
+      {
+        "name": "r_index_finger_mcp_flex",
+        "final_error_deg": 0.19234220683574677,
+        "settled_max_speed_rad_s": 0.018204517662525177,
+        "peak_physx_actuation_force_nm": 0.0,
+        "peak_physx_projected_joint_force_nm": 0.04432915523648262,
+        "peak_explicit_raw_torque_nm": 0.0,
+        "peak_explicit_applied_torque_nm": 0.0,
+        "peak_gravity_compensation_nm": 0.0,
+        "peak_explicit_saturation_ratio": 0.0,
+        "effort_limit_nm": 2.0
+      },
+      {
+        "name": "r_middle_finger_mcp_flex",
+        "final_error_deg": 0.154929980635643,
+        "settled_max_speed_rad_s": 0.020551856607198715,
+        "peak_physx_actuation_force_nm": 0.0,
+        "peak_physx_projected_joint_force_nm": 0.045262567698955536,
+        "peak_explicit_raw_torque_nm": 0.0,
+        "peak_explicit_applied_torque_nm": 0.0,
+        "peak_gravity_compensation_nm": 0.0,
+        "peak_explicit_saturation_ratio": 0.0,
+        "effort_limit_nm": 2.0
+      },
+      {
+        "name": "r_pinky_mcp_flex",
+        "final_error_deg": 0.1440885066986084,
+        "settled_max_speed_rad_s": 0.02137620374560356,
+        "peak_physx_actuation_force_nm": 0.0,
+        "peak_physx_projected_joint_force_nm": 0.03827717900276184,
+        "peak_explicit_raw_torque_nm": 0.0,
+        "peak_explicit_applied_torque_nm": 0.0,
+        "peak_gravity_compensation_nm": 0.0,
+        "peak_explicit_saturation_ratio": 0.0,
+        "effort_limit_nm": 2.0
+      },
+      {
+        "name": "r_ring_finger_mcp_flex",
+        "final_error_deg": 0.08410166949033737,
+        "settled_max_speed_rad_s": 0.01496509462594986,
+        "peak_physx_actuation_force_nm": 0.0,
+        "peak_physx_projected_joint_force_nm": 0.045198678970336914,
+        "peak_explicit_raw_torque_nm": 0.0,
+        "peak_explicit_applied_torque_nm": 0.0,
+        "peak_gravity_compensation_nm": 0.0,
+        "peak_explicit_saturation_ratio": 0.0,
+        "effort_limit_nm": 2.0
+      },
+      {
+        "name": "r_thumb_cmc_flex",
+        "final_error_deg": 0.08736135810613632,
+        "settled_max_speed_rad_s": 0.0054605151526629925,
+        "peak_physx_actuation_force_nm": 0.0,
+        "peak_physx_projected_joint_force_nm": 0.029307771474123,
+        "peak_explicit_raw_torque_nm": 0.0,
+        "peak_explicit_applied_torque_nm": 0.0,
+        "peak_gravity_compensation_nm": 0.0,
+        "peak_explicit_saturation_ratio": 0.0,
+        "effort_limit_nm": 2.0
+      },
+      {
+        "name": "r_index_finger_mcp_abd",
+        "final_error_deg": 0.00016800906450953335,
+        "settled_max_speed_rad_s": 8.566363248974085e-06,
+        "peak_physx_actuation_force_nm": 0.0,
+        "peak_physx_projected_joint_force_nm": 0.012571465224027634,
+        "peak_explicit_raw_torque_nm": 0.0,
+        "peak_explicit_applied_torque_nm": 0.0,
+        "peak_gravity_compensation_nm": 0.0,
+        "peak_explicit_saturation_ratio": 0.0,
+        "effort_limit_nm": 2.0
+      },
+      {
+        "name": "r_middle_finger_mcp_abd",
+        "final_error_deg": 0.009100767783820629,
+        "settled_max_speed_rad_s": 0.00037605364923365414,
+        "peak_physx_actuation_force_nm": 0.0,
+        "peak_physx_projected_joint_force_nm": 0.00896480306982994,
+        "peak_explicit_raw_torque_nm": 0.0,
+        "peak_explicit_applied_torque_nm": 0.0,
+        "peak_gravity_compensation_nm": 0.0,
+        "peak_explicit_saturation_ratio": 0.0,
+        "effort_limit_nm": 2.0
+      },
+      {
+        "name": "r_pinky_mcp_abd",
+        "final_error_deg": 0.006893865764141083,
+        "settled_max_speed_rad_s": 0.00022726089810021222,
+        "peak_physx_actuation_force_nm": 0.0,
+        "peak_physx_projected_joint_force_nm": 0.0028946446254849434,
+        "peak_explicit_raw_torque_nm": 0.0,
+        "peak_explicit_applied_torque_nm": 0.0,
+        "peak_gravity_compensation_nm": 0.0,
+        "peak_explicit_saturation_ratio": 0.0,
+        "effort_limit_nm": 2.0
+      },
+      {
+        "name": "r_ring_finger_mcp_abd",
+        "final_error_deg": 0.014839351177215576,
+        "settled_max_speed_rad_s": 0.0016527328407391906,
+        "peak_physx_actuation_force_nm": 0.0,
+        "peak_physx_projected_joint_force_nm": 0.006162190809845924,
+        "peak_explicit_raw_torque_nm": 0.0,
+        "peak_explicit_applied_torque_nm": 0.0,
+        "peak_gravity_compensation_nm": 0.0,
+        "peak_explicit_saturation_ratio": 0.0,
+        "effort_limit_nm": 2.0
+      },
+      {
+        "name": "r_thumb_cmc_abd",
+        "final_error_deg": 0.0833640843629837,
+        "settled_max_speed_rad_s": 0.010139811784029007,
+        "peak_physx_actuation_force_nm": 0.0,
+        "peak_physx_projected_joint_force_nm": 0.03451581299304962,
+        "peak_explicit_raw_torque_nm": 0.0,
+        "peak_explicit_applied_torque_nm": 0.0,
+        "peak_gravity_compensation_nm": 0.0,
+        "peak_explicit_saturation_ratio": 0.0,
+        "effort_limit_nm": 2.0
+      },
+      {
+        "name": "r_index_finger_pip",
+        "final_error_deg": 0.1771307736635208,
+        "settled_max_speed_rad_s": 0.018915297463536263,
+        "peak_physx_actuation_force_nm": 0.0,
+        "peak_physx_projected_joint_force_nm": 0.009547041729092598,
+        "peak_explicit_raw_torque_nm": 0.0,
+        "peak_explicit_applied_torque_nm": 0.0,
+        "peak_gravity_compensation_nm": 0.0,
+        "peak_explicit_saturation_ratio": 0.0,
+        "effort_limit_nm": 2.0
+      },
+      {
+        "name": "r_middle_finger_pip",
+        "final_error_deg": 0.232859805226326,
+        "settled_max_speed_rad_s": 0.028593026101589203,
+        "peak_physx_actuation_force_nm": 0.0,
+        "peak_physx_projected_joint_force_nm": 0.009750159457325935,
+        "peak_explicit_raw_torque_nm": 0.0,
+        "peak_explicit_applied_torque_nm": 0.0,
+        "peak_gravity_compensation_nm": 0.0,
+        "peak_explicit_saturation_ratio": 0.0,
+        "effort_limit_nm": 2.0
+      },
+      {
+        "name": "r_pinky_pip",
+        "final_error_deg": 0.3061721622943878,
+        "settled_max_speed_rad_s": 0.039822015911340714,
+        "peak_physx_actuation_force_nm": 0.0,
+        "peak_physx_projected_joint_force_nm": 0.008508926257491112,
+        "peak_explicit_raw_torque_nm": 0.0,
+        "peak_explicit_applied_torque_nm": 0.0,
+        "peak_gravity_compensation_nm": 0.0,
+        "peak_explicit_saturation_ratio": 0.0,
+        "effort_limit_nm": 2.0
+      },
+      {
+        "name": "r_ring_finger_pip",
+        "final_error_deg": 0.32109153270721436,
+        "settled_max_speed_rad_s": 0.03976690396666527,
+        "peak_physx_actuation_force_nm": 0.0,
+        "peak_physx_projected_joint_force_nm": 0.009730128571391106,
+        "peak_explicit_raw_torque_nm": 0.0,
+        "peak_explicit_applied_torque_nm": 0.0,
+        "peak_gravity_compensation_nm": 0.0,
+        "peak_explicit_saturation_ratio": 0.0,
+        "effort_limit_nm": 2.0
+      },
+      {
+        "name": "r_thumb_mcp",
+        "final_error_deg": 0.04571076110005379,
+        "settled_max_speed_rad_s": 0.006797898095101118,
+        "peak_physx_actuation_force_nm": 0.0,
+        "peak_physx_projected_joint_force_nm": 0.0019577951170504093,
+        "peak_explicit_raw_torque_nm": 0.0,
+        "peak_explicit_applied_torque_nm": 0.0,
+        "peak_gravity_compensation_nm": 0.0,
+        "peak_explicit_saturation_ratio": 0.0,
+        "effort_limit_nm": 2.0
+      },
+      {
+        "name": "r_index_finger_dip",
+        "final_error_deg": 1.7024878616211936e-05,
+        "settled_max_speed_rad_s": 2.2591166271013208e-06,
+        "peak_physx_actuation_force_nm": 0.0,
+        "peak_physx_projected_joint_force_nm": 0.0012620565248653293,
+        "peak_explicit_raw_torque_nm": 0.0,
+        "peak_explicit_applied_torque_nm": 0.0,
+        "peak_gravity_compensation_nm": 0.0,
+        "peak_explicit_saturation_ratio": 0.0,
+        "effort_limit_nm": 2.0
+      },
+      {
+        "name": "r_middle_finger_dip",
+        "final_error_deg": 0.018514355644583702,
+        "settled_max_speed_rad_s": 0.0014255079440772533,
+        "peak_physx_actuation_force_nm": 0.0,
+        "peak_physx_projected_joint_force_nm": 0.001288333092816174,
+        "peak_explicit_raw_torque_nm": 0.0,
+        "peak_explicit_applied_torque_nm": 0.0,
+        "peak_gravity_compensation_nm": 0.0,
+        "peak_explicit_saturation_ratio": 0.0,
+        "effort_limit_nm": 2.0
+      },
+      {
+        "name": "r_pinky_dip",
+        "final_error_deg": 0.02925327979028225,
+        "settled_max_speed_rad_s": 0.0025998633354902267,
+        "peak_physx_actuation_force_nm": 0.0,
+        "peak_physx_projected_joint_force_nm": 0.0012666592374444008,
+        "peak_explicit_raw_torque_nm": 0.0,
+        "peak_explicit_applied_torque_nm": 0.0,
+        "peak_gravity_compensation_nm": 0.0,
+        "peak_explicit_saturation_ratio": 0.0,
+        "effort_limit_nm": 2.0
+      },
+      {
+        "name": "r_ring_finger_dip",
+        "final_error_deg": 0.05026858672499657,
+        "settled_max_speed_rad_s": 0.004674015566706657,
+        "peak_physx_actuation_force_nm": 0.0,
+        "peak_physx_projected_joint_force_nm": 0.0012847469188272953,
+        "peak_explicit_raw_torque_nm": 0.0,
+        "peak_explicit_applied_torque_nm": 0.0,
+        "peak_gravity_compensation_nm": 0.0,
+        "peak_explicit_saturation_ratio": 0.0,
+        "effort_limit_nm": 2.0
+      },
+      {
+        "name": "r_thumb_ip",
+        "final_error_deg": 0.026196764782071114,
+        "settled_max_speed_rad_s": 0.002463917713612318,
+        "peak_physx_actuation_force_nm": 0.0,
+        "peak_physx_projected_joint_force_nm": 0.00035276589915156364,
+        "peak_explicit_raw_torque_nm": 0.0,
+        "peak_explicit_applied_torque_nm": 0.0,
+        "peak_gravity_compensation_nm": 0.0,
+        "peak_explicit_saturation_ratio": 0.0,
+        "effort_limit_nm": 2.0
+      }
+    ]
+  },
+  "right_flange": {
+    "name": "arm_r_link_tf",
+    "status": "PASS",
+    "settled_translation_span_m": 0.0,
+    "settled_rotation_span_deg": 0.0,
+    "all_time_translation_from_first_sample_m": 0.016266312450170517,
+    "all_time_rotation_from_first_sample_deg": 4.396936893463135
+  },
+  "wuji2_wrist": {
+    "name": "r_wrist",
+    "status": "PASS",
+    "settled_translation_span_m": 0.0,
+    "settled_rotation_span_deg": 0.0,
+    "all_time_translation_from_first_sample_m": 0.017893489450216293,
+    "all_time_rotation_from_first_sample_deg": 4.396580696105957
+  },
+  "joint_trace_csv": "/home/lin/Projects/DexGraspNet2_Wuji2/08_dual_arm_scene_layout/isaaclab_control/outputs/force_nf_finetune/ft02_j1j3_45_j5j6_50/joint_trace.csv"
+}

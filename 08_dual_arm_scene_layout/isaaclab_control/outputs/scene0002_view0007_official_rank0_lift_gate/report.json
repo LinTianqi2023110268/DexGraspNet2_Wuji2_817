@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-08-12T22:45:51.741243+00:00",
+  "status": "FAIL",
+  "mode": "through_lift_only",
+  "target": "sem-Ashtray-2b210ae3bfa1abe43da807e9c1c58ac0 segmentation 14",
+  "candidate_index": 566,
+  "control": "Isaac Lab 2.2 one AppLauncher/SimulationContext; ft04 right-arm Force Drive; official Wuji2 drives",
+  "cached_pipeline_inputs": {
+    "frozen RGB-D/40K input": "/home/lin/Projects/DexGraspNet2_Wuji2/06_leap_to_wuji2_final_pipeline/01_cases/scene0002_view0007_official_rank0/01_input/view_0007_network_input.npz",
+    "DGN2 prediction": "/home/lin/Projects/DexGraspNet2_Wuji2/06_leap_to_wuji2_final_pipeline/01_cases/scene0002_view0007_official_rank0/01_input/official_leap_1024.npz",
+    "target selection": "/home/lin/Projects/DexGraspNet2_Wuji2/06_leap_to_wuji2_final_pipeline/01_cases/scene0002_view0007_official_rank0/01_input/leap_selected_rank0.npz",
+    "retargeted waypoints": "/home/lin/Projects/DexGraspNet2_Wuji2/06_leap_to_wuji2_final_pipeline/01_cases/scene0002_view0007_official_rank0/06_isaacsim/final_waypoints.npz",
+    "arm IK": "/home/lin/Projects/DexGraspNet2_Wuji2/06_leap_to_wuji2_final_pipeline/01_cases/scene0002_view0007_official_rank0/07_arm_execution/full_arm_waypoint_ik.npz",
+    "path collision": "/home/lin/Projects/DexGraspNet2_Wuji2/06_leap_to_wuji2_final_pipeline/01_cases/scene0002_view0007_official_rank0/07_arm_execution/full_joint_path_collision_report.json"
+  },
+  "max_object_lift_mm": 2.9802322387695312e-05,
+  "final_object_position_world_m": [
+    -0.34070244431495667,
+    -0.07287026941776276,
+    0.4859811067581177
+  ],
+  "final_object_inside_green_zone_xy": false,
+  "trace_csv": "/home/lin/Projects/DexGraspNet2_Wuji2/08_dual_arm_scene_layout/isaaclab_control/outputs/scene0002_view0007_official_rank0_lift_gate/trace.csv"
+}

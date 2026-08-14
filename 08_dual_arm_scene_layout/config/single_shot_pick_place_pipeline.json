@@ -1,0 +1,97 @@
+{
+  "schema_version": 1,
+  "status": "test_scene_import_and_stage01_rgbd_capture_implemented",
+  "task": "single_rgbd_text_guided_pick_and_place",
+  "batch_processing": false,
+  "camera_capture_count": 1,
+  "active_arm": "right",
+  "inactive_arm_policy": "fixed_collision_free_home_pose",
+  "stages": [
+    {
+      "id": "00_import_test_scene",
+      "runtime": "Isaac Sim 5.0 GUI",
+      "inputs": [
+        "calibrated TableAssembly with 0.50 x 0.30 m SourceZone",
+        "wuji2_test60_10upright_10view_v1 scene_0000 manifest and centered meshes"
+      ],
+      "implementation": "08_dual_arm_scene_layout/scripts/06b_import_test_scene0000_into_source_zone.py",
+      "output_prim": "/World/Layout/TableAssembly/TestScene0000",
+      "outputs": [
+        "six static visual test objects parented under TableAssembly",
+        "08_dual_arm_scene_layout/outputs/test_scene0000_import.json"
+      ]
+    },
+    {
+      "id": "01_capture",
+      "runtime": "Isaac Sim 5.0 GUI",
+      "inputs": ["frozen scene layout", "complete six-object TestScene0000"],
+      "implementation": "08_dual_arm_scene_layout/scripts/07_capture_single_rgbd.py",
+      "output_directory": "08_dual_arm_scene_layout/captures/latest",
+      "outputs": ["rgb.png", "depth_m.npy", "depth_preview.png", "intrinsics.npy", "T_world_camera.npy", "capture_manifest.json", "scene_snapshot.json"]
+    },
+    {
+      "id": "02_target_segmentation",
+      "runtime": "groundedsam conda environment",
+      "inputs": ["rgb.png", "depth_m.npy", "intrinsics.npy", "T_world_camera.npy", "Chinese or English target query"],
+      "outputs": ["mask.npy", "target_points_camera.npy", "target_points_world.npy", "result.json"]
+    },
+    {
+      "id": "03_scene_network_input",
+      "runtime": "graspnet2.0 conda environment",
+      "inputs": ["full depth image", "target mask", "intrinsics", "T_world_camera"],
+      "outputs": ["full_scene_40000_points_camera", "sampled_target_membership", "pixel_provenance", "network_input.npz"]
+    },
+    {
+      "id": "04_official_leap_inference",
+      "runtime": "graspnet2.0 conda environment",
+      "inputs": ["network_input.npz", "official LEAP checkpoint"],
+      "outputs": ["1024 LEAP candidates", "seed point provenance", "score", "graspness", "log_prob"]
+    },
+    {
+      "id": "05_target_candidate_filter",
+      "runtime": "graspnet2.0 conda environment",
+      "inputs": ["1024 candidates", "SAM target membership", "full scene geometry"],
+      "outputs": ["highest-score target candidate that passes collision and approach filtering"]
+    },
+    {
+      "id": "06_leap_to_wuji2",
+      "runtime": "wuji_retargeting conda environment",
+      "inputs": ["selected LEAP GRASP and SQUEEZE", "T_world_LEAP_wrist"],
+      "outputs": ["Wuji2 GRASP/SQUEEZE q20", "T_world_Wuji2_wrist"]
+    },
+    {
+      "id": "07_arm_ik_and_motion",
+      "runtime": "Isaac Sim 5.0 GUI",
+      "inputs": ["T_world_Wuji2_wrist", "q20 waypoints", "T_tool_wuji_wrist calibration", "place region"],
+      "outputs": ["right-arm PREGRASP/GRASP/LIFT/PREPLACE/PLACE/RETREAT trajectory"]
+    },
+    {
+      "id": "08_execute_and_audit",
+      "runtime": "Isaac Sim 5.0 GUI",
+      "inputs": ["approved arm and hand trajectory"],
+      "outputs": ["pick success", "place success", "object motion record", "final_result.json"]
+    }
+  ],
+  "target_selection_contract": {
+    "network_input": "full single-view scene point cloud",
+    "sam_role": "target membership for sampled points and candidate seed filtering",
+    "official_inference_mode": "cate=false; preserve the official non-categorical sampler",
+    "pixel_provenance": "store source pixel (v,u) for every sampled point; sampled_target_membership[i] = sam_mask[v_i,u_i]",
+    "candidate_target_test": "map each predicted seed to its exact/nearest sampled input point and require sampled_target_membership=true",
+    "ranking": "official score within target candidates only, followed by executability filters",
+    "seg_note": "simulation semantic IDs may be saved only for auditing; they must not replace Grounded-SAM target selection",
+    "forbidden": "do not choose global rank-0 without checking target membership; do not feed only the isolated target cloud as the full scene"
+  },
+  "hand_arm_mount_contract": {
+    "tool_link": "arm_r_link_tf",
+    "hand_link": "Wuji2 r_wrist",
+    "required_calibration": "T_tool_wuji_wrist",
+    "tool_target_equation": "T_world_tool = T_world_wuji_wrist @ inverse(T_tool_wuji_wrist)",
+    "remove_or_disable_original_gripper": true
+  },
+  "place_contract": {
+    "policy": "choose one collision-free reachable region on the tabletop beside the source object",
+    "required_stages": ["preplace", "place", "release", "retreat"],
+    "success_checks": ["object on table", "object within place region", "object settled", "hand released", "no non-target object displaced"]
+  }
+}

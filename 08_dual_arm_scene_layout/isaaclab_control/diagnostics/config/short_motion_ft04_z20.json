@@ -1,0 +1,106 @@
+{
+  "schema_version": 1,
+  "purpose": "Minimal +20 mm / return Differential IK smoke test using ft04 implicit Force Drive baseline; no camera, point cloud, grasp, or object motion",
+  "stage": "08_dual_arm_scene_layout/scenes/manual_layout_calibrated_mass_fixed.usda",
+  "robot_prim": "/World/Layout/DualArmMount/DualArm",
+  "flange_body": "arm_r_link_tf",
+  "right_arm_joints": [
+    "arm_r_joint_1",
+    "arm_r_joint_2",
+    "arm_r_joint_3",
+    "arm_r_joint_4",
+    "arm_r_joint_5",
+    "arm_r_joint_6",
+    "arm_r_joint_7"
+  ],
+  "initial_right_arm_joint_deg": [
+    50.0,
+    -70.0,
+    0.0,
+    40.0,
+    35.0,
+    0.0,
+    25.0
+  ],
+  "expected_total_actuated_joints": 35,
+  "physics_dt_s": 0.008333333333333333,
+  "render_interval": 4,
+  "initial_hold_s": 3.0,
+  "startup_max_joint_velocity_rad_s": 0.1,
+  "test_world_translation_m": [
+    0.0,
+    0.0,
+    0.02
+  ],
+  "outbound_duration_s": 4.0,
+  "endpoint_hold_s": 1.0,
+  "return_duration_s": 4.0,
+  "final_hold_s": 1.0,
+  "dls_damping": 0.05,
+  "max_joint_velocity_rad_s": 0.2,
+  "max_joint_acceleration_rad_s2": 0.4,
+  "joint_limit_margin_rad": 0.02,
+  "position_tolerance_m": 0.004,
+  "orientation_tolerance_deg": 2.0,
+  "telemetry_hz": 5.0,
+  "output_directory": "08_dual_arm_scene_layout/isaaclab_control/outputs/short_motion_ft04_z20",
+  "right_arm_drive_type": "force",
+  "right_arm_force_natural_frequency_groups": [
+    {
+      "name": "right_arm_j1_tuned",
+      "joint_names_expr": [
+        "arm_r_joint_1"
+      ],
+      "natural_frequency_rad_s": 50.0,
+      "damping_ratio": 1.0
+    },
+    {
+      "name": "right_arm_j2_frozen",
+      "joint_names_expr": [
+        "arm_r_joint_2"
+      ],
+      "natural_frequency_rad_s": 40.0,
+      "damping_ratio": 1.0
+    },
+    {
+      "name": "right_arm_j3_tuned",
+      "joint_names_expr": [
+        "arm_r_joint_3"
+      ],
+      "natural_frequency_rad_s": 45.0,
+      "damping_ratio": 1.0
+    },
+    {
+      "name": "right_arm_j4_frozen",
+      "joint_names_expr": [
+        "arm_r_joint_4"
+      ],
+      "natural_frequency_rad_s": 40.0,
+      "damping_ratio": 1.0
+    },
+    {
+      "name": "right_arm_j5_tuned",
+      "joint_names_expr": [
+        "arm_r_joint_5"
+      ],
+      "natural_frequency_rad_s": 55.0,
+      "damping_ratio": 1.0
+    },
+    {
+      "name": "right_arm_j6_tuned",
+      "joint_names_expr": [
+        "arm_r_joint_6"
+      ],
+      "natural_frequency_rad_s": 50.0,
+      "damping_ratio": 1.0
+    },
+    {
+      "name": "right_arm_j7_frozen",
+      "joint_names_expr": [
+        "arm_r_joint_7"
+      ],
+      "natural_frequency_rad_s": 40.0,
+      "damping_ratio": 1.0
+    }
+  ]
+}

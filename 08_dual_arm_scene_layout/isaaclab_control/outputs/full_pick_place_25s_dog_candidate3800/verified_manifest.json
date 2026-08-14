@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "status": "VERIFIED_SUCCESS_BASELINE",
+  "frozen_local_date": "2026-08-14",
+  "route": "C_dual_arm",
+  "case_id": "full_pick_place_25s_dog_candidate3800",
+  "target": "dog",
+  "source_candidate_index": 3800,
+  "action_duration_s": 24.84999999999923,
+  "action_wall_duration_s": 272.97884852599964,
+  "max_object_lift_mm": 180.8527708053589,
+  "final_object_inside_green_zone_xy": true,
+  "authoritative_result": "report.json",
+  "stable_replay": "physical_replay_30fps.npz",
+  "rejected_content_excluded": [
+    "08_dual_arm_scene_layout/isaaclab_control/rejected/mp4_export/",
+    "Rejected PNG/MP4 caches were deleted; only explanatory source remains archived."
+  ]
+}

@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "status": "ready_for_manual_isaacsim_validation",
+  "case_id": "scene0000_view0001_object014_source0462",
+  "scene_id": "scene_0000",
+  "view_id": "view_0001",
+  "scene_index": 0,
+  "view_index": 1,
+  "target_segmentation_id": 14,
+  "target_object_code": "sem-Ashtray-2b210ae3bfa1abe43da807e9c1c58ac0",
+  "scene_dataset_root": "02_training_dataset/data/scene_datasets/wuji2_test60_10upright_10view_v1",
+  "source_scene_manifest": "02_training_dataset/data/scene_datasets/wuji2_test60_10upright_10view_v1/scenes/scene_0000/scene_manifest.json",
+  "source_candidate_index": 462,
+  "filtered_rank_1_based": 5,
+  "score": 20.955646514892578,
+  "selection_filter_tier": "balanced_filtered_enhanced_full_hand_and_path",
+  "root_control_change_only": true,
+  "frozen_native_action_contract": {
+    "pregrasp_opening_m": 0.0375,
+    "tiger_mouth_approach_m": 0.1,
+    "squeeze_width_per_fingertip_m": 0.03,
+    "squeeze_keep_z": false,
+    "squeeze_direction": "all_fingertips_local_plus_y_green_axis",
+    "squeeze_local_normals_xyz": {
+      "r_thumb_tip": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "r_index_finger_tip": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "r_middle_finger_tip": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "r_ring_finger_tip": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "r_pinky_tip": [
+        0.0,
+        1.0,
+        0.0
+      ]
+    },
+    "lift_world_z_m": 0.07,
+    "control_steps_120hz": [
+      240,
+      240,
+      240,
+      225
+    ],
+    "minimum_hold_steps": [
+      60,
+      120,
+      240,
+      180
+    ],
+    "maximum_hold_steps": [
+      180,
+      300,
+      480,
+      360
+    ],
+    "gravity_m_s2": -9.81,
+    "hand_object_table_friction": [
+      0.2,
+      0.5,
+      1.0
+    ],
+    "object_mass_kg": 0.1
+  }
+}

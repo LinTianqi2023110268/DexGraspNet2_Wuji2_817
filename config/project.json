@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "project_root": ".",
+  "sources": {
+    "official_dexgraspnet2": "03_prediction_network/official_core",
+    "official_wuji2_description": "01_environment/vendor/wuji-description",
+    "official_wuji2_usd_right": "01_environment/vendor/wuji-description/hand2/hand2_beta1/body/usd/right/wujihand2.usd",
+    "official_wuji2_urdf_right": "01_environment/vendor/wuji-description/hand2/hand2_beta1/body/urdf/right.urdf",
+    "dual_arm_package": "01_environment/vendor/wuji-description/dual_arm",
+    "dual_arm_urdf": "01_environment/vendor/wuji-description/dual_arm/urdf/dual_arm.urdf",
+    "dual_arm_readme": "01_environment/vendor/wuji-description/dual_arm/README.md",
+    "wuji2_asset_contract": "config/wuji2_official_asset.json",
+    "adapter_history": ".",
+    "wuji2_factory": "02_training_dataset/assets/wuji2_factory",
+    "single_object_dataset": "02_training_dataset/data/single_object_dataset",
+    "active_training_scene_dataset": "02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1",
+    "active_training_dataset_config": "02_training_dataset/config/wuji2_train60_100seminal_256view_v1.json",
+    "active_training_dataset_origin_config": "02_training_dataset/config/wuji2_train60_100seminal_256view_v1.json",
+    "force_adjusted_training_scene_dataset": "02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1",
+    "force_adjusted_training_dataset_config": "02_training_dataset/config/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1.json",
+    "independent_test_scene_dataset": "02_training_dataset/data/scene_datasets/wuji2_test60_10upright_10view_v1",
+    "independent_test_dataset_config": "02_training_dataset/config/wuji2_test60_10upright_10view_v1.json",
+    "wuji2_checkpoint": "04_training/experiments/wuji2_dexgraspnet2_train60_100seminal_256view_force_adjusted_legacy_v1_scratch/checkpoints/wuji2_scratch_050000.pth",
+    "legacy_40scene_checkpoint": "04_training/checkpoints/wuji2_legacy_40scene_best_validation.pth"
+  },
+  "dataset_roles": {
+    "active_training_scene_dataset": "q_opt基线场景与相机输入：配置池60种、100训练场景实际覆盖59种、每场景256视角，Stage01-04完整，25598个可训练单视角",
+    "force_adjusted_training_scene_dataset": "与q_opt基线共享场景和相机输入，只把20关节监督切换为Wuji2 1.0力调整后目标；50000步训练已完成",
+    "independent_test_scene_dataset": "独立10场景、每场景10视角；100个相机输入中99个具有有效可见抓取标签；20关节监督为q_opt，不与力调整checkpoint混算joint loss",
+    "default_checkpoint": "默认推理使用力调整后100场景数据训练至50000步的20关节checkpoint；旧40场景checkpoint只保留为历史回归基线",
+    "cutover_policy": "正式运行只读取项目内相对路径；旧Adapter与外部05_output不再是运行依赖"
+  },
+  "runtime": {
+    "network_python": "/home/lin/miniconda3/envs/graspnet2.0/bin/python",
+    "simulation_python": "/home/lin/miniconda3/envs/wuji2_factory/bin/python",
+    "isaac_sim_root": "/home/lin/isaacsim"
+  },
+  "outputs": {
+    "inference": "05_inference/outputs",
+    "isaac_jobs": "05_inference/outputs/isaacsim_jobs"
+  }
+}

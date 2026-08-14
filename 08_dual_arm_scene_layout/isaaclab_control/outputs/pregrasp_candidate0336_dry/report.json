@@ -1,0 +1,175 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-08-12T20:47:18.145509+00:00",
+  "status": "FAIL",
+  "stage": "/home/lin/Projects/DexGraspNet2_Wuji2/08_dual_arm_scene_layout/scenes/manual_layout_calibrated_mass_fixed.usda",
+  "right_arm_drive_type": "force",
+  "resolved_force_drive_gains": [
+    {
+      "name": "right_arm_j1_tuned",
+      "joint_names_expr": [
+        "arm_r_joint_1"
+      ],
+      "natural_frequency_rad_s": 50.0,
+      "damping_ratio": 1.0,
+      "matched_joint_names": [
+        "arm_r_joint_1"
+      ],
+      "equivalent_mass_diagonal": [
+        0.15212778747081757
+      ],
+      "stiffness_by_joint": {
+        "arm_r_joint_1": 380.3194885253906
+      },
+      "damping_by_joint": {
+        "arm_r_joint_1": 15.21277904510498
+      },
+      "gain_source": "force_drive_mass_matrix_natural_frequency"
+    },
+    {
+      "name": "right_arm_j2_frozen",
+      "joint_names_expr": [
+        "arm_r_joint_2"
+      ],
+      "natural_frequency_rad_s": 40.0,
+      "damping_ratio": 1.0,
+      "matched_joint_names": [
+        "arm_r_joint_2"
+      ],
+      "equivalent_mass_diagonal": [
+        0.4860127568244934
+      ],
+      "stiffness_by_joint": {
+        "arm_r_joint_2": 777.620361328125
+      },
+      "damping_by_joint": {
+        "arm_r_joint_2": 38.881019592285156
+      },
+      "gain_source": "force_drive_mass_matrix_natural_frequency"
+    },
+    {
+      "name": "right_arm_j3_tuned",
+      "joint_names_expr": [
+        "arm_r_joint_3"
+      ],
+      "natural_frequency_rad_s": 45.0,
+      "damping_ratio": 1.0,
+      "matched_joint_names": [
+        "arm_r_joint_3"
+      ],
+      "equivalent_mass_diagonal": [
+        0.0840291753411293
+      ],
+      "stiffness_by_joint": {
+        "arm_r_joint_3": 170.15908813476562
+      },
+      "damping_by_joint": {
+        "arm_r_joint_3": 7.562625885009766
+      },
+      "gain_source": "force_drive_mass_matrix_natural_frequency"
+    },
+    {
+      "name": "right_arm_j4_frozen",
+      "joint_names_expr": [
+        "arm_r_joint_4"
+      ],
+      "natural_frequency_rad_s": 40.0,
+      "damping_ratio": 1.0,
+      "matched_joint_names": [
+        "arm_r_joint_4"
+      ],
+      "equivalent_mass_diagonal": [
+        0.15736062824726105
+      ],
+      "stiffness_by_joint": {
+        "arm_r_joint_4": 251.77700805664062
+      },
+      "damping_by_joint": {
+        "arm_r_joint_4": 12.588850021362305
+      },
+      "gain_source": "force_drive_mass_matrix_natural_frequency"
+    },
+    {
+      "name": "right_arm_j5_tuned",
+      "joint_names_expr": [
+        "arm_r_joint_5"
+      ],
+      "natural_frequency_rad_s": 55.0,
+      "damping_ratio": 1.0,
+      "matched_joint_names": [
+        "arm_r_joint_5"
+      ],
+      "equivalent_mass_diagonal": [
+        0.006224961020052433
+      ],
+      "stiffness_by_joint": {
+        "arm_r_joint_5": 18.830507278442383
+      },
+      "damping_by_joint": {
+        "arm_r_joint_5": 0.684745728969574
+      },
+      "gain_source": "force_drive_mass_matrix_natural_frequency"
+    },
+    {
+      "name": "right_arm_j6_tuned",
+      "joint_names_expr": [
+        "arm_r_joint_6"
+      ],
+      "natural_frequency_rad_s": 50.0,
+      "damping_ratio": 1.0,
+      "matched_joint_names": [
+        "arm_r_joint_6"
+      ],
+      "equivalent_mass_diagonal": [
+        0.02766115963459015
+      ],
+      "stiffness_by_joint": {
+        "arm_r_joint_6": 69.15290069580078
+      },
+      "damping_by_joint": {
+        "arm_r_joint_6": 2.76611590385437
+      },
+      "gain_source": "force_drive_mass_matrix_natural_frequency"
+    },
+    {
+      "name": "right_arm_j7_frozen",
+      "joint_names_expr": [
+        "arm_r_joint_7"
+      ],
+      "natural_frequency_rad_s": 40.0,
+      "damping_ratio": 1.0,
+      "matched_joint_names": [
+        "arm_r_joint_7"
+      ],
+      "equivalent_mass_diagonal": [
+        0.017796918749809265
+      ],
+      "stiffness_by_joint": {
+        "arm_r_joint_7": 28.47507095336914
+      },
+      "damping_by_joint": {
+        "arm_r_joint_7": 1.4237534999847412
+      },
+      "gain_source": "force_drive_mass_matrix_natural_frequency"
+    }
+  ],
+  "test_world_translation_m": [
+    0.0,
+    0.0,
+    0.02
+  ],
+  "final_return_position_error_m": 1.467594188397925e-07,
+  "final_return_orientation_error_deg": 0.0,
+  "max_raw_reported_joint_velocity_rad_s": 0.10295212268829346,
+  "max_command_joint_velocity_rad_s": 0.20000000298023224,
+  "velocity_note": "Raw PhysX joint velocity is diagnostic only. ft04 static audit showed a TGS telemetry anomaly; use Cartesian tracking, finite-difference motion, and final return error for this minimal IK smoke test.",
+  "limits": {
+    "max_joint_velocity_rad_s": 0.2,
+    "max_joint_acceleration_rad_s2": 0.4,
+    "position_tolerance_m": 0.005,
+    "orientation_tolerance_deg": 5.0
+  },
+  "trace_csv": "/home/lin/Projects/DexGraspNet2_Wuji2/08_dual_arm_scene_layout/isaaclab_control/outputs/pregrasp_candidate0336_dry/trace.csv",
+  "pregrasp_endpoint_position_error_m": 0.009943853132426739,
+  "pregrasp_endpoint_orientation_error_deg": 9.311114399988925
+}

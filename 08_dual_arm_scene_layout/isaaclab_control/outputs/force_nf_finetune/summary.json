@@ -1,0 +1,263 @@
+{
+  "schema_version": 1,
+  "purpose": "Right-arm implicit Force Drive nf40 per-joint fine tune summary; no IK",
+  "best_so_far": "ft04_j1_50_j3_45_j5_55_j6_50",
+  "note": "best_so_far is not a formal PASS because right arm speed and Wuji2 hand speed exceed current thresholds.",
+  "cases": [
+    {
+      "case": "nf40_baseline",
+      "config": "/home/lin/Projects/DexGraspNet2_Wuji2/08_dual_arm_scene_layout/isaaclab_control/config/force_nf_scan/nf40.json",
+      "report": "/home/lin/Projects/DexGraspNet2_Wuji2/08_dual_arm_scene_layout/isaaclab_control/outputs/force_nf_scan/nf40/report.json",
+      "status": "FAIL",
+      "right_arm_status": "FAIL",
+      "wuji2_hand_status": "FAIL",
+      "right_flange_status": "PASS",
+      "wuji2_wrist_status": "PASS",
+      "right_arm_settled_max_target_error_deg": 2.7558038234710693,
+      "right_arm_settled_max_joint_speed_rad_s": 0.09982147812843323,
+      "wuji2_hand_settled_max_target_error_deg": 0.32132476568222046,
+      "wuji2_hand_settled_max_joint_speed_rad_s": 0.038238104432821274,
+      "per_joint": {
+        "arm_r_joint_1": {
+          "final_error_deg": 1.4238349199295044,
+          "settled_max_speed_rad_s": 0.09982147812843323,
+          "effort_limit_nm": 130.0
+        },
+        "arm_r_joint_2": {
+          "final_error_deg": 0.5070322751998901,
+          "settled_max_speed_rad_s": 0.033415812999010086,
+          "effort_limit_nm": 70.0
+        },
+        "arm_r_joint_3": {
+          "final_error_deg": 1.0133836269378662,
+          "settled_max_speed_rad_s": 0.026426365599036217,
+          "effort_limit_nm": 70.0
+        },
+        "arm_r_joint_4": {
+          "final_error_deg": 0.822771430015564,
+          "settled_max_speed_rad_s": 0.03748852014541626,
+          "effort_limit_nm": 70.0
+        },
+        "arm_r_joint_5": {
+          "final_error_deg": 2.7558038234710693,
+          "settled_max_speed_rad_s": 0.0613846480846405,
+          "effort_limit_nm": 12.0
+        },
+        "arm_r_joint_6": {
+          "final_error_deg": 1.8478357791900635,
+          "settled_max_speed_rad_s": 0.04953585937619209,
+          "effort_limit_nm": 12.0
+        },
+        "arm_r_joint_7": {
+          "final_error_deg": 0.5677458047866821,
+          "settled_max_speed_rad_s": 0.022315673530101776,
+          "effort_limit_nm": 12.0
+        }
+      }
+    },
+    {
+      "case": "ft01_j1j3_45_j5j6_45",
+      "config": "/home/lin/Projects/DexGraspNet2_Wuji2/08_dual_arm_scene_layout/isaaclab_control/config/force_nf_finetune/ft01_j1j3_45_j5j6_45.json",
+      "report": "/home/lin/Projects/DexGraspNet2_Wuji2/08_dual_arm_scene_layout/isaaclab_control/outputs/force_nf_finetune/ft01_j1j3_45_j5j6_45/report.json",
+      "status": "FAIL",
+      "right_arm_status": "FAIL",
+      "wuji2_hand_status": "FAIL",
+      "right_flange_status": "PASS",
+      "wuji2_wrist_status": "PASS",
+      "right_arm_settled_max_target_error_deg": 2.181391716003418,
+      "right_arm_settled_max_joint_speed_rad_s": 0.09338842332363129,
+      "wuji2_hand_settled_max_target_error_deg": 0.32114794850349426,
+      "wuji2_hand_settled_max_joint_speed_rad_s": 0.039237167686223984,
+      "per_joint": {
+        "arm_r_joint_1": {
+          "final_error_deg": 1.1432439088821411,
+          "settled_max_speed_rad_s": 0.09338842332363129,
+          "effort_limit_nm": 130.0
+        },
+        "arm_r_joint_2": {
+          "final_error_deg": 0.5041226148605347,
+          "settled_max_speed_rad_s": 0.03367067873477936,
+          "effort_limit_nm": 70.0
+        },
+        "arm_r_joint_3": {
+          "final_error_deg": 0.8002095818519592,
+          "settled_max_speed_rad_s": 0.0245316531509161,
+          "effort_limit_nm": 70.0
+        },
+        "arm_r_joint_4": {
+          "final_error_deg": 0.8249126672744751,
+          "settled_max_speed_rad_s": 0.03953796252608299,
+          "effort_limit_nm": 70.0
+        },
+        "arm_r_joint_5": {
+          "final_error_deg": 2.181391716003418,
+          "settled_max_speed_rad_s": 0.05879957228899002,
+          "effort_limit_nm": 12.0
+        },
+        "arm_r_joint_6": {
+          "final_error_deg": 1.4642763137817383,
+          "settled_max_speed_rad_s": 0.04365905001759529,
+          "effort_limit_nm": 12.0
+        },
+        "arm_r_joint_7": {
+          "final_error_deg": 0.5456279516220093,
+          "settled_max_speed_rad_s": 0.017880376428365707,
+          "effort_limit_nm": 12.0
+        }
+      }
+    },
+    {
+      "case": "ft02_j1j3_45_j5j6_50",
+      "config": "/home/lin/Projects/DexGraspNet2_Wuji2/08_dual_arm_scene_layout/isaaclab_control/config/force_nf_finetune/ft02_j1j3_45_j5j6_50.json",
+      "report": "/home/lin/Projects/DexGraspNet2_Wuji2/08_dual_arm_scene_layout/isaaclab_control/outputs/force_nf_finetune/ft02_j1j3_45_j5j6_50/report.json",
+      "status": "FAIL",
+      "right_arm_status": "FAIL",
+      "wuji2_hand_status": "FAIL",
+      "right_flange_status": "PASS",
+      "wuji2_wrist_status": "PASS",
+      "right_arm_settled_max_target_error_deg": 1.772246241569519,
+      "right_arm_settled_max_joint_speed_rad_s": 0.09302808344364166,
+      "wuji2_hand_settled_max_target_error_deg": 0.3210916817188263,
+      "wuji2_hand_settled_max_joint_speed_rad_s": 0.039822015911340714,
+      "per_joint": {
+        "arm_r_joint_1": {
+          "final_error_deg": 1.1429946422576904,
+          "settled_max_speed_rad_s": 0.09302808344364166,
+          "effort_limit_nm": 130.0
+        },
+        "arm_r_joint_2": {
+          "final_error_deg": 0.5039791464805603,
+          "settled_max_speed_rad_s": 0.03374951332807541,
+          "effort_limit_nm": 70.0
+        },
+        "arm_r_joint_3": {
+          "final_error_deg": 0.8005164861679077,
+          "settled_max_speed_rad_s": 0.02528334967792034,
+          "effort_limit_nm": 70.0
+        },
+        "arm_r_joint_4": {
+          "final_error_deg": 0.8242570161819458,
+          "settled_max_speed_rad_s": 0.03901839628815651,
+          "effort_limit_nm": 70.0
+        },
+        "arm_r_joint_5": {
+          "final_error_deg": 1.772246241569519,
+          "settled_max_speed_rad_s": 0.0587158165872097,
+          "effort_limit_nm": 12.0
+        },
+        "arm_r_joint_6": {
+          "final_error_deg": 1.1905510425567627,
+          "settled_max_speed_rad_s": 0.040754534304142,
+          "effort_limit_nm": 12.0
+        },
+        "arm_r_joint_7": {
+          "final_error_deg": 0.5367162823677063,
+          "settled_max_speed_rad_s": 0.016766689717769623,
+          "effort_limit_nm": 12.0
+        }
+      }
+    },
+    {
+      "case": "ft03_j1j3_50_j5j6_50",
+      "config": "/home/lin/Projects/DexGraspNet2_Wuji2/08_dual_arm_scene_layout/isaaclab_control/config/force_nf_finetune/ft03_j1j3_50_j5j6_50.json",
+      "report": "/home/lin/Projects/DexGraspNet2_Wuji2/08_dual_arm_scene_layout/isaaclab_control/outputs/force_nf_finetune/ft03_j1j3_50_j5j6_50/report.json",
+      "status": "FAIL",
+      "right_arm_status": "FAIL",
+      "wuji2_hand_status": "FAIL",
+      "right_flange_status": "PASS",
+      "wuji2_wrist_status": "PASS",
+      "right_arm_settled_max_target_error_deg": 1.7693229913711548,
+      "right_arm_settled_max_joint_speed_rad_s": 0.08764325827360153,
+      "wuji2_hand_settled_max_target_error_deg": 0.32100677490234375,
+      "wuji2_hand_settled_max_joint_speed_rad_s": 0.039827797561883926,
+      "per_joint": {
+        "arm_r_joint_1": {
+          "final_error_deg": 0.9411727786064148,
+          "settled_max_speed_rad_s": 0.08764325827360153,
+          "effort_limit_nm": 130.0
+        },
+        "arm_r_joint_2": {
+          "final_error_deg": 0.5021486878395081,
+          "settled_max_speed_rad_s": 0.03400387987494469,
+          "effort_limit_nm": 70.0
+        },
+        "arm_r_joint_3": {
+          "final_error_deg": 0.6491804718971252,
+          "settled_max_speed_rad_s": 0.02295602671802044,
+          "effort_limit_nm": 70.0
+        },
+        "arm_r_joint_4": {
+          "final_error_deg": 0.8264836072921753,
+          "settled_max_speed_rad_s": 0.04139814153313637,
+          "effort_limit_nm": 70.0
+        },
+        "arm_r_joint_5": {
+          "final_error_deg": 1.7693229913711548,
+          "settled_max_speed_rad_s": 0.056062351912260056,
+          "effort_limit_nm": 12.0
+        },
+        "arm_r_joint_6": {
+          "final_error_deg": 1.1898066997528076,
+          "settled_max_speed_rad_s": 0.03840681165456772,
+          "effort_limit_nm": 12.0
+        },
+        "arm_r_joint_7": {
+          "final_error_deg": 0.5296230912208557,
+          "settled_max_speed_rad_s": 0.014223731122910976,
+          "effort_limit_nm": 12.0
+        }
+      }
+    },
+    {
+      "case": "ft04_j1_50_j3_45_j5_55_j6_50",
+      "config": "/home/lin/Projects/DexGraspNet2_Wuji2/08_dual_arm_scene_layout/isaaclab_control/config/force_nf_finetune/ft04_j1_50_j3_45_j5_55_j6_50.json",
+      "report": "/home/lin/Projects/DexGraspNet2_Wuji2/08_dual_arm_scene_layout/isaaclab_control/outputs/force_nf_finetune/ft04_j1_50_j3_45_j5_55_j6_50/report.json",
+      "status": "FAIL",
+      "right_arm_status": "FAIL",
+      "wuji2_hand_status": "FAIL",
+      "right_flange_status": "PASS",
+      "wuji2_wrist_status": "PASS",
+      "right_arm_settled_max_target_error_deg": 1.4647135734558105,
+      "right_arm_settled_max_joint_speed_rad_s": 0.08772528171539307,
+      "wuji2_hand_settled_max_target_error_deg": 0.3211338222026825,
+      "wuji2_hand_settled_max_joint_speed_rad_s": 0.03976114094257355,
+      "per_joint": {
+        "arm_r_joint_1": {
+          "final_error_deg": 0.9418591856956482,
+          "settled_max_speed_rad_s": 0.08772528171539307,
+          "effort_limit_nm": 130.0
+        },
+        "arm_r_joint_2": {
+          "final_error_deg": 0.5019232630729675,
+          "settled_max_speed_rad_s": 0.03421855717897415,
+          "effort_limit_nm": 70.0
+        },
+        "arm_r_joint_3": {
+          "final_error_deg": 0.7975479364395142,
+          "settled_max_speed_rad_s": 0.024282153695821762,
+          "effort_limit_nm": 70.0
+        },
+        "arm_r_joint_4": {
+          "final_error_deg": 0.8249844312667847,
+          "settled_max_speed_rad_s": 0.04141060635447502,
+          "effort_limit_nm": 70.0
+        },
+        "arm_r_joint_5": {
+          "final_error_deg": 1.4647135734558105,
+          "settled_max_speed_rad_s": 0.05394713953137398,
+          "effort_limit_nm": 12.0
+        },
+        "arm_r_joint_6": {
+          "final_error_deg": 1.190644383430481,
+          "settled_max_speed_rad_s": 0.038530051708221436,
+          "effort_limit_nm": 12.0
+        },
+        "arm_r_joint_7": {
+          "final_error_deg": 0.5229517221450806,
+          "settled_max_speed_rad_s": 0.013114431872963905,
+          "effort_limit_nm": 12.0
+        }
+      }
+    }
+  ]
+}

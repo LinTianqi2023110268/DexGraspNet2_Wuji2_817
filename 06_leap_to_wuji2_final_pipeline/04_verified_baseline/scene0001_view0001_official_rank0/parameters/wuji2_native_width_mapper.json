@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "purpose": "User-approved Wuji2 fingertip directions for native IK actions",
+  "runtime_asset": "01_environment/vendor/wuji-description/hand2/hand2_beta1/body/usd/right/wujihand2.usd",
+  "kinematic_companion": "01_environment/vendor/wuji-description/hand2/hand2_beta1/body/urdf/right.urdf",
+  "tip_links_in_solver_order": [
+    "r_thumb_tip",
+    "r_index_finger_tip",
+    "r_middle_finger_tip",
+    "r_ring_finger_tip",
+    "r_pinky_tip"
+  ],
+  "local_inward_normals_xyz": {
+    "r_thumb_tip": [0.0, 1.0, 0.0],
+    "r_index_finger_tip": [0.0, 1.0, 0.0],
+    "r_middle_finger_tip": [0.0, 1.0, 0.0],
+    "r_ring_finger_tip": [0.0, 1.0, 0.0],
+    "r_pinky_tip": [0.0, 1.0, 0.0]
+  },
+  "directions_approved": true,
+  "direction_calibration_status": "USER_VISUALLY_APPROVED_2026-08-11_TEMP_FULL_3D_DIRECTION",
+  "direction_calibration_note": "All five inward pad normals are local +Y. Preserve the complete 3D fingertip direction and do not remove its wrist-frame Z component.",
+  "thumb_convention": "r_thumb_tip local +Y is inward/SQUEEZE; local -Y is outward/PREGRASP",
+  "keep_z": false,
+  "ik_steps": 20,
+  "ik_learning_rate": 20.0,
+  "joint_limit_policy": "exact official Hand2 Beta1 companion URDF limits"
+}

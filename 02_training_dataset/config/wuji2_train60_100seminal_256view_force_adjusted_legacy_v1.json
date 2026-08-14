@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "extends": "wuji2_train60_100seminal_256view_v1.json",
+  "experiment_name": "wuji2_dexgraspnet2_train60_100seminal_256view_force_adjusted_legacy_v1",
+  "paths": {
+    "output_root": "02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1"
+  },
+  "pose_policy": {
+    "hand_root_pose_field": "hand_root_pose_in_centered_object.matrix",
+    "pre_force_joint_field": "pre_force_joint_positions_rad",
+    "training_joint_field": "joint_positions_rad",
+    "physics_validation_joint_field": "joint_positions_rad",
+    "training_target_semantics": "Isaac Sim force-adjusted joint target from Wuji2 DexGraspNet 1.0",
+    "geometry_policy": "legacy Wuji2 URDF geometry, identical to the source optimizer and six-direction validation",
+    "runtime_policy": "convert the legacy r_base_link root to the official Hand2 USD r_wrist root only at Isaac Sim deployment"
+  },
+  "grasp_label_generation": {
+    "pre_force_joint_field": "pre_force_joint_positions_rad",
+    "training_joint_field": "joint_positions_rad",
+    "physics_validation_joint_field": "joint_positions_rad",
+    "source": "Strict single-variable A/B derivative of wuji2_train60_100seminal_256view_v1. Scene poses, camera inputs, geometry, eligibility and filtering equations are unchanged. Only the 20-joint supervision target changes from the optimizer output to the stored Isaac force-adjusted target."
+  },
+  "dataset_derivation": {
+    "source_dataset": "02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1",
+    "copied_inputs": [
+      "prepared_assets",
+      "scenes/scene_xxxx/scene_manifest.json",
+      "scenes/scene_xxxx/network_input.npz"
+    ],
+    "not_duplicated": "Raw camera images are omitted because network_input.npz is the exact 256-view, 40000-point training input.",
+    "recomputed_stages": [
+      "01_transformed_object_grasps",
+      "02_scene_table_collision_filtered",
+      "02b_enhanced_palm_center_path_filtered",
+      "03_reference_points_and_surface_graspness",
+      "04_single_view_training_labels"
+    ],
+    "single_changed_variable": "qpos supervision: pre_force_joint_positions_rad -> joint_positions_rad"
+  }
+}

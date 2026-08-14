@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "updated_local_date": "2026-08-14",
+  "dependencies": [
+    {
+      "name": "GroundingDINO + SAM",
+      "role": "text-conditioned target mask for RGB-D scene input",
+      "integration": "external_project_with_cached_outputs_and_interface_contracts_in_this_project",
+      "local_path": "/home/lin/Projects/分类抓取开源项/03_检测加分割_GroundedSAM",
+      "bundled_here": false,
+      "weights_bundled_here": false,
+      "current_runtime_status": "cached results are available; per-cycle live execution is not yet connected to the full pick-place loop",
+      "guard": "do not copy a second large weight set into this project without an explicit vendor decision"
+    },
+    {
+      "name": "Isaac Sim",
+      "version": "5.0",
+      "local_path": "/home/lin/isaacsim",
+      "role": "PhysX simulation and GUI",
+      "guard": "do not upgrade automatically or start a second Kit process"
+    },
+    {
+      "name": "Isaac Lab",
+      "version": "2.2.x",
+      "role": "AppLauncher, SimulationContext, Articulation, IK and state machine",
+      "environment": "wuji2_factory"
+    }
+  ]
+}
+

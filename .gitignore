@@ -1,0 +1,76 @@
+# Python/editor/runtime caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.idea/
+.vscode/
+*.swp
+*.tmp
+*.bak
+*.log
+
+# Secrets and machine-local configuration
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+credentials*
+secrets*
+
+# Local Python/Conda environments (never upload)
+01_environment/conda/
+01_environment/venvs/
+
+# Large datasets and copied object assets (about 312 GB + 2.1 GB locally)
+02_training_dataset/data/
+02_training_dataset/assets/wuji2_factory/
+
+# Model weights and training runs
+03_prediction_network/official_core/experiments/*/ckpt/
+04_training/checkpoints/
+04_training/experiments/
+*.pth
+*.pt
+*.ckpt
+*.onnx
+
+# Regenerable inference/simulation outputs
+05_inference/outputs/
+06_leap_to_wuji2_final_pipeline/01_cases/
+06_leap_to_wuji2_final_pipeline/99_archive/
+07_wuji2_network_3p3r_sim/01_cases/selected_native_case/
+07_wuji2_network_3p3r_sim/selected_native_case/
+08_dual_arm_scene_layout/captures/
+08_dual_arm_scene_layout/outputs/
+08_dual_arm_scene_layout/isaaclab_control/outputs/**/trace.csv
+08_dual_arm_scene_layout/isaaclab_control/outputs/**/*trace.csv
+08_dual_arm_scene_layout/isaaclab_control/outputs/**/physical_replay_30fps.npz
+08_dual_arm_scene_layout/isaaclab_control/outputs/**/videos/
+08_dual_arm_scene_layout/isaaclab_control/**/frames/
+08_dual_arm_scene_layout/isaaclab_control/**/png_frames/
+
+# Historical rollback archives are retained locally, not published
+archive/migration_snapshots/**/*.tar
+archive/migration_snapshots/**/*.tar.gz
+archive/migration_snapshots/**/*.tgz
+archive/migration_snapshots/**/*.zip
+archive/migration_snapshots/**/*.zst
+
+# Generated visualization products; keep source scripts and READMEs
+trimesh/outputs/
+
+# Generic generated-output convention
+outputs_*/
+!.gitkeep
+
+# Video exports are local presentation artifacts
+*.mp4
+*.avi
+*.mov
+
+# Operating-system metadata
+.DS_Store
+Thumbs.db

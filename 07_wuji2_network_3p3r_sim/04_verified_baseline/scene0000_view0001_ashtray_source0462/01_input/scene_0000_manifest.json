@@ -1,0 +1,2614 @@
+{
+  "schema_version": 1,
+  "script_revision": "wuji2-dgn2-candidate-to-sim50-camera-v7",
+  "scene_index": 0,
+  "coordinate_contract": {
+    "world": "tabletop center origin, +z upward",
+    "camera": "OpenCV optical frame: +x image-right, +y image-down, +z camera-forward; extrinsics is T_world_camera",
+    "object": "centered source-mesh AABB; source mesh axes retained"
+  },
+  "objects": [
+    {
+      "segmentation_id": 3,
+      "object_pool_index": 2,
+      "object_code": "sem-CanOpener-ef6762a35438931aec2282dd8bc87a",
+      "object_frame": "centered source-mesh AABB; same centered object frame used by Wuji2 single-object output",
+      "T_world_centered_object": [
+        [
+          0.08618442337561982,
+          0.8604750848131618,
+          0.5021502500080965,
+          -0.12173978984355927
+        ],
+        [
+          0.9962636902455887,
+          -0.07162291148519406,
+          -0.048257828884292,
+          -0.023012438789010048
+        ],
+        [
+          -0.005559196493512192,
+          0.5044331342865633,
+          -0.863432862687181,
+          0.015896175056695938
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "asset": {
+        "object_code": "sem-CanOpener-ef6762a35438931aec2282dd8bc87a",
+        "source_obj": "/home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/assets/wuji2_factory/03_dexgraspnet_objects/meshdata/sem-CanOpener-ef6762a35438931aec2282dd8bc87a/coacd/decomposed.obj",
+        "source_obj_sha256": "375361dea3559b4c75fd3f04aea95e17cc9fa23c10bc4ee4719ec742b7eb2564",
+        "scale": 0.1,
+        "native_aabb_center": [
+          0.0,
+          0.0012770000000000004,
+          0.0
+        ],
+        "aabb_min_m": [
+          -0.0939624,
+          -0.0264269,
+          -0.021447900000000002
+        ],
+        "aabb_max_m": [
+          0.0939624,
+          0.0264269,
+          0.021447900000000002
+        ],
+        "extent_m": [
+          0.1879248,
+          0.0528538,
+          0.042895800000000005
+        ],
+        "piece_count": 12,
+        "centered_combined_obj": "/home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_test60_10upright_10view_v1/prepared_assets/object_003/centered_combined.obj",
+        "urdf": "/home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_test60_10upright_10view_v1/prepared_assets/object_003/sem-CanOpener-ef6762a35438931aec2282dd8bc87a_centered_coacd.urdf",
+        "root_frame": "centered source-mesh AABB; source axes retained",
+        "scale_contract": {
+          "verified": true,
+          "dexgraspnet1_output_manifest": "/home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/single_object_dataset/objects/sem-CanOpener-ef6762a35438931aec2282dd8bc87a/manifest.json",
+          "object_scale": 0.1,
+          "source_mesh_sha256": "375361dea3559b4c75fd3f04aea95e17cc9fa23c10bc4ee4719ec742b7eb2564"
+        }
+      }
+    },
+    {
+      "segmentation_id": 11,
+      "object_pool_index": 10,
+      "object_code": "sem-Notepad-491731fae7b58f4cc2e054c56e9a85a",
+      "object_frame": "centered source-mesh AABB; same centered object frame used by Wuji2 single-object output",
+      "T_world_centered_object": [
+        [
+          -0.09710966493771678,
+          -0.9952736874727809,
+          -1.3380220910562799e-07,
+          0.0033410547766834497
+        ],
+        [
+          0.9952736874727893,
+          -0.09710966493772055,
+          2.203334655994301e-08,
+          -0.04406557232141495
+        ],
+        [
+          -3.4922697772254537e-08,
+          -1.310301671466709e-07,
+          0.9999999999999908,
+          0.0017406227998435497
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "asset": {
+        "object_code": "sem-Notepad-491731fae7b58f4cc2e054c56e9a85a",
+        "source_obj": "/home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/assets/wuji2_factory/03_dexgraspnet_objects/meshdata/sem-Notepad-491731fae7b58f4cc2e054c56e9a85a/coacd/decomposed.obj",
+        "source_obj_sha256": "3112670aa9539065f496caf2c3955b077d3e2eb81afb72daf8fefee4f58c8d85",
+        "scale": 0.1,
+        "native_aabb_center": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "aabb_min_m": [
+          -0.0574406,
+          -0.0800687,
+          -0.00174062
+        ],
+        "aabb_max_m": [
+          0.0574406,
+          0.0800687,
+          0.00174062
+        ],
+        "extent_m": [
+          0.1148812,
+          0.1601374,
+          0.00348124
+        ],
+        "piece_count": 1,
+        "centered_combined_obj": "/home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_test60_10upright_10view_v1/prepared_assets/object_011/centered_combined.obj",
+        "urdf": "/home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_test60_10upright_10view_v1/prepared_assets/object_011/sem-Notepad-491731fae7b58f4cc2e054c56e9a85a_centered_coacd.urdf",
+        "root_frame": "centered source-mesh AABB; source axes retained",
+        "scale_contract": {
+          "verified": true,
+          "dexgraspnet1_output_manifest": "/home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/single_object_dataset/objects/sem-Notepad-491731fae7b58f4cc2e054c56e9a85a/manifest.json",
+          "object_scale": 0.1,
+          "source_mesh_sha256": "3112670aa9539065f496caf2c3955b077d3e2eb81afb72daf8fefee4f58c8d85"
+        }
+      }
+    },
+    {
+      "segmentation_id": 14,
+      "object_pool_index": 13,
+      "object_code": "sem-Ashtray-2b210ae3bfa1abe43da807e9c1c58ac0",
+      "object_frame": "centered source-mesh AABB; same centered object frame used by Wuji2 single-object output",
+      "T_world_centered_object": [
+        [
+          -0.20989132763171714,
+          7.788190981078413e-05,
+          0.977724718169385,
+          -0.17682230472564697
+        ],
+        [
+          -0.9777247211350872,
+          -3.3409991882837886e-05,
+          -0.20989132560705842,
+          0.04087655618786812
+        ],
+        [
+          1.6319037606571385e-05,
+          -0.9999999964090902,
+          8.315953610371629e-05,
+          0.09282796829938889
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "asset": {
+        "object_code": "sem-Ashtray-2b210ae3bfa1abe43da807e9c1c58ac0",
+        "source_obj": "/home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/assets/wuji2_factory/03_dexgraspnet_objects/meshdata/sem-Ashtray-2b210ae3bfa1abe43da807e9c1c58ac0/coacd/decomposed.obj",
+        "source_obj_sha256": "ef34afba5dc57b1cf8dcb207be6df6e5efc0fae12017fb9b4a5d04f6f91a5eda",
+        "scale": 0.1,
+        "native_aabb_center": [
+          0.0,
+          0.0,
+          -0.002522500000000011
+        ],
+        "aabb_min_m": [
+          -0.07062840000000001,
+          -0.0928259,
+          -0.025981149999999998
+        ],
+        "aabb_max_m": [
+          0.07062840000000001,
+          0.0928259,
+          0.025981149999999998
+        ],
+        "extent_m": [
+          0.14125680000000002,
+          0.1856518,
+          0.051962299999999996
+        ],
+        "piece_count": 19,
+        "centered_combined_obj": "/home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_test60_10upright_10view_v1/prepared_assets/object_014/centered_combined.obj",
+        "urdf": "/home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_test60_10upright_10view_v1/prepared_assets/object_014/sem-Ashtray-2b210ae3bfa1abe43da807e9c1c58ac0_centered_coacd.urdf",
+        "root_frame": "centered source-mesh AABB; source axes retained",
+        "scale_contract": {
+          "verified": true,
+          "dexgraspnet1_output_manifest": "/home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/single_object_dataset/objects/sem-Ashtray-2b210ae3bfa1abe43da807e9c1c58ac0/manifest.json",
+          "object_scale": 0.1,
+          "source_mesh_sha256": "ef34afba5dc57b1cf8dcb207be6df6e5efc0fae12017fb9b4a5d04f6f91a5eda"
+        }
+      }
+    },
+    {
+      "segmentation_id": 33,
+      "object_pool_index": 32,
+      "object_code": "sem-Dog-2526b1f358f773034203f59b4fda924b",
+      "object_frame": "centered source-mesh AABB; same centered object frame used by Wuji2 single-object output",
+      "T_world_centered_object": [
+        [
+          0.9937175230958224,
+          -0.046813715334226645,
+          0.10165608859733721,
+          -0.01373757142573595
+        ],
+        [
+          -0.10801644348687778,
+          -0.1634529290989699,
+          0.9806200017873454,
+          0.07837297767400742
+        ],
+        [
+          -0.02929048017274244,
+          -0.985439808423413,
+          -0.16748269088379586,
+          0.02305474877357483
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "asset": {
+        "object_code": "sem-Dog-2526b1f358f773034203f59b4fda924b",
+        "source_obj": "/home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/assets/wuji2_factory/03_dexgraspnet_objects/meshdata/sem-Dog-2526b1f358f773034203f59b4fda924b/coacd/decomposed.obj",
+        "source_obj_sha256": "dd483c9bae16b0775f509721080a7fbf772837c70567e834377c4224b87f863c",
+        "scale": 0.1,
+        "native_aabb_center": [
+          -0.0011755000000000515,
+          -2.000000000002e-06,
+          -0.0011755000000000237
+        ],
+        "aabb_min_m": [
+          -0.08639695000000001,
+          -0.024449600000000002,
+          -0.04596085
+        ],
+        "aabb_max_m": [
+          0.08639695000000001,
+          0.024449600000000002,
+          0.04596085
+        ],
+        "extent_m": [
+          0.17279390000000003,
+          0.048899200000000004,
+          0.0919217
+        ],
+        "piece_count": 13,
+        "centered_combined_obj": "/home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_test60_10upright_10view_v1/prepared_assets/object_033/centered_combined.obj",
+        "urdf": "/home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_test60_10upright_10view_v1/prepared_assets/object_033/sem-Dog-2526b1f358f773034203f59b4fda924b_centered_coacd.urdf",
+        "root_frame": "centered source-mesh AABB; source axes retained",
+        "scale_contract": {
+          "verified": true,
+          "dexgraspnet1_output_manifest": "/home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/single_object_dataset/objects/sem-Dog-2526b1f358f773034203f59b4fda924b/manifest.json",
+          "object_scale": 0.1,
+          "source_mesh_sha256": "dd483c9bae16b0775f509721080a7fbf772837c70567e834377c4224b87f863c"
+        }
+      }
+    },
+    {
+      "segmentation_id": 37,
+      "object_pool_index": 36,
+      "object_code": "sem-Hammer-405f308492a6f40d2c3380317c2cc450",
+      "object_frame": "centered source-mesh AABB; same centered object frame used by Wuji2 single-object output",
+      "T_world_centered_object": [
+        [
+          0.018703429296310747,
+          -0.03518409574985559,
+          -0.9992058152046667,
+          0.17268377542495728
+        ],
+        [
+          -0.8148443396584134,
+          0.5785840616013911,
+          -0.035625633853754446,
+          -0.012161705642938614
+        ],
+        [
+          0.5793780146495048,
+          0.8148635241972133,
+          -0.01784805517963539,
+          0.07410674542188644
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "asset": {
+        "object_code": "sem-Hammer-405f308492a6f40d2c3380317c2cc450",
+        "source_obj": "/home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/assets/wuji2_factory/03_dexgraspnet_objects/meshdata/sem-Hammer-405f308492a6f40d2c3380317c2cc450/coacd/decomposed.obj",
+        "source_obj_sha256": "b2aed0b3d609d68ceb012327e17a1d80f46c70a833460f3c65c395905dec64de",
+        "scale": 0.1,
+        "native_aabb_center": [
+          0.0012125000000000052,
+          4.000000000004e-06,
+          0.0
+        ],
+        "aabb_min_m": [
+          -0.05421035000000001,
+          -0.08925870000000001,
+          -0.0145531
+        ],
+        "aabb_max_m": [
+          0.05421035000000001,
+          0.08925870000000001,
+          0.0145531
+        ],
+        "extent_m": [
+          0.10842070000000002,
+          0.17851740000000002,
+          0.0291062
+        ],
+        "piece_count": 3,
+        "centered_combined_obj": "/home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_test60_10upright_10view_v1/prepared_assets/object_037/centered_combined.obj",
+        "urdf": "/home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_test60_10upright_10view_v1/prepared_assets/object_037/sem-Hammer-405f308492a6f40d2c3380317c2cc450_centered_coacd.urdf",
+        "root_frame": "centered source-mesh AABB; source axes retained",
+        "scale_contract": {
+          "verified": true,
+          "dexgraspnet1_output_manifest": "/home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/single_object_dataset/objects/sem-Hammer-405f308492a6f40d2c3380317c2cc450/manifest.json",
+          "object_scale": 0.1,
+          "source_mesh_sha256": "b2aed0b3d609d68ceb012327e17a1d80f46c70a833460f3c65c395905dec64de"
+        }
+      }
+    },
+    {
+      "segmentation_id": 52,
+      "object_pool_index": 51,
+      "object_code": "sem-Pen-47e0235a83058335782611375da5ea9a",
+      "object_frame": "centered source-mesh AABB; same centered object frame used by Wuji2 single-object output",
+      "T_world_centered_object": [
+        [
+          -0.9803584557165355,
+          0.08680829297108691,
+          0.17709211890012583,
+          0.11382473260164261
+        ],
+        [
+          -0.07515631226517466,
+          -0.9946059662505307,
+          0.07148776556550475,
+          0.0047574033960700035
+        ],
+        [
+          0.18234260893107218,
+          0.056774044864664634,
+          0.981594560293564,
+          0.016731956973671913
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "asset": {
+        "object_code": "sem-Pen-47e0235a83058335782611375da5ea9a",
+        "source_obj": "/home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/assets/wuji2_factory/03_dexgraspnet_objects/meshdata/sem-Pen-47e0235a83058335782611375da5ea9a/coacd/decomposed.obj",
+        "source_obj_sha256": "4f8bd77217a93fb9ca1586da4ef0915b8006594f78a68fe92f6603aa1ee5f1a3",
+        "scale": 0.1,
+        "native_aabb_center": [
+          0.0,
+          -0.0008854999999999835,
+          0.0
+        ],
+        "aabb_min_m": [
+          -0.0159417,
+          -0.09768745000000001,
+          -0.0191301
+        ],
+        "aabb_max_m": [
+          0.0159417,
+          0.09768745000000001,
+          0.0191301
+        ],
+        "extent_m": [
+          0.0318834,
+          0.19537490000000002,
+          0.0382602
+        ],
+        "piece_count": 1,
+        "centered_combined_obj": "/home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_test60_10upright_10view_v1/prepared_assets/object_052/centered_combined.obj",
+        "urdf": "/home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_test60_10upright_10view_v1/prepared_assets/object_052/sem-Pen-47e0235a83058335782611375da5ea9a_centered_coacd.urdf",
+        "root_frame": "centered source-mesh AABB; source axes retained",
+        "scale_contract": {
+          "verified": true,
+          "dexgraspnet1_output_manifest": "/home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/single_object_dataset/objects/sem-Pen-47e0235a83058335782611375da5ea9a/manifest.json",
+          "object_scale": 0.1,
+          "source_mesh_sha256": "4f8bd77217a93fb9ca1586da4ef0915b8006594f78a68fe92f6603aa1ee5f1a3"
+        }
+      }
+    }
+  ],
+  "table": {
+    "size_m": [
+      0.5,
+      0.3,
+      0.02
+    ],
+    "top_z_m": 0.0,
+    "paper_size_m": [
+      0.5,
+      0.3
+    ],
+    "source": "DexGraspNet 2.0 paper and supplement: objects are placed within an approximately 30 cm x 50 cm tabletop/area. The 2 cm thickness and tabletop-centred world origin are adapter conventions."
+  },
+  "camera": {
+    "reference_view_indices": [
+      0,
+      28,
+      57,
+      85,
+      113,
+      142,
+      170,
+      198,
+      227,
+      255
+    ],
+    "width": 1280,
+    "height": 720,
+    "near_m": 0.05,
+    "far_m": 2.0,
+    "placement_mode": "official_orientation_fit_table_box",
+    "target_world_m": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "framing_margin_fraction": 0.05,
+    "framing_box_height_m": 0.2,
+    "pose_source": "open-source GraspNet scene_0000/realsense: T_table_camera = cam0_wrt_table @ camera_poses[index]",
+    "intrinsics_source": "open-source GraspNet scene_0000/realsense/camK.npy, converted to Isaac/Omniverse's supported pinhole form by averaging fx/fy and centering cx/cy",
+    "placement_note": "Official rotations are retained. Translation is fitted along each optical axis so the centred 0.50 x 0.30 x 0.20 m tabletop workspace remains visible with a 5 percent image border.",
+    "coordinate_contract": "OpenCV optical frame: +x image-right, +y image-down, +z camera-forward; extrinsics is T_world_camera",
+    "test_view_policy": "Ten approximately uniform indices are selected across the same ordered 256-view official camera trajectory used by the training set. Intrinsics, pose fitting, image size and 40000-point sampling remain unchanged."
+  },
+  "workspace": {
+    "mode": "official_visible_foreground_bbox",
+    "outlier_m": 0.02,
+    "sampling": "Match src/utils/pc.py:get_workspace_mask: transform visible object points to world/table coordinates, expand their axis-aligned bounds by 0.02 m, retain finite depth points in the box, then sample with replacement exactly as official dataset.py."
+  },
+  "physics_acceptance": {
+    "pipeline": "analytic_stable_pose_packing candidate -> Isaac Sim 5.0 stability filter",
+    "candidate_type": "analytic_stable_pose_packing",
+    "candidate_source": "/home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_test60_10upright_10view_v1/stable_pose_candidates/candidate_0031.json",
+    "candidate_index": 31,
+    "candidate_global_attempt": 318,
+    "candidate_generation_config": {
+      "candidate_count": 32,
+      "maximum_scene_attempts_per_candidate": 2000,
+      "stable_pose_probability_threshold": 0.01,
+      "center_mass_sigma_m": 0.0,
+      "center_mass_samples": 1,
+      "yaw_deg": [
+        0.0,
+        360.0
+      ],
+      "table_edge_margin_m": 0.015,
+      "minimum_object_clearance_m": 0.005,
+      "xy_candidates_per_object": 512,
+      "object_order": "random_anchor_then_largest",
+      "layout_mode_sequence": [
+        "uniform",
+        "compact",
+        "spread"
+      ],
+      "layout_selection_pool_fraction": 0.15,
+      "compact_center_sampling_fraction": 0.5,
+      "minimum_pairwise_layout_rms_m": 0.012,
+      "release_clearance_m": 0.001,
+      "pose_sampling": "probability_weighted",
+      "source": "The validated training-set pipeline is reused unchanged: Trimesh stable poses and six-object random-anchor footprint packing, followed by Isaac Sim 5.0 physical acceptance. Every analytic candidate additionally enables the recorded upright-pose preference requested for this held-out test family.",
+      "candidate_evaluation_order": "descending",
+      "upright_pose_bias": {
+        "enabled": true,
+        "start_candidate_index": 0,
+        "minimum_upright_objects_per_scene": 2,
+        "relative_height_threshold": 0.8,
+        "minimum_height_to_horizontal_span": 0.8,
+        "minimum_pose_height_range_ratio": 1.25,
+        "policy": "Every candidate contains at least two objects forced to a tall Trimesh-stable orientation. A qualifying pose has height at least 80 percent of that object's tallest stable pose, height/max(XY span) at least 0.8, and tallest/shortest stable-height ratio at least 1.25. The pose remains probability-weighted within the qualifying stable subset and still requires unchanged Isaac Sim acceptance."
+      }
+    },
+    "candidate_layout_sampling": {
+      "mode": "compact",
+      "object_order_policy": "random_anchor_then_largest",
+      "packing_order_object_indices": [
+        2,
+        10,
+        32,
+        13,
+        51,
+        36
+      ],
+      "compact_center_xy_m": [
+        -0.06813264501020824,
+        -0.06275491537593267
+      ],
+      "upright_pose_bias": {
+        "active": true,
+        "minimum_upright_objects_per_scene": 2,
+        "forced_upright_object_indices": [
+          13,
+          36
+        ],
+        "classified_upright_object_count": 2
+      }
+    },
+    "active_object_indices": [
+      2,
+      10,
+      13,
+      32,
+      36,
+      51
+    ],
+    "active_object_ids": [
+      3,
+      11,
+      14,
+      33,
+      37,
+      52
+    ],
+    "active_object_codes": [
+      "sem-CanOpener-ef6762a35438931aec2282dd8bc87a",
+      "sem-Notepad-491731fae7b58f4cc2e054c56e9a85a",
+      "sem-Ashtray-2b210ae3bfa1abe43da807e9c1c58ac0",
+      "sem-Dog-2526b1f358f773034203f59b4fda924b",
+      "sem-Hammer-405f308492a6f40d2c3380317c2cc450",
+      "sem-Pen-47e0235a83058335782611375da5ea9a"
+    ],
+    "candidate_initial_records": [
+      {
+        "object_index": 2,
+        "object_code": "sem-CanOpener-ef6762a35438931aec2282dd8bc87a",
+        "stable_pose_index": 0,
+        "stable_pose_probability": 0.42111125738908606,
+        "upright_sampling_probability": 0.42111125738908606,
+        "upright_pose_forced": false,
+        "upright_pose_classified": false,
+        "pose_height_m": 0.040625870737767356,
+        "pose_height_to_horizontal_span": 0.215886953562107,
+        "yaw_rad": 4.616215149220347,
+        "placement_rank": 0,
+        "xy_translation_m": [
+          -0.12172650895290343,
+          -0.023010505131866782
+        ],
+        "release_clearance_m": 0.001,
+        "footprint_area_m2": 0.008950372279761348,
+        "footprint_world_xy_m": [
+          [
+            -0.11812538382134953,
+            -0.11658589540924598
+          ],
+          [
+            -0.13879632407429918,
+            -0.11582812533141751
+          ],
+          [
+            -0.1395300166031101,
+            -0.11578081817552403
+          ],
+          [
+            -0.13989736425117852,
+            -0.11575711622836872
+          ],
+          [
+            -0.14114385628900744,
+            -0.11566033902041511
+          ],
+          [
+            -0.1432683593924811,
+            -0.11549059427594245
+          ],
+          [
+            -0.1472975564253509,
+            -0.11514883848004974
+          ],
+          [
+            -0.1500792414346206,
+            -0.11490395806173895
+          ],
+          [
+            -0.152862020317279,
+            -0.1146589732652633
+          ],
+          [
+            -0.15476562037328648,
+            -0.11448706659200814
+          ],
+          [
+            -0.1568126294817999,
+            -0.11428958865666206
+          ],
+          [
+            -0.15746983144294247,
+            -0.1142144510480556
+          ],
+          [
+            -0.1577349044586531,
+            -0.11401353285173611
+          ],
+          [
+            -0.15838562786023497,
+            -0.11343635389239014
+          ],
+          [
+            -0.14792849754523793,
+            0.01173339981617414
+          ],
+          [
+            -0.14528809748453483,
+            0.042256500052672674
+          ],
+          [
+            -0.14515578308534272,
+            0.043090917734711826
+          ],
+          [
+            -0.14418325590818992,
+            0.04593171537101842
+          ],
+          [
+            -0.14387014145264035,
+            0.046843956756973115
+          ],
+          [
+            -0.1259543302259239,
+            0.07141693680038148
+          ],
+          [
+            -0.12523580542290888,
+            0.07161337373084962
+          ],
+          [
+            -0.1132262254827067,
+            0.07056043869742307
+          ],
+          [
+            -0.09814628871651887,
+            0.06597372871312486
+          ],
+          [
+            -0.09788099068456063,
+            0.06577449429102092
+          ],
+          [
+            -0.09668044085523347,
+            0.06446076707502874
+          ],
+          [
+            -0.09716866255481599,
+            0.030661850763944953
+          ],
+          [
+            -0.10798642004654052,
+            -0.11307972726838451
+          ],
+          [
+            -0.1081632734869069,
+            -0.11512415809832284
+          ],
+          [
+            -0.1082700085718627,
+            -0.11578643764098431
+          ],
+          [
+            -0.10853768260468205,
+            -0.1161920138018551
+          ],
+          [
+            -0.10925528995361658,
+            -0.11638642836475477
+          ]
+        ],
+        "analytic_T_world_centered_object": [
+          [
+            0.08618168723082474,
+            0.8609222608835517,
+            0.5013836629779657,
+            -0.12172650895290343
+          ],
+          [
+            0.9962627698154727,
+            -0.07156055574657588,
+            -0.0483692086026195,
+            -0.023010505131866782
+          ],
+          [
+            -0.0057628348623581915,
+            0.5036784168260489,
+            -0.8638720056570615,
+            0.016921019627748744
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      {
+        "object_index": 10,
+        "object_code": "sem-Notepad-491731fae7b58f4cc2e054c56e9a85a",
+        "stable_pose_index": 0,
+        "stable_pose_probability": 0.5,
+        "upright_sampling_probability": 0.5,
+        "upright_pose_forced": false,
+        "upright_pose_classified": false,
+        "pose_height_m": 0.00348124,
+        "pose_height_to_horizontal_span": 0.021739081563707165,
+        "yaw_rad": 1.6680593603333727,
+        "placement_rank": 1,
+        "xy_translation_m": [
+          0.0033410570241421966,
+          -0.04406557800574135
+        ],
+        "release_clearance_m": 0.001,
+        "footprint_area_m2": 0.018392658804870003,
+        "footprint_world_xy_m": [
+          [
+            -0.0690238676332131,
+            -0.10883966108921922
+          ],
+          [
+            -0.06994011120623275,
+            -0.10848837699493061
+          ],
+          [
+            -0.0702350753569445,
+            -0.10837026264442695
+          ],
+          [
+            -0.07041951945062043,
+            -0.10809457095737768
+          ],
+          [
+            -0.07094043240347975,
+            -0.10727538494947511
+          ],
+          [
+            -0.08175799277114808,
+            0.0035933255631481337
+          ],
+          [
+            -0.08127758075667585,
+            0.004803899817934151
+          ],
+          [
+            -0.08017995260016121,
+            0.005498573467949963
+          ],
+          [
+            0.07570598168149749,
+            0.020708505077736507
+          ],
+          [
+            0.07662222525451715,
+            0.020357220983447895
+          ],
+          [
+            0.07691718940522889,
+            0.02023910663294424
+          ],
+          [
+            0.07710163349890482,
+            0.01996341494589498
+          ],
+          [
+            0.07762254645176414,
+            0.0191442289379924
+          ],
+          [
+            0.08844010681943247,
+            -0.09172448157463084
+          ],
+          [
+            0.08795969480496024,
+            -0.09293505582941686
+          ],
+          [
+            0.0868620666484456,
+            -0.09362972947943267
+          ]
+        ],
+        "analytic_T_world_centered_object": [
+          [
+            -0.09710975309230858,
+            -0.9952736788714704,
+            0.0,
+            0.0033410570241421966
+          ],
+          [
+            0.9952736788714704,
+            -0.09710975309230858,
+            0.0,
+            -0.04406557800574135
+          ],
+          [
+            0.0,
+            0.0,
+            0.9999999999999999,
+            0.00274062
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      {
+        "object_index": 13,
+        "object_code": "sem-Ashtray-2b210ae3bfa1abe43da807e9c1c58ac0",
+        "stable_pose_index": 8,
+        "stable_pose_probability": 0.020378899549751413,
+        "upright_sampling_probability": 0.25636934042617654,
+        "upright_pose_forced": true,
+        "upright_pose_classified": true,
+        "pose_height_m": 0.1856518,
+        "pose_height_to_horizontal_span": 1.314285754738887,
+        "yaw_rad": 4.500950088332163,
+        "placement_rank": 3,
+        "xy_translation_m": [
+          -0.17681468207423803,
+          0.04087259097063026
+        ],
+        "release_clearance_m": 0.001,
+        "footprint_area_m2": 0.006468573995615,
+        "footprint_world_xy_m": [
+          [
+            -0.17955421881992256,
+            -0.030776499519351144
+          ],
+          [
+            -0.21109001843479425,
+            -0.02400742946057209
+          ],
+          [
+            -0.21112081692825302,
+            -0.02400081865119122
+          ],
+          [
+            -0.21229528666962444,
+            -0.023060290647034562
+          ],
+          [
+            -0.2134690510133337,
+            -0.02211981177675794
+          ],
+          [
+            -0.2150180676819239,
+            -0.019723150588681987
+          ],
+          [
+            -0.21574050562653777,
+            -0.016921133676494948
+          ],
+          [
+            -0.21576859232885243,
+            -0.016808020162036745
+          ],
+          [
+            -0.2068756895763123,
+            0.024622308784688563
+          ],
+          [
+            -0.1886659108296056,
+            0.10945817672529486
+          ],
+          [
+            -0.18866553306906952,
+            0.10945993663920678
+          ],
+          [
+            -0.1884522519337955,
+            0.1097269217461626
+          ],
+          [
+            -0.18678486099224953,
+            0.11180946992040743
+          ],
+          [
+            -0.18438887705465218,
+            0.11335914334754475
+          ],
+          [
+            -0.18293263177676353,
+            0.11373468899141106
+          ],
+          [
+            -0.18147587664720286,
+            0.11411022747479022
+          ],
+          [
+            -0.1617471290697588,
+            0.10987550769109686
+          ],
+          [
+            -0.1499090829928822,
+            0.10733450463323739
+          ],
+          [
+            -0.14990810526293114,
+            0.10733429476627292
+          ],
+          [
+            -0.1487345922648143,
+            0.10639407440207584
+          ],
+          [
+            -0.14835804123857832,
+            0.10493679509986896
+          ],
+          [
+            -0.15120053518901452,
+            0.03640580210980471
+          ],
+          [
+            -0.17715594413004485,
+            -0.02922711324024188
+          ],
+          [
+            -0.17809770120974502,
+            -0.030401114608569313
+          ]
+        ],
+        "analytic_T_world_centered_object": [
+          [
+            -0.20986696447208456,
+            0.0,
+            0.9777299510720089,
+            -0.17681468207423803
+          ],
+          [
+            -0.9777299510720089,
+            0.0,
+            -0.20986696447208456,
+            0.04087259097063026
+          ],
+          [
+            0.0,
+            -1.0,
+            0.0,
+            0.0938259
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      {
+        "object_index": 32,
+        "object_code": "sem-Dog-2526b1f358f773034203f59b4fda924b",
+        "stable_pose_index": 0,
+        "stable_pose_probability": 0.43587720373909633,
+        "upright_sampling_probability": 0.43587720373909633,
+        "upright_pose_forced": false,
+        "upright_pose_classified": false,
+        "pose_height_m": 0.04901172997401358,
+        "pose_height_to_horizontal_span": 0.2833248613816397,
+        "yaw_rad": 6.180088994211746,
+        "placement_rank": 2,
+        "xy_translation_m": [
+          -0.013723452444020345,
+          0.07826023612523786
+        ],
+        "release_clearance_m": 0.001,
+        "footprint_area_m2": 0.012411590102172888,
+        "footprint_world_xy_m": [
+          [
+            0.03930973605658399,
+            0.02628090124851465
+          ],
+          [
+            -0.033897082374237705,
+            0.0325246667780465
+          ],
+          [
+            -0.046042291857833664,
+            0.03384332220702779
+          ],
+          [
+            -0.04664812275179205,
+            0.03417084198208235
+          ],
+          [
+            -0.09793692591262622,
+            0.10131610696019161
+          ],
+          [
+            -0.0981699601888772,
+            0.10201508993776762
+          ],
+          [
+            -0.09824758833287872,
+            0.10296440772365578
+          ],
+          [
+            -0.09777007931468872,
+            0.10757966518491913
+          ],
+          [
+            -0.09734925701276424,
+            0.11079722207483592
+          ],
+          [
+            -0.09716421821982396,
+            0.11201913601135464
+          ],
+          [
+            -0.09689578696461647,
+            0.1129152390462293
+          ],
+          [
+            -0.09652049099319324,
+            0.11349683150538761
+          ],
+          [
+            -0.09633451658927547,
+            0.1136298184896595
+          ],
+          [
+            -0.08339389840834122,
+            0.12281199076029353
+          ],
+          [
+            -0.08085825205143864,
+            0.12422527968599745
+          ],
+          [
+            -0.08038718048999104,
+            0.12433017366730702
+          ],
+          [
+            -0.06995131805751831,
+            0.12615821375483077
+          ],
+          [
+            -0.06897131598558227,
+            0.12620636143514496
+          ],
+          [
+            -0.06799161698353257,
+            0.12625383989137737
+          ],
+          [
+            -0.06527369112069502,
+            0.1262777892077183
+          ],
+          [
+            0.07377993655774154,
+            0.11444868009544695
+          ],
+          [
+            0.07611447023957478,
+            0.11414270985439193
+          ],
+          [
+            0.0767936515528966,
+            0.11388686307775928
+          ],
+          [
+            0.0403401202736386,
+            0.027103580052284255
+          ],
+          [
+            0.039964069962977244,
+            0.02652246645857547
+          ],
+          [
+            0.03977875698192853,
+            0.02638719155058291
+          ]
+        ],
+        "analytic_T_world_centered_object": [
+          [
+            0.993692634250179,
+            -0.047593603484974364,
+            0.10153717321382945,
+            -0.013723452444020345
+          ],
+          [
+            -0.1078893030756313,
+            -0.15888154488767917,
+            0.981385017705059,
+            0.07826023612523786
+          ],
+          [
+            -0.030575266455008025,
+            -0.9861498383113082,
+            -0.16301426158402776,
+            0.024045242211090858
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      {
+        "object_index": 36,
+        "object_code": "sem-Hammer-405f308492a6f40d2c3380317c2cc450",
+        "stable_pose_index": 4,
+        "stable_pose_probability": 0.031150661521498174,
+        "upright_sampling_probability": 0.5733546658455783,
+        "upright_pose_forced": true,
+        "upright_pose_classified": true,
+        "pose_height_m": 0.15778202030923183,
+        "pose_height_to_horizontal_span": 1.1051839851376144,
+        "yaw_rad": 1.6061900630663668,
+        "placement_rank": 5,
+        "xy_translation_m": [
+          0.17396358224841918,
+          -0.011961908292056136
+        ],
+        "release_clearance_m": 0.001,
+        "footprint_area_m2": 0.003924494306078603,
+        "footprint_world_xy_m": [
+          [
+            0.16359149969902323,
+            -0.10284479628689275
+          ],
+          [
+            0.16310455958117023,
+            -0.10277880612650567
+          ],
+          [
+            0.162938506729781,
+            -0.10267851734376897
+          ],
+          [
+            0.16258863466750273,
+            -0.10197618602146401
+          ],
+          [
+            0.1596236364526345,
+            -0.01823933529936613
+          ],
+          [
+            0.15898486175092413,
+            -0.00019919565478015468
+          ],
+          [
+            0.16261636182366207,
+            0.03432808430080648
+          ],
+          [
+            0.1629184685276492,
+            0.03498264475280507
+          ],
+          [
+            0.16383124026299445,
+            0.03659512899956212
+          ],
+          [
+            0.163984396733971,
+            0.03683503649355175
+          ],
+          [
+            0.16413962455525502,
+            0.03701616275661454
+          ],
+          [
+            0.16602303788843348,
+            0.038663019246045156
+          ],
+          [
+            0.1663366234399477,
+            0.038936877547551804
+          ],
+          [
+            0.16681054008054458,
+            0.03930453827343943
+          ],
+          [
+            0.16872186543011886,
+            0.040163109515827
+          ],
+          [
+            0.16920518015014197,
+            0.04020883270260668
+          ],
+          [
+            0.17502106541982798,
+            0.0404147646106471
+          ],
+          [
+            0.17550835961648523,
+            0.04034810026235378
+          ],
+          [
+            0.17747556619005903,
+            0.03962848582869143
+          ],
+          [
+            0.17944283032920416,
+            0.03890724564037365
+          ],
+          [
+            0.1796080441862369,
+            0.03880663099467885
+          ],
+          [
+            0.1806045991106461,
+            0.03805264559104741
+          ],
+          [
+            0.18163113204140466,
+            0.03650882925839864
+          ],
+          [
+            0.18265565623101193,
+            0.034964941799192385
+          ],
+          [
+            0.18300589345294987,
+            0.03426077556121361
+          ],
+          [
+            0.18807283274454997,
+            0.0008307664386889273
+          ],
+          [
+            0.18812091267836992,
+            -0.0005270968547257879
+          ],
+          [
+            0.1890827814818598,
+            -0.02769199159502709
+          ],
+          [
+            0.19145714099977496,
+            -0.09474814950947204
+          ],
+          [
+            0.1914292954260554,
+            -0.10088531494442023
+          ],
+          [
+            0.19137481353267025,
+            -0.10160175589910467
+          ],
+          [
+            0.19122077912236735,
+            -0.1018408893804738
+          ],
+          [
+            0.19073768757975162,
+            -0.10188358986567256
+          ]
+        ],
+        "analytic_T_world_centered_object": [
+          [
+            0.028797184245148214,
+            -0.020564915136489156,
+            -0.9993737071010924,
+            0.17396358224841918
+          ],
+          [
+            -0.8132839697037995,
+            0.5807899715627066,
+            -0.03538634701435023,
+            -0.011961908292056136
+          ],
+          [
+            0.5811539441511006,
+            0.8137936428835135,
+            0.0,
+            0.0753928644157403
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      {
+        "object_index": 51,
+        "object_code": "sem-Pen-47e0235a83058335782611375da5ea9a",
+        "stable_pose_index": 8,
+        "stable_pose_probability": 0.03353748960727069,
+        "upright_sampling_probability": 0.03353748960727069,
+        "upright_pose_forced": false,
+        "upright_pose_classified": false,
+        "pose_height_m": 0.037642132742699355,
+        "pose_height_to_horizontal_span": 0.1932978832416217,
+        "yaw_rad": 4.904680963337465,
+        "placement_rank": 4,
+        "xy_translation_m": [
+          0.12088260514452032,
+          0.004360018859381455
+        ],
+        "release_clearance_m": 0.001,
+        "footprint_area_m2": 0.005196867649446172,
+        "footprint_world_xy_m": [
+          [
+            0.12791169787950965,
+            -0.09326223421632832
+          ],
+          [
+            0.12735816008751172,
+            -0.09305321338262651
+          ],
+          [
+            0.1257816346109185,
+            -0.09218284239945257
+          ],
+          [
+            0.12250859650363191,
+            -0.08941706881047892
+          ],
+          [
+            0.11860563587517312,
+            -0.08450928557629556
+          ],
+          [
+            0.11793761712151077,
+            -0.08355211063957388
+          ],
+          [
+            0.11771490630945523,
+            -0.08302934881945875
+          ],
+          [
+            0.11731560753390631,
+            -0.08207665569480382
+          ],
+          [
+            0.1161917877927413,
+            -0.07887314450316682
+          ],
+          [
+            0.1158977130237152,
+            -0.07795253356542328
+          ],
+          [
+            0.11526967664930748,
+            -0.07581015584545095
+          ],
+          [
+            0.10896067239148391,
+            -0.04655724029379289
+          ],
+          [
+            0.10485995487214644,
+            -0.012833720378095739
+          ],
+          [
+            0.10387394172208773,
+            -0.0032275581931650995
+          ],
+          [
+            0.10132529495076432,
+            0.02529098501976912
+          ],
+          [
+            0.1000697663747657,
+            0.04015231315780231
+          ],
+          [
+            0.09973145796885584,
+            0.06256511750667605
+          ],
+          [
+            0.09961103868716015,
+            0.07109207912801774
+          ],
+          [
+            0.09962240926314592,
+            0.07855710108369685
+          ],
+          [
+            0.09962725086153705,
+            0.07913922391573935
+          ],
+          [
+            0.09963429388294068,
+            0.07965045117274736
+          ],
+          [
+            0.10018182567250149,
+            0.08722012653996761
+          ],
+          [
+            0.10073202608837047,
+            0.09479005739716626
+          ],
+          [
+            0.10129163691353328,
+            0.09640935148819516
+          ],
+          [
+            0.10170131836763342,
+            0.09757635211866142
+          ],
+          [
+            0.10232428734133558,
+            0.09859852510267048
+          ],
+          [
+            0.10283202951112372,
+            0.09903505517129044
+          ],
+          [
+            0.10344856714106873,
+            0.0994158839271023
+          ],
+          [
+            0.1055214366928426,
+            0.10049993138502358
+          ],
+          [
+            0.10658122678764101,
+            0.1008430655866879
+          ],
+          [
+            0.10712005156152471,
+            0.10094797350186929
+          ],
+          [
+            0.11023542801476656,
+            0.10001577588724861
+          ],
+          [
+            0.1107870590631489,
+            0.09980648534055636
+          ],
+          [
+            0.11162937828648316,
+            0.0990623059642364
+          ],
+          [
+            0.11285749541448054,
+            0.09787451479042578
+          ],
+          [
+            0.11308480499865756,
+            0.09735238425513573
+          ],
+          [
+            0.1134840735519563,
+            0.09639978761821036
+          ],
+          [
+            0.11907449639795274,
+            0.08211274086072107
+          ],
+          [
+            0.11970443444997651,
+            0.07997063186740105
+          ],
+          [
+            0.12423299920546194,
+            0.06234363129055949
+          ],
+          [
+            0.12603609371923044,
+            0.05505198178261374
+          ],
+          [
+            0.1290217846019274,
+            0.04259261877766425
+          ],
+          [
+            0.13223401538789628,
+            0.023712074793998304
+          ],
+          [
+            0.13803816156414445,
+            -0.011925060202960268
+          ],
+          [
+            0.1420120341192774,
+            -0.044605431290096274
+          ],
+          [
+            0.142004817280143,
+            -0.045168517754281885
+          ],
+          [
+            0.14199586250081808,
+            -0.045680115533202864
+          ],
+          [
+            0.141927122614819,
+            -0.04660094599832158
+          ],
+          [
+            0.14094311249095173,
+            -0.059653207749749394
+          ],
+          [
+            0.14055549167640774,
+            -0.06343920535686484
+          ],
+          [
+            0.14026563782795912,
+            -0.06616067944833418
+          ],
+          [
+            0.13969999403376507,
+            -0.07058117573502865
+          ],
+          [
+            0.13873550976325405,
+            -0.07565680662109009
+          ],
+          [
+            0.13831879382480256,
+            -0.07733503369284758
+          ],
+          [
+            0.13766625198366203,
+            -0.07952718527209751
+          ],
+          [
+            0.13710665321829807,
+            -0.08114657854061533
+          ],
+          [
+            0.13567738813212118,
+            -0.08448747836691389
+          ],
+          [
+            0.1344886936144579,
+            -0.0867842825419882
+          ],
+          [
+            0.1338611356677802,
+            -0.0878069825310211
+          ],
+          [
+            0.133084400362945,
+            -0.08895563160058076
+          ],
+          [
+            0.13135611571765268,
+            -0.09135732929720303
+          ],
+          [
+            0.12960634260325057,
+            -0.09306701491535505
+          ],
+          [
+            0.12859116017666772,
+            -0.09324206040407207
+          ],
+          [
+            0.12816163584615906,
+            -0.09325848000800602
+          ]
+        ],
+        "analytic_T_world_centered_object": [
+          [
+            -0.8537052271357347,
+            0.12059798840513478,
+            0.506599951000549,
+            0.12088260514452032
+          ],
+          [
+            -0.08157167955836762,
+            -0.9917748892956296,
+            0.09863381801729466,
+            0.004360018859381455
+          ],
+          [
+            0.5143281503623446,
+            0.042879997146417735,
+            0.8565207875992109,
+            0.019249714602603003
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ]
+      }
+    ],
+    "candidate_positions_world_m": [
+      [
+        -0.12172650545835495,
+        -0.023010505363345146,
+        0.016921019181609154
+      ],
+      [
+        0.0033410571049898863,
+        -0.044065579771995544,
+        0.0027406199369579554
+      ],
+      [
+        -0.17681467533111572,
+        0.040872592478990555,
+        0.09382589906454086
+      ],
+      [
+        -0.01372345257550478,
+        0.07826023548841476,
+        0.024045241996645927
+      ],
+      [
+        0.17396357655525208,
+        -0.01196190807968378,
+        0.07539286464452744
+      ],
+      [
+        0.12088260799646378,
+        0.004360018763691187,
+        0.01924971491098404
+      ]
+    ],
+    "candidate_quaternions_world_wxyz": [
+      [
+        0.19413211941719055,
+        0.7109174132347107,
+        0.6530945301055908,
+        0.17428916692733765
+      ],
+      [
+        0.6718966364860535,
+        0.0,
+        0.0,
+        0.7406449317932129
+      ],
+      [
+        0.4444471299648285,
+        -0.4444471299648285,
+        0.5499697923660278,
+        -0.5499697923660278
+      ],
+      [
+        0.6464899182319641,
+        -0.7608528733253479,
+        0.0510883592069149,
+        -0.02331656590104103
+      ],
+      [
+        0.6343475580215454,
+        0.3346666991710663,
+        -0.6228950023651123,
+        -0.31241512298583984
+      ],
+      [
+        -0.05253729969263077,
+        0.26530590653419495,
+        0.03677482157945633,
+        0.962029218673706
+      ]
+    ],
+    "isaac_settling_elapsed_s": 2.0,
+    "velocity_quiet_reached": false,
+    "velocity_quiet_required": false,
+    "peak_linear_speed_m_s": 0.0975101888179779,
+    "peak_angular_speed_rad_s": 7.9198408126831055,
+    "best_max_linear_speed_m_s": 0.004577516112476587,
+    "best_max_angular_speed_rad_s": 0.0,
+    "last_linear_speeds_m_s": [
+      0.0002125196624547243,
+      0.00010264792217640206,
+      0.00634657172486186,
+      5.062557465862483e-05,
+      0.004581826273351908,
+      0.0013612504117190838
+    ],
+    "last_angular_speeds_rad_s": [
+      0.0029575738590210676,
+      0.0013057590695098042,
+      0.08825690299272537,
+      0.002086109947413206,
+      0.08592268079519272,
+      0.07468952983617783
+    ],
+    "positions_world_m": [
+      [
+        -0.12173978984355927,
+        -0.023012438789010048,
+        0.015896175056695938
+      ],
+      [
+        0.0033410547766834497,
+        -0.04406557232141495,
+        0.0017406227998435497
+      ],
+      [
+        -0.17682230472564697,
+        0.04087655618786812,
+        0.09282796829938889
+      ],
+      [
+        -0.01373757142573595,
+        0.07837297767400742,
+        0.02305474877357483
+      ],
+      [
+        0.17268377542495728,
+        -0.012161705642938614,
+        0.07410674542188644
+      ],
+      [
+        0.11382473260164261,
+        0.0047574033960700035,
+        0.016731956973671913
+      ]
+    ],
+    "quaternions_world_wxyz": [
+      [
+        0.19437633454799652,
+        0.7108516097068787,
+        0.6529979705810547,
+        0.1746465116739273
+      ],
+      [
+        0.6718966364860535,
+        -5.695202176525527e-08,
+        -3.679118520949487e-08,
+        0.7406448125839233
+      ],
+      [
+        0.44445428252220154,
+        -0.4444262981414795,
+        0.5499488115310669,
+        -0.5500018000602722
+      ],
+      [
+        0.6447444558143616,
+        -0.7623406052589417,
+        0.05077459290623665,
+        -0.02373138628900051
+      ],
+      [
+        0.6283787488937378,
+        0.33836644887924194,
+        -0.6280383467674255,
+        -0.3101872205734253
+      ],
+      [
+        -0.040712833404541016,
+        0.09035064280033112,
+        0.03224100545048714,
+        0.9945551156997681
+      ]
+    ],
+    "final_velocities_world": [
+      [
+        -4.669911504606716e-05,
+        -2.592236569398665e-06,
+        -0.00020730144751723856,
+        -0.00042435727664269507,
+        -0.0028507832903414965,
+        0.0007296311086975038
+      ],
+      [
+        -4.4194923248142004e-05,
+        -5.2356961532495916e-05,
+        7.642134733032435e-05,
+        -0.00046824465971440077,
+        0.0012185059022158384,
+        4.1672079532872885e-05
+      ],
+      [
+        0.004782353527843952,
+        0.00407445291057229,
+        -0.0009107945370487869,
+        -0.048597510904073715,
+        0.07111100107431412,
+        0.018881572410464287
+      ],
+      [
+        -3.259220829932019e-05,
+        -2.5963807274820283e-05,
+        -2.8570540962391533e-05,
+        0.001473418204113841,
+        -0.0014010031009092927,
+        -0.00046084553468972445
+      ],
+      [
+        0.00242735561914742,
+        0.0038396373856812716,
+        -0.0006197750335559249,
+        -0.07062561064958572,
+        0.04694923758506775,
+        -0.014041566289961338
+      ],
+      [
+        0.0013374789850786328,
+        0.00023626224719919264,
+        -7.880928023951128e-05,
+        -0.004559743218123913,
+        0.06185406073927879,
+        0.041544392704963684
+      ]
+    ],
+    "post_quiet_translation_drift_m": [
+      4.165001232792065e-09,
+      6.574116806490338e-09,
+      2.107342389479072e-08,
+      5.015325488244571e-09,
+      7.226007170402227e-08,
+      1.5535231767671576e-08
+    ],
+    "post_quiet_rotation_drift_deg": [
+      0.0,
+      0.0,
+      0.0,
+      0.022201496902434746,
+      0.0,
+      0.0
+    ],
+    "candidate_to_isaac_translation_adjustment_m": [
+      0.001024932018481195,
+      0.0009999971371144056,
+      0.0009979677852243185,
+      0.0009969889651983976,
+      0.0018253527814522386,
+      0.007504040841013193
+    ],
+    "candidate_to_isaac_rotation_adjustment_deg": [
+      0.041397702373357936,
+      0.0,
+      0.0,
+      0.2704380076958981,
+      1.0296251794919018,
+      20.470651222508558
+    ],
+    "geometry": [
+      {
+        "object_index": 0,
+        "aabb_world_min_m": [
+          -0.1633476402062585,
+          -0.11955157208786665,
+          -0.01647560840972144
+        ],
+        "aabb_world_max_m": [
+          -0.08013193948086003,
+          0.07352669450984656,
+          0.048267958523113316
+        ],
+        "mesh_world_min_m": [
+          -0.15840247500746413,
+          -0.11658815639050561,
+          -3.4238116633313054e-05
+        ],
+        "mesh_world_max_m": [
+          -0.09671053910249636,
+          0.0716113161135233,
+          0.04061281485845196
+        ],
+        "within_table_xy": true,
+        "table_supported": true,
+        "on_table": true
+      },
+      {
+        "object_index": 1,
+        "aabb_world_min_m": [
+          -0.08192726273016929,
+          -0.10901014446966605,
+          -9.697553128790518e-09
+        ],
+        "aabb_world_max_m": [
+          0.08860937228353619,
+          0.02087899982683615,
+          0.003481255297240228
+        ],
+        "mesh_world_min_m": [
+          -0.08175800022326318,
+          -0.1088396585746034,
+          -9.406646285688158e-09
+        ],
+        "mesh_world_max_m": [
+          0.08844010977663008,
+          0.020708513931773503,
+          0.003481255006333385
+        ],
+        "within_table_xy": true,
+        "table_supported": true,
+        "on_table": true
+      },
+      {
+        "object_index": 2,
+        "aabb_world_min_m": [
+          -0.2170562375081291,
+          -0.03363489903036421,
+          -1.2458123803682497e-06
+        ],
+        "aabb_world_max_m": [
+          -0.13658837194316484,
+          0.11538801140610044,
+          0.18565718241115814
+        ],
+        "mesh_world_min_m": [
+          -0.21577765463376136,
+          -0.030774018827854716,
+          1.4838708414788293e-08
+        ],
+        "mesh_world_max_m": [
+          -0.1483604511264309,
+          0.11411437772316634,
+          0.18565516378983504
+        ],
+        "within_table_xy": true,
+        "table_supported": true,
+        "on_table": true
+      },
+      {
+        "object_index": 3,
+        "aabb_world_min_m": [
+          -0.10540851127289438,
+          0.019974201437441545,
+          -0.01126711285547026
+        ],
+        "aabb_world_max_m": [
+          0.07793336842142248,
+          0.13677175391057328,
+          0.05737661040261992
+        ],
+        "mesh_world_min_m": [
+          -0.0982552302073195,
+          0.026377672734990622,
+          -0.00012779106209771102
+        ],
+        "mesh_world_max_m": [
+          0.07678675370762636,
+          0.12637381255979319,
+          0.048935209552216155
+        ],
+        "within_table_xy": true,
+        "table_supported": true,
+        "on_table": true
+      },
+      {
+        "object_index": 4,
+        "aabb_world_min_m": [
+          0.153987826562298,
+          -0.10849682695954882,
+          -0.0302949408445458
+        ],
+        "aabb_world_max_m": [
+          0.19137972428761654,
+          0.08417341567367159,
+          0.1785084316883187
+        ],
+        "mesh_world_min_m": [
+          0.15900349488426702,
+          -0.10295499627119513,
+          -0.0005726006932938454
+        ],
+        "mesh_world_max_m": [
+          0.19077103993716996,
+          0.04002068567377503,
+          0.15761508658980428
+        ],
+        "within_table_xy": true,
+        "table_supported": true,
+        "on_table": true
+      },
+      {
+        "object_index": 5,
+        "aabb_world_min_m": [
+          0.0863282756620624,
+          -0.0949688311533592,
+          -0.010499009047974999
+        ],
+        "aabb_world_max_m": [
+          0.1413211895412228,
+          0.10448363794549921,
+          0.04396292299531883
+        ],
+        "mesh_world_min_m": [
+          0.09498696301750106,
+          -0.09293778391946708,
+          -0.002331414906079316
+        ],
+        "mesh_world_max_m": [
+          0.134172342356258,
+          0.10168639666186031,
+          0.037725075150603915
+        ],
+        "within_table_xy": true,
+        "table_supported": true,
+        "on_table": true
+      }
+    ]
+  },
+  "camera_output": {
+    "network_input": "/home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_test60_10upright_10view_v1/scenes/scene_0000/network_input.npz",
+    "tensor_shapes": {
+      "pc": [
+        10,
+        40000,
+        3
+      ],
+      "seg": [
+        10,
+        40000
+      ],
+      "edge": [
+        10,
+        40000
+      ],
+      "extrinsics": [
+        10,
+        4,
+        4
+      ]
+    },
+    "valid_pixel_count_per_view": [
+      195064,
+      108257,
+      92805,
+      100854,
+      140600,
+      125132,
+      99051,
+      97940,
+      108430,
+      117398
+    ],
+    "reference_view_indices": [
+      0,
+      28,
+      57,
+      85,
+      113,
+      142,
+      170,
+      198,
+      227,
+      255
+    ],
+    "framing_records": [
+      {
+        "camera_distance_to_target_m": 0.7419507888788528,
+        "pixel_bounds_uv": [
+          [
+            189.38371383829804,
+            158.91192252773988
+          ],
+          [
+            1095.4904558733697,
+            684.0
+          ]
+        ],
+        "depth_bounds_m": [
+          0.5068214737220701,
+          0.7832138723963168
+        ],
+        "framing_margin_fraction": 0.05,
+        "framing_box_world_m": [
+          [
+            -0.25,
+            -0.15,
+            0.0
+          ],
+          [
+            0.25,
+            0.15,
+            0.2
+          ]
+        ],
+        "reference_view_index": 0,
+        "official_position_table_m": [
+          -0.060772665620782707,
+          -0.04276322475153656,
+          0.47765158535287394
+        ],
+        "fitted_position_world_m": [
+          0.01335002336736818,
+          0.18185114350342996,
+          0.7191960175088135
+        ]
+      },
+      {
+        "camera_distance_to_target_m": 0.9877384986456063,
+        "pixel_bounds_uv": [
+          [
+            458.4214131335303,
+            111.70001411052539
+          ],
+          [
+            849.7554856457139,
+            684.0
+          ]
+        ],
+        "depth_bounds_m": [
+          0.7079135955121324,
+          1.081595824345621
+        ],
+        "framing_margin_fraction": 0.05,
+        "framing_box_world_m": [
+          [
+            -0.25,
+            -0.15,
+            0.0
+          ],
+          [
+            0.25,
+            0.15,
+            0.2
+          ]
+        ],
+        "reference_view_index": 28,
+        "official_position_table_m": [
+          0.0799593972262955,
+          -0.13302521815125995,
+          0.4460282384465995
+        ],
+        "fitted_position_world_m": [
+          0.36323745522921447,
+          0.012647534443468519,
+          0.9184366786544309
+        ]
+      },
+      {
+        "camera_distance_to_target_m": 1.0622563393848583,
+        "pixel_bounds_uv": [
+          [
+            395.67476031262515,
+            98.01950857766798
+          ],
+          [
+            916.385022584509,
+            684.0
+          ]
+        ],
+        "depth_bounds_m": [
+          0.7677475249610332,
+          1.1715260842453024
+        ],
+        "framing_margin_fraction": 0.05,
+        "framing_box_world_m": [
+          [
+            -0.25,
+            -0.15,
+            0.0
+          ],
+          [
+            0.25,
+            0.15,
+            0.2
+          ]
+        ],
+        "reference_view_index": 57,
+        "official_position_table_m": [
+          0.06708943260727626,
+          -0.07631787117853694,
+          0.4394944721629292
+        ],
+        "fitted_position_world_m": [
+          0.3638772947413118,
+          0.16735436997096376,
+          0.983856879727273
+        ]
+      },
+      {
+        "camera_distance_to_target_m": 1.0063939395178074,
+        "pixel_bounds_uv": [
+          [
+            317.62487953952194,
+            105.77254326913496
+          ],
+          [
+            969.190955145795,
+            684.0
+          ]
+        ],
+        "depth_bounds_m": [
+          0.7092421223404318,
+          1.12244123324156
+        ],
+        "framing_margin_fraction": 0.05,
+        "framing_box_world_m": [
+          [
+            -0.25,
+            -0.15,
+            0.0
+          ],
+          [
+            0.25,
+            0.15,
+            0.2
+          ]
+        ],
+        "reference_view_index": 85,
+        "official_position_table_m": [
+          0.03494574774630369,
+          -0.010947419543599207,
+          0.4239999912056825
+        ],
+        "fitted_position_world_m": [
+          0.2674102456140298,
+          0.3329115446501365,
+          0.9113124741149308
+        ]
+      },
+      {
+        "camera_distance_to_target_m": 0.8359553207155127,
+        "pixel_bounds_uv": [
+          [
+            222.55901306366763,
+            148.23844960035882
+          ],
+          [
+            995.3144104985568,
+            683.9999999999999
+          ]
+        ],
+        "depth_bounds_m": [
+          0.5625867632097524,
+          0.9344791724332285
+        ],
+        "framing_margin_fraction": 0.05,
+        "framing_box_world_m": [
+          [
+            -0.25,
+            -0.15,
+            0.0
+          ],
+          [
+            0.25,
+            0.15,
+            0.2
+          ]
+        ],
+        "reference_view_index": 113,
+        "official_position_table_m": [
+          -0.0257920574404749,
+          0.041550086433274756,
+          0.4063174341858779
+        ],
+        "fitted_position_world_m": [
+          0.09230122456094073,
+          0.39524154613716883,
+          0.7308118105122734
+        ]
+      },
+      {
+        "camera_distance_to_target_m": 0.874006851617564,
+        "pixel_bounds_uv": [
+          [
+            291.48872490515697,
+            145.87836175650006
+          ],
+          [
+            1029.4965349168504,
+            684.0
+          ]
+        ],
+        "depth_bounds_m": [
+          0.6000494836152821,
+          0.9768506493018247
+        ],
+        "framing_margin_fraction": 0.05,
+        "framing_box_world_m": [
+          [
+            -0.25,
+            -0.15,
+            0.0
+          ],
+          [
+            0.25,
+            0.15,
+            0.2
+          ]
+        ],
+        "reference_view_index": 142,
+        "official_position_table_m": [
+          -0.10879296113353645,
+          0.0528427239340818,
+          0.39766894517296103
+        ],
+        "fitted_position_world_m": [
+          -0.09398716159460976,
+          0.4425959561584123,
+          0.7477721643134734
+        ]
+      },
+      {
+        "camera_distance_to_target_m": 0.9646599266961488,
+        "pixel_bounds_uv": [
+          [
+            295.8708229986774,
+            108.93325405593504
+          ],
+          [
+            963.7549847493456,
+            684.0
+          ]
+        ],
+        "depth_bounds_m": [
+          0.6432821754366493,
+          1.126288357124345
+        ],
+        "framing_margin_fraction": 0.05,
+        "framing_box_world_m": [
+          [
+            -0.25,
+            -0.15,
+            0.0
+          ],
+          [
+            0.25,
+            0.15,
+            0.2
+          ]
+        ],
+        "reference_view_index": 170,
+        "official_position_table_m": [
+          -0.2035266003209474,
+          0.04496860934750769,
+          0.3757580345403063
+        ],
+        "fitted_position_world_m": [
+          -0.34253638208928633,
+          0.46854916217703574,
+          0.7705188406144263
+        ]
+      },
+      {
+        "camera_distance_to_target_m": 0.94447234976361,
+        "pixel_bounds_uv": [
+          [
+            300.04338647362613,
+            96.05193041042935
+          ],
+          [
+            905.3168197657326,
+            684.0
+          ]
+        ],
+        "depth_bounds_m": [
+          0.5988406645045872,
+          1.1448011179825934
+        ],
+        "framing_margin_fraction": 0.05,
+        "framing_box_world_m": [
+          [
+            -0.25,
+            -0.15,
+            0.0
+          ],
+          [
+            0.25,
+            0.15,
+            0.2
+          ]
+        ],
+        "reference_view_index": 198,
+        "official_position_table_m": [
+          -0.2946811870419679,
+          -0.002601998909297569,
+          0.3512028064410557
+        ],
+        "fitted_position_world_m": [
+          -0.5534155831295914,
+          0.3390072444175681,
+          0.6861729374215632
+        ]
+      },
+      {
+        "camera_distance_to_target_m": 0.8820681171493624,
+        "pixel_bounds_uv": [
+          [
+            335.253302818219,
+            109.69585760704771
+          ],
+          [
+            834.3920882719758,
+            684.0
+          ]
+        ],
+        "depth_bounds_m": [
+          0.545821240904568,
+          1.0830259880110316
+        ],
+        "framing_margin_fraction": 0.05,
+        "framing_box_world_m": [
+          [
+            -0.25,
+            -0.15,
+            0.0
+          ],
+          [
+            0.25,
+            0.15,
+            0.2
+          ]
+        ],
+        "reference_view_index": 227,
+        "official_position_table_m": [
+          -0.3542917893067779,
+          -0.09049576008383087,
+          0.3381417372703597
+        ],
+        "fitted_position_world_m": [
+          -0.6390933170012385,
+          0.1165680101799151,
+          0.5966705912465197
+        ]
+      },
+      {
+        "camera_distance_to_target_m": 0.8301610296852524,
+        "pixel_bounds_uv": [
+          [
+            364.9937946206996,
+            129.21799079271094
+          ],
+          [
+            910.4036349210471,
+            684.0
+          ]
+        ],
+        "depth_bounds_m": [
+          0.5093396262770802,
+          1.0243082612599759
+        ],
+        "framing_margin_fraction": 0.05,
+        "framing_box_world_m": [
+          [
+            -0.25,
+            -0.15,
+            0.0
+          ],
+          [
+            0.25,
+            0.15,
+            0.2
+          ]
+        ],
+        "reference_view_index": 255,
+        "official_position_table_m": [
+          -0.3781448417840384,
+          -0.14163597081377696,
+          0.3243527709072649
+        ],
+        "fitted_position_world_m": [
+          -0.6424074873501062,
+          0.0038106255805798956,
+          0.5257998046189122
+        ]
+      }
+    ],
+    "workspace_bounds_world_m_per_view": [
+      [
+        [
+          -0.23447938543684654,
+          -0.1356835423511534,
+          -0.01954400872421967
+        ],
+        [
+          0.20995404030230003,
+          0.14647335058730127,
+          0.20558964588175907
+        ]
+      ],
+      [
+        [
+          -0.23200529559010727,
+          -0.13550889962317214,
+          -0.019689029308321487
+        ],
+        [
+          0.21117263137739828,
+          0.14672096399820353,
+          0.20548429092944384
+        ]
+      ],
+      [
+        [
+          -0.23234207610648358,
+          -0.13512139888740057,
+          -0.019753146404984916
+        ],
+        [
+          0.21093192400832203,
+          0.14699246639628152,
+          0.20546977817031606
+        ]
+      ],
+      [
+        [
+          -0.2317882337478859,
+          -0.13527245860492174,
+          -0.01979130647392267
+        ],
+        [
+          0.21061310403334052,
+          0.14704502416226087,
+          0.20546338729305477
+        ]
+      ],
+      [
+        [
+          -0.23173173015279208,
+          -0.13554309906220843,
+          -0.01973868557232737
+        ],
+        [
+          0.20947790099133215,
+          0.14680741523870924,
+          0.20548675314243944
+        ]
+      ],
+      [
+        [
+          -0.23447639254593985,
+          -0.13566249025835306,
+          -0.019769263208184267
+        ],
+        [
+          0.2092445846029951,
+          0.1466170170065547,
+          0.205473629733094
+        ]
+      ],
+      [
+        [
+          -0.23635445727856932,
+          -0.1357246718271317,
+          -0.02016848839538397
+        ],
+        [
+          0.2088263732538034,
+          0.1463735105371949,
+          0.20542173080300172
+        ]
+      ],
+      [
+        [
+          -0.23625159404835636,
+          -0.13616584273006058,
+          -0.02037629891274027
+        ],
+        [
+          0.2086352358163361,
+          0.1461414273183155,
+          0.20539959196211352
+        ]
+      ],
+      [
+        [
+          -0.23608064034217127,
+          -0.13628011726672218,
+          -0.019598398152840795
+        ],
+        [
+          0.20900089524824492,
+          0.14576328527694227,
+          0.20540564472898057
+        ]
+      ],
+      [
+        [
+          -0.23598793123235215,
+          -0.13650378554117584,
+          -0.019826020944393435
+        ],
+        [
+          0.20924016639312135,
+          0.14490297125772003,
+          0.2054119344721266
+        ]
+      ]
+    ]
+  },
+  "source_ledger": {
+    "table": "DexGraspNet 2.0 paper and supplement: objects are placed within an approximately 30 cm x 50 cm tabletop/area. The 2 cm thickness and tabletop-centred world origin are adapter conventions.",
+    "candidate_sampling": "Adapter method: Trimesh 4.12.2 compute_stable_poses provides quasi-static support poses; Shapely 2D convex footprints are packed inside the paper-sized tabletop. This is not the unreleased modified DREDS generator.",
+    "scene_generation": "The validated training-set pipeline is reused unchanged: Trimesh stable poses and six-object random-anchor footprint packing, followed by Isaac Sim 5.0 physical acceptance. Every analytic candidate additionally enables the recorded upright-pose preference requested for this held-out test family.",
+    "physics": "mass=0.1 kg and friction=0.2 follow DexGraspNet 2.0 evaluation settings; solver/contact details are adapter values",
+    "stability": "Adapter acceptance contract. Analytic candidates start 1 mm above their stable support plane. Isaac allows up to 2 s for settling, records the velocity-quiet diagnostic, and then accepts only if every object moves at most 2 mm and rotates at most 2 degrees over a separate 1 s observation. Exact mesh vertices must remain inside the tabletop and no more than 3 mm below its contact plane. Exact scene-stability thresholds are not published.",
+    "camera_pose": "open-source GraspNet scene_0000/realsense: T_table_camera = cam0_wrt_table @ camera_poses[index]",
+    "camera_intrinsics": "open-source GraspNet scene_0000/realsense/camK.npy, converted to Isaac/Omniverse's supported pinhole form by averaging fx/fy and centering cx/cy"
+  }
+}

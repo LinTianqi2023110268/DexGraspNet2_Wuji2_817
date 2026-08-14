@@ -1,0 +1,59 @@
+current_path	group	classification	metadata_status	metadata_path	reason
+08_dual_arm_scene_layout/isaaclab_control/scripts/00_check_initial_stability.py	scripts	REVIEW	N/A		Classified by role/name only; verify consumers before Phase 3 move
+08_dual_arm_scene_layout/isaaclab_control/scripts/01_run_short_motion.py	scripts	VERIFIED_DIAGNOSTIC	N/A		Classified by role/name only; verify consumers before Phase 3 move
+08_dual_arm_scene_layout/isaaclab_control/scripts/02_capture_scene0000_rgbd.py	scripts	REVIEW	N/A		Classified by role/name only; verify consumers before Phase 3 move
+08_dual_arm_scene_layout/isaaclab_control/scripts/02_check_motion_math.py	scripts	REVIEW	N/A		Classified by role/name only; verify consumers before Phase 3 move
+08_dual_arm_scene_layout/isaaclab_control/scripts/03_build_arm_execution_targets.py	scripts	REVIEW	N/A		Classified by role/name only; verify consumers before Phase 3 move
+08_dual_arm_scene_layout/isaaclab_control/scripts/03_scan_j6_gravity_margin.py	scripts	HISTORY	N/A		Classified by role/name only; verify consumers before Phase 3 move
+08_dual_arm_scene_layout/isaaclab_control/scripts/04_audit_mass_tree.py	scripts	VERIFIED_DIAGNOSTIC	N/A		Classified by role/name only; verify consumers before Phase 3 move
+08_dual_arm_scene_layout/isaaclab_control/scripts/04_audit_pregrasp_reachability.py	scripts	REVIEW	N/A		Classified by role/name only; verify consumers before Phase 3 move
+08_dual_arm_scene_layout/isaaclab_control/scripts/05_make_accel_nf_scan_configs.py	scripts	HISTORY	N/A		Classified by role/name only; verify consumers before Phase 3 move
+08_dual_arm_scene_layout/isaaclab_control/scripts/05_screen_arm_reachable_candidates.py	scripts	REVIEW	N/A		Classified by role/name only; verify consumers before Phase 3 move
+08_dual_arm_scene_layout/isaaclab_control/scripts/06_audit_pregrasp_joint_path.py	scripts	REVIEW	N/A		Classified by role/name only; verify consumers before Phase 3 move
+08_dual_arm_scene_layout/isaaclab_control/scripts/06_make_force_nf_scan_configs.py	scripts	HISTORY	N/A		Classified by role/name only; verify consumers before Phase 3 move
+08_dual_arm_scene_layout/isaaclab_control/scripts/07_screen_approach_reachable_candidates.py	scripts	REVIEW	N/A		Classified by role/name only; verify consumers before Phase 3 move
+08_dual_arm_scene_layout/isaaclab_control/scripts/08_solve_full_arm_waypoints.py	scripts	REVIEW	N/A		Classified by role/name only; verify consumers before Phase 3 move
+08_dual_arm_scene_layout/isaaclab_control/scripts/09_audit_full_joint_path.py	scripts	REVIEW	N/A		Classified by role/name only; verify consumers before Phase 3 move
+08_dual_arm_scene_layout/isaaclab_control/scripts/10_run_full_pick_place.py	scripts	ACTIVE	N/A		Classified by role/name only; verify consumers before Phase 3 move
+08_dual_arm_scene_layout/isaaclab_control/scripts/11_replay_physical_trajectory.py	scripts	ACTIVE	N/A		Classified by role/name only; verify consumers before Phase 3 move
+08_dual_arm_scene_layout/isaaclab_control/scripts/11_settle_and_capture_dynamic_scene.py	scripts	REVIEW	N/A		Classified by role/name only; verify consumers before Phase 3 move
+08_dual_arm_scene_layout/isaaclab_control/scripts/12_screen_live_candidates.py	scripts	REVIEW	N/A		Classified by role/name only; verify consumers before Phase 3 move
+08_dual_arm_scene_layout/isaaclab_control/scripts/13_resample_until_arm_reachable.py	scripts	REVIEW	N/A		Classified by role/name only; verify consumers before Phase 3 move
+08_dual_arm_scene_layout/isaaclab_control/scripts/14_refine_reachable_shortlist.py	scripts	REVIEW	N/A		Classified by role/name only; verify consumers before Phase 3 move
+08_dual_arm_scene_layout/isaaclab_control/scripts/__pycache__	scripts	REVIEW	N/A		Classified by role/name only; verify consumers before Phase 3 move
+08_dual_arm_scene_layout/isaaclab_control/scripts/motion_math.py	scripts	REVIEW	N/A		Classified by role/name only; verify consumers before Phase 3 move
+08_dual_arm_scene_layout/isaaclab_control/scripts/placement_allocator.py	scripts	REVIEW	N/A		Classified by role/name only; verify consumers before Phase 3 move
+08_dual_arm_scene_layout/isaaclab_control/scripts/runtime_rebase_ik.py	scripts	REVIEW	N/A		Classified by role/name only; verify consumers before Phase 3 move
+08_dual_arm_scene_layout/isaaclab_control/outputs/README.md	outputs	HISTORY	NO_STATUS		Historical/failed diagnostic; retain summary before any deletion
+08_dual_arm_scene_layout/isaaclab_control/outputs/accel_nf_scan	outputs	HISTORY	NO_STATUS		Historical/failed diagnostic; retain summary before any deletion
+08_dual_arm_scene_layout/isaaclab_control/outputs/diagnostic_grouped_pd_zero_gravity	outputs	VERIFIED_DIAGNOSTIC	PASS	08_dual_arm_scene_layout/isaaclab_control/outputs/diagnostic_grouped_pd_zero_gravity/report.json	Small unique diagnostic; not a business case
+08_dual_arm_scene_layout/isaaclab_control/outputs/explicit_pd	outputs	HISTORY	NO_STATUS		Historical/failed diagnostic; retain summary before any deletion
+08_dual_arm_scene_layout/isaaclab_control/outputs/force_nf_finetune	outputs	VERIFIED_DIAGNOSTIC	NO_STATUS	08_dual_arm_scene_layout/isaaclab_control/outputs/force_nf_finetune/summary.json	Required control diagnostic baseline
+08_dual_arm_scene_layout/isaaclab_control/outputs/force_nf_scan	outputs	HISTORY	NO_STATUS		Historical/failed diagnostic; retain summary before any deletion
+08_dual_arm_scene_layout/isaaclab_control/outputs/full_pick_place_25s_dog_candidate3800	outputs	VERIFIED	PASS	08_dual_arm_scene_layout/isaaclab_control/outputs/full_pick_place_25s_dog_candidate3800/report.json	Canonical route-C 24.85 s full pick-place
+08_dual_arm_scene_layout/isaaclab_control/outputs/full_pick_place_live_dog_candidate3800	outputs	HISTORY	PASS	08_dual_arm_scene_layout/isaaclab_control/outputs/full_pick_place_live_dog_candidate3800/report.json	PASS but superseded or diagnostic
+08_dual_arm_scene_layout/isaaclab_control/outputs/full_pick_place_scene0000_ashtray_candidate0597	outputs	FAILED_HISTORY	FAIL	08_dual_arm_scene_layout/isaaclab_control/outputs/full_pick_place_scene0000_ashtray_candidate0597/report.json	Historical/failed diagnostic; retain summary before any deletion
+08_dual_arm_scene_layout/isaaclab_control/outputs/full_pick_place_scene0000_ashtray_candidate0597_lift_gate	outputs	FAILED_HISTORY	FAIL	08_dual_arm_scene_layout/isaaclab_control/outputs/full_pick_place_scene0000_ashtray_candidate0597_lift_gate/report.json	Historical/failed diagnostic; retain summary before any deletion
+08_dual_arm_scene_layout/isaaclab_control/outputs/initial_stability	outputs	FAILED_HISTORY	FAIL	08_dual_arm_scene_layout/isaaclab_control/outputs/initial_stability/report.json	Historical/failed diagnostic; retain summary before any deletion
+08_dual_arm_scene_layout/isaaclab_control/outputs/initial_stability_grouped_pd_round1	outputs	FAILED_HISTORY	FAIL	08_dual_arm_scene_layout/isaaclab_control/outputs/initial_stability_grouped_pd_round1/report.json	Historical/failed diagnostic; retain summary before any deletion
+08_dual_arm_scene_layout/isaaclab_control/outputs/initial_stability_grouped_pd_round1_mass_fixed	outputs	FAILED_HISTORY	FAIL	08_dual_arm_scene_layout/isaaclab_control/outputs/initial_stability_grouped_pd_round1_mass_fixed/report.json	Historical/failed diagnostic; retain summary before any deletion
+08_dual_arm_scene_layout/isaaclab_control/outputs/initial_stability_grouped_pd_round2	outputs	FAILED_HISTORY	FAIL	08_dual_arm_scene_layout/isaaclab_control/outputs/initial_stability_grouped_pd_round2/report.json	Historical/failed diagnostic; retain summary before any deletion
+08_dual_arm_scene_layout/isaaclab_control/outputs/live_dynamic_scene0000_dog_candidate3800_lift_gate	outputs	HISTORY	PASS	08_dual_arm_scene_layout/isaaclab_control/outputs/live_dynamic_scene0000_dog_candidate3800_lift_gate/report.json	Stage-only result covered by full pick-place baseline; keep summary/reference
+08_dual_arm_scene_layout/isaaclab_control/outputs/live_scene0000_ashtray_fullflow_candidate0191_lift_gate	outputs	FAILED_HISTORY	FAIL	08_dual_arm_scene_layout/isaaclab_control/outputs/live_scene0000_ashtray_fullflow_candidate0191_lift_gate/report.json	Historical/failed diagnostic; retain summary before any deletion
+08_dual_arm_scene_layout/isaaclab_control/outputs/mass_fixed_round1_ab_summary.json	outputs	HISTORY	NO_STATUS		Historical/failed diagnostic; retain summary before any deletion
+08_dual_arm_scene_layout/isaaclab_control/outputs/mass_tree_audit_round1_mass_fixed	outputs	VERIFIED_DIAGNOSTIC	NO_STATUS	08_dual_arm_scene_layout/isaaclab_control/outputs/mass_tree_audit_round1_mass_fixed/report.json	Required control diagnostic baseline
+08_dual_arm_scene_layout/isaaclab_control/outputs/placement_registry.json	outputs	HISTORY	NO_STATUS		Historical/failed diagnostic; retain summary before any deletion
+08_dual_arm_scene_layout/isaaclab_control/outputs/pregrasp_candidate0336_dry	outputs	FAILED_HISTORY	FAIL	08_dual_arm_scene_layout/isaaclab_control/outputs/pregrasp_candidate0336_dry/report.json	Historical/failed diagnostic; retain summary before any deletion
+08_dual_arm_scene_layout/isaaclab_control/outputs/report_demo_20s_dog_candidate3800	outputs	HISTORY	PASS	08_dual_arm_scene_layout/isaaclab_control/outputs/report_demo_20s_dog_candidate3800/report.json	Stage-only result covered by full pick-place baseline; keep summary/reference
+08_dual_arm_scene_layout/isaaclab_control/outputs/scene0002_view0007_official_rank0_lift_gate	outputs	FAILED_HISTORY	FAIL	08_dual_arm_scene_layout/isaaclab_control/outputs/scene0002_view0007_official_rank0_lift_gate/report.json	Historical/failed diagnostic; retain summary before any deletion
+08_dual_arm_scene_layout/isaaclab_control/outputs/scene0003_view0005_official_rank0_lift_gate	outputs	FAILED_HISTORY	FAIL	08_dual_arm_scene_layout/isaaclab_control/outputs/scene0003_view0005_official_rank0_lift_gate/report.json	Historical/failed diagnostic; retain summary before any deletion
+08_dual_arm_scene_layout/isaaclab_control/outputs/short_motion	outputs	FAILED_HISTORY	FAIL	08_dual_arm_scene_layout/isaaclab_control/outputs/short_motion/report.json	Historical/failed diagnostic; retain summary before any deletion
+08_dual_arm_scene_layout/isaaclab_control/outputs/short_motion_ft04_gate0_zero	outputs	VERIFIED_DIAGNOSTIC	PASS	08_dual_arm_scene_layout/isaaclab_control/outputs/short_motion_ft04_gate0_zero/report.json	Small unique diagnostic; not a business case
+08_dual_arm_scene_layout/isaaclab_control/outputs/short_motion_ft04_gate1_z1	outputs	VERIFIED_DIAGNOSTIC	PASS	08_dual_arm_scene_layout/isaaclab_control/outputs/short_motion_ft04_gate1_z1/report.json	Small unique diagnostic; not a business case
+08_dual_arm_scene_layout/isaaclab_control/outputs/short_motion_ft04_z20	outputs	FAILED_HISTORY	FAIL	08_dual_arm_scene_layout/isaaclab_control/outputs/short_motion_ft04_z20/report.json	Historical/failed diagnostic; retain summary before any deletion
+08_dual_arm_scene_layout/isaaclab_control/outputs/short_motion_ft04_z20_fixed	outputs	VERIFIED_DIAGNOSTIC	PASS	08_dual_arm_scene_layout/isaaclab_control/outputs/short_motion_ft04_z20_fixed/report.json	Required control diagnostic baseline
+08_dual_arm_scene_layout/isaaclab_control/report_demo/README.md	report_demo	REVIEW	N/A		Classified by role/name only; verify consumers before Phase 3 move
+08_dual_arm_scene_layout/isaaclab_control/report_demo/assets	report_demo	REVIEW	N/A		Classified by role/name only; verify consumers before Phase 3 move
+08_dual_arm_scene_layout/isaaclab_control/report_demo/launch_interactive_demo.sh	report_demo	ACTIVE	N/A		Classified by role/name only; verify consumers before Phase 3 move
+08_dual_arm_scene_layout/isaaclab_control/report_demo/results	report_demo	REVIEW	N/A		Classified by role/name only; verify consumers before Phase 3 move
+08_dual_arm_scene_layout/isaaclab_control/report_demo/scripts	report_demo	REVIEW	N/A		Classified by role/name only; verify consumers before Phase 3 move

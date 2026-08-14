@@ -1,0 +1,23 @@
+{
+  "source": "official DexGraspNet2.0 dex_graspness_new",
+  "scene": "scene_0000",
+  "camera": "realsense",
+  "view": 0,
+  "sampling_seed": 0,
+  "score_space": "log",
+  "point_count": 40000,
+  "table_point_count": 17650,
+  "object_point_count": 22350,
+  "positive_graspness_point_count": 8285,
+  "raw_graspness_object_min_median_max": [
+    0.0,
+    0.0,
+    118.09772491455078
+  ],
+  "display_score_object_min_median_max": [
+    -6.907755374908447,
+    -6.907755374908447,
+    4.771521091461182
+  ],
+  "color_contract": "table gray; object points log(raw + 1e-3) with per-scene linear Viridis scale"
+}

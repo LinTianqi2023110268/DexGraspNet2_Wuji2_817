@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "canonical_release": {
+    "repository": "https://github.com/wuji-technology/wuji-description.git",
+    "commit": "8271644a78d69ed9a4adcf9165d882c64ad33dfa",
+    "model": "Wuji Hand 2 Beta 1 right",
+    "usd_entry": "01_environment/vendor/wuji-description/hand2/hand2_beta1/body/usd/right/wujihand2.usd",
+    "companion_urdf": "01_environment/vendor/wuji-description/hand2/hand2_beta1/body/urdf/right.urdf",
+    "usd_folder_policy": "Keep the complete usd/right folder together; the layered asset is self-contained only as a folder.",
+    "root_link": "r_wrist",
+    "actuated_joint_count": 20,
+    "usd_sha256": "261fbdf7a1c6c95f9d7c529356618d4cb39af98940014be139018c4d213e3ba7",
+    "usd_layer_sha256": {
+      "configuration/wujihand2_base.usd": "2c1a47e547b5abde2ee72867f02fc20437dc607b4d3bbb05262bfff280d2325b",
+      "configuration/wujihand2_physics.usd": "a39fd27a776fbb02dc0e4410bc287721999fb7812f5554e3bbd0935b9634f01b",
+      "configuration/wujihand2_robot.usd": "bff5fb80549a14f026479fd2d7f5b02cae47364d12e73d1bb85bcbaddfee276d",
+      "configuration/wujihand2_sensor.usd": "1335af36af3b6ae63929f24d6da67762bb6cf411ef47fcc92aa0fc77cb44290b"
+    },
+    "usd_physics_layer_sha256": "a39fd27a776fbb02dc0e4410bc287721999fb7812f5554e3bbd0935b9634f01b",
+    "companion_urdf_sha256": "1ae70be3f5e64532203e599eaa98d2af368d0214be9c949a358b7abaa8b6265a"
+  },
+  "legacy_dataset_compatibility": {
+    "legacy_pose_frame": "r_base_link",
+    "legacy_marker_frame": "r_wrist",
+    "legacy_base_T_legacy_wrist": [
+      [1.0, 0.0, 0.0, 0.000250158192548897],
+      [0.0, 1.0, 0.0, 0.00300004199195804],
+      [0.0, 0.0, 1.0, 0.028499851090377],
+      [0.0, 0.0, 0.0, 1.0]
+    ],
+    "official_wrist_T_coordinate_to_legacy_wrist": [
+      [0.0, 1.0, 0.0, 0.0],
+      [1.0, 0.0, 0.0, 0.0],
+      [0.0, 0.0, -1.0, 0.0],
+      [0.0, 0.0, 0.0, 1.0]
+    ],
+    "pose_conversion": "T_world_official_wrist = T_world_legacy_base * legacy_base_T_legacy_wrist * official_wrist_T_coordinate_to_legacy_wrist",
+    "joint_mapping": "Map the same 20 semantic joint values by joint name, never by raw imported index.",
+    "validated_random_fk_max_position_error_m": 0.0000059,
+    "warning": "Legacy labels were optimized and collision-filtered against the legacy geometry. Coordinate conversion preserves kinematics, but official collision geometry still requires a new collision preflight and physical validation."
+  },
+  "runtime_policy": {
+    "isaac_sim_hand_asset": "official USD only",
+    "new_offline_fk_and_training_geometry_target": "official companion URDF from the same commit",
+    "existing_dataset_status": "Immutable compatibility input generated with the legacy r_base_link model and collision SDF; do not relabel it as official geometry without regenerating collision labels and physical validation.",
+    "native_usd_baseline": "Do not overwrite official joint drives, effort limits, self-collision or collision approximation in the first A/B test.",
+    "physical_materials": "The official hand USD has no authored physics material; friction and restitution must be declared and logged by the experiment."
+  }
+}

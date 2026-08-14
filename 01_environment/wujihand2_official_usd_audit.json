@@ -1,0 +1,1116 @@
+{
+  "articulation_roots": [
+    "/wujihand2_right/root_joint"
+  ],
+  "asset": "/home/lin/Projects/DexGraspNet2_Wuji2/01_environment/vendor/wuji-description/hand2/hand2_beta1/body/usd/right/wujihand2.usd",
+  "collision_prims": [],
+  "default_prim": "/wujihand2_right",
+  "frames_per_second": 24.0,
+  "joints": [
+    {
+      "applied_schemas": [
+        "PhysicsDriveAPI:angular"
+      ],
+      "attributes": {
+        "drive:angular:physics:damping": 2.0,
+        "drive:angular:physics:maxForce": 2.0,
+        "drive:angular:physics:stiffness": 50.0,
+        "drive:angular:physics:targetPosition": 0.0,
+        "drive:angular:physics:type": "force",
+        "physics:JointEquivalentInertia": 0.0005312610883265734,
+        "physics:axis": "X",
+        "physics:breakForce": 3.4028234663852886e+38,
+        "physics:breakTorque": 3.4028234663852886e+38,
+        "physics:localPos0": "(0.022661, -0.0033252, -0.069975)",
+        "physics:localPos1": "(0, 0, 0)",
+        "physics:localRot0": "(0.99626714, -0.016387505, -0.06936763, 0.048695717)",
+        "physics:localRot1": "(1, 0, 0, 0)",
+        "physics:lowerLimit": -59.98868179321289,
+        "physics:upperLimit": 89.9543685913086,
+        "physxJoint:maxJointVelocity": 469.99725341796875
+      },
+      "name": "r_index_finger_mcp_flex",
+      "path": "/wujihand2_right/joints/r_index_finger_mcp_flex",
+      "relationships": {
+        "physics:body0": [
+          "/wujihand2_right/r_wrist"
+        ],
+        "physics:body1": [
+          "/wujihand2_right/r_index_finger_proximal"
+        ]
+      },
+      "type": "PhysicsRevoluteJoint"
+    },
+    {
+      "applied_schemas": [
+        "PhysicsDriveAPI:angular"
+      ],
+      "attributes": {
+        "drive:angular:physics:damping": 2.0,
+        "drive:angular:physics:maxForce": 2.0,
+        "drive:angular:physics:stiffness": 50.0,
+        "drive:angular:physics:targetPosition": 0.0,
+        "drive:angular:physics:type": "force",
+        "physics:JointEquivalentInertia": 0.0002499464899301529,
+        "physics:axis": "Y",
+        "physics:breakForce": 3.4028234663852886e+38,
+        "physics:breakTorque": 3.4028234663852886e+38,
+        "physics:localPos0": "(0, -0.0012009802, -0.0145)",
+        "physics:localPos1": "(0, 0, 0)",
+        "physics:localRot0": "(1, 0, 0, 0)",
+        "physics:localRot1": "(1, 0, 0, 0)",
+        "physics:lowerLimit": -39.992454528808594,
+        "physics:upperLimit": 39.992454528808594,
+        "physxJoint:maxJointVelocity": 464.6687316894531
+      },
+      "name": "r_index_finger_mcp_abd",
+      "path": "/wujihand2_right/joints/r_index_finger_mcp_abd",
+      "relationships": {
+        "physics:body0": [
+          "/wujihand2_right/r_index_finger_proximal"
+        ],
+        "physics:body1": [
+          "/wujihand2_right/r_index_finger_proximal_abd"
+        ]
+      },
+      "type": "PhysicsRevoluteJoint"
+    },
+    {
+      "applied_schemas": [
+        "PhysicsDriveAPI:angular"
+      ],
+      "attributes": {
+        "drive:angular:physics:damping": 2.0,
+        "drive:angular:physics:maxForce": 2.0,
+        "drive:angular:physics:stiffness": 50.0,
+        "drive:angular:physics:targetPosition": 0.0,
+        "drive:angular:physics:type": "force",
+        "physics:JointEquivalentInertia": 0.00016041708295233548,
+        "physics:axis": "X",
+        "physics:breakForce": 3.4028234663852886e+38,
+        "physics:breakTorque": 3.4028234663852886e+38,
+        "physics:localPos0": "(0, 0, -0.0376)",
+        "physics:localPos1": "(0, 0, 0)",
+        "physics:localRot0": "(1, 0, 0, 0)",
+        "physics:localRot1": "(1, 0, 0, 0)",
+        "physics:lowerLimit": -59.98868179321289,
+        "physics:upperLimit": 119.97736358642578,
+        "physxJoint:maxJointVelocity": 736.8236694335938
+      },
+      "name": "r_index_finger_pip",
+      "path": "/wujihand2_right/joints/r_index_finger_pip",
+      "relationships": {
+        "physics:body0": [
+          "/wujihand2_right/r_index_finger_proximal_abd"
+        ],
+        "physics:body1": [
+          "/wujihand2_right/r_index_finger_middle"
+        ]
+      },
+      "type": "PhysicsRevoluteJoint"
+    },
+    {
+      "applied_schemas": [
+        "PhysicsDriveAPI:angular"
+      ],
+      "attributes": {
+        "drive:angular:physics:damping": 2.0,
+        "drive:angular:physics:maxForce": 2.0,
+        "drive:angular:physics:stiffness": 50.0,
+        "drive:angular:physics:targetPosition": 0.0,
+        "drive:angular:physics:type": "force",
+        "physics:JointEquivalentInertia": 1.9876093574566767e-05,
+        "physics:axis": "X",
+        "physics:breakForce": 3.4028234663852886e+38,
+        "physics:breakTorque": 3.4028234663852886e+38,
+        "physics:localPos0": "(0, 0, -0.0295)",
+        "physics:localPos1": "(0, 0, 0)",
+        "physics:localRot0": "(1, 0, 0, 0)",
+        "physics:localRot1": "(1, 0, 0, 0)",
+        "physics:lowerLimit": -59.98868179321289,
+        "physics:upperLimit": 89.9543685913086,
+        "physxJoint:maxJointVelocity": 773.4929809570312
+      },
+      "name": "r_index_finger_dip",
+      "path": "/wujihand2_right/joints/r_index_finger_dip",
+      "relationships": {
+        "physics:body0": [
+          "/wujihand2_right/r_index_finger_middle"
+        ],
+        "physics:body1": [
+          "/wujihand2_right/r_index_finger_distal"
+        ]
+      },
+      "type": "PhysicsRevoluteJoint"
+    },
+    {
+      "applied_schemas": [],
+      "attributes": {
+        "physics:JointEquivalentInertia": 0.0,
+        "physics:breakForce": 3.4028234663852886e+38,
+        "physics:breakTorque": 3.4028234663852886e+38,
+        "physics:localPos0": "(0, 0, -0.02475)",
+        "physics:localPos1": "(0, 0, 0)",
+        "physics:localRot0": "(1, 0, 0, 0)",
+        "physics:localRot1": "(1, 0, 0, 0)"
+      },
+      "name": "r_index_finger_tip_fixed",
+      "path": "/wujihand2_right/joints/r_index_finger_tip_fixed",
+      "relationships": {
+        "physics:body0": [
+          "/wujihand2_right/r_index_finger_distal"
+        ],
+        "physics:body1": [
+          "/wujihand2_right/r_index_finger_tip"
+        ]
+      },
+      "type": "PhysicsFixedJoint"
+    },
+    {
+      "applied_schemas": [
+        "PhysicsDriveAPI:angular"
+      ],
+      "attributes": {
+        "drive:angular:physics:damping": 2.0,
+        "drive:angular:physics:maxForce": 2.0,
+        "drive:angular:physics:stiffness": 50.0,
+        "drive:angular:physics:targetPosition": 0.0,
+        "drive:angular:physics:type": "force",
+        "physics:JointEquivalentInertia": 0.00047971602180041373,
+        "physics:axis": "X",
+        "physics:breakForce": 3.4028234663852886e+38,
+        "physics:breakTorque": 3.4028234663852886e+38,
+        "physics:localPos0": "(0.00095202, -0.008303, -0.073915)",
+        "physics:localPos1": "(0, 0, 0)",
+        "physics:localRot0": "(0.9998411, -0.016951954, 0.0055237426, -0.00026405195)",
+        "physics:localRot1": "(1, 0, 0, 0)",
+        "physics:lowerLimit": -59.98868179321289,
+        "physics:upperLimit": 89.9543685913086,
+        "physxJoint:maxJointVelocity": 469.99725341796875
+      },
+      "name": "r_middle_finger_mcp_flex",
+      "path": "/wujihand2_right/joints/r_middle_finger_mcp_flex",
+      "relationships": {
+        "physics:body0": [
+          "/wujihand2_right/r_wrist"
+        ],
+        "physics:body1": [
+          "/wujihand2_right/r_middle_finger_proximal"
+        ]
+      },
+      "type": "PhysicsRevoluteJoint"
+    },
+    {
+      "applied_schemas": [
+        "PhysicsDriveAPI:angular"
+      ],
+      "attributes": {
+        "drive:angular:physics:damping": 2.0,
+        "drive:angular:physics:maxForce": 2.0,
+        "drive:angular:physics:stiffness": 50.0,
+        "drive:angular:physics:targetPosition": 0.0,
+        "drive:angular:physics:type": "force",
+        "physics:JointEquivalentInertia": 0.00024645833764225245,
+        "physics:axis": "Y",
+        "physics:breakForce": 3.4028234663852886e+38,
+        "physics:breakTorque": 3.4028234663852886e+38,
+        "physics:localPos0": "(0, -0.0012009802, -0.0145)",
+        "physics:localPos1": "(0, 0, 0)",
+        "physics:localRot0": "(1, 0, 0, 0)",
+        "physics:localRot1": "(1, 0, 0, 0)",
+        "physics:lowerLimit": -39.992454528808594,
+        "physics:upperLimit": 39.992454528808594,
+        "physxJoint:maxJointVelocity": 464.6687316894531
+      },
+      "name": "r_middle_finger_mcp_abd",
+      "path": "/wujihand2_right/joints/r_middle_finger_mcp_abd",
+      "relationships": {
+        "physics:body0": [
+          "/wujihand2_right/r_middle_finger_proximal"
+        ],
+        "physics:body1": [
+          "/wujihand2_right/r_middle_finger_proximal_abd"
+        ]
+      },
+      "type": "PhysicsRevoluteJoint"
+    },
+    {
+      "applied_schemas": [
+        "PhysicsDriveAPI:angular"
+      ],
+      "attributes": {
+        "drive:angular:physics:damping": 2.0,
+        "drive:angular:physics:maxForce": 2.0,
+        "drive:angular:physics:stiffness": 50.0,
+        "drive:angular:physics:targetPosition": 0.0,
+        "drive:angular:physics:type": "force",
+        "physics:JointEquivalentInertia": 0.00016048249381128699,
+        "physics:axis": "X",
+        "physics:breakForce": 3.4028234663852886e+38,
+        "physics:breakTorque": 3.4028234663852886e+38,
+        "physics:localPos0": "(0, 0, -0.0376)",
+        "physics:localPos1": "(0, 0, 0)",
+        "physics:localRot0": "(1, 0, 0, 0)",
+        "physics:localRot1": "(1, 0, 0, 0)",
+        "physics:lowerLimit": -59.98868179321289,
+        "physics:upperLimit": 119.97736358642578,
+        "physxJoint:maxJointVelocity": 736.8236694335938
+      },
+      "name": "r_middle_finger_pip",
+      "path": "/wujihand2_right/joints/r_middle_finger_pip",
+      "relationships": {
+        "physics:body0": [
+          "/wujihand2_right/r_middle_finger_proximal_abd"
+        ],
+        "physics:body1": [
+          "/wujihand2_right/r_middle_finger_middle"
+        ]
+      },
+      "type": "PhysicsRevoluteJoint"
+    },
+    {
+      "applied_schemas": [
+        "PhysicsDriveAPI:angular"
+      ],
+      "attributes": {
+        "drive:angular:physics:damping": 2.0,
+        "drive:angular:physics:maxForce": 2.0,
+        "drive:angular:physics:stiffness": 50.0,
+        "drive:angular:physics:targetPosition": 0.0,
+        "drive:angular:physics:type": "force",
+        "physics:JointEquivalentInertia": 1.9877594240824692e-05,
+        "physics:axis": "X",
+        "physics:breakForce": 3.4028234663852886e+38,
+        "physics:breakTorque": 3.4028234663852886e+38,
+        "physics:localPos0": "(0, 0, -0.0295)",
+        "physics:localPos1": "(0, 0, 0)",
+        "physics:localRot0": "(1, 0, 0, 0)",
+        "physics:localRot1": "(1, 0, 0, 0)",
+        "physics:lowerLimit": -59.98868179321289,
+        "physics:upperLimit": 89.9543685913086,
+        "physxJoint:maxJointVelocity": 773.4929809570312
+      },
+      "name": "r_middle_finger_dip",
+      "path": "/wujihand2_right/joints/r_middle_finger_dip",
+      "relationships": {
+        "physics:body0": [
+          "/wujihand2_right/r_middle_finger_middle"
+        ],
+        "physics:body1": [
+          "/wujihand2_right/r_middle_finger_distal"
+        ]
+      },
+      "type": "PhysicsRevoluteJoint"
+    },
+    {
+      "applied_schemas": [],
+      "attributes": {
+        "physics:JointEquivalentInertia": 0.0,
+        "physics:breakForce": 3.4028234663852886e+38,
+        "physics:breakTorque": 3.4028234663852886e+38,
+        "physics:localPos0": "(0, 0, -0.02475)",
+        "physics:localPos1": "(0, 0, 0)",
+        "physics:localRot0": "(1, 0, 0, 0)",
+        "physics:localRot1": "(1, 0, 0, 0)"
+      },
+      "name": "r_middle_finger_tip_fixed",
+      "path": "/wujihand2_right/joints/r_middle_finger_tip_fixed",
+      "relationships": {
+        "physics:body0": [
+          "/wujihand2_right/r_middle_finger_distal"
+        ],
+        "physics:body1": [
+          "/wujihand2_right/r_middle_finger_tip"
+        ]
+      },
+      "type": "PhysicsFixedJoint"
+    },
+    {
+      "applied_schemas": [
+        "PhysicsDriveAPI:angular"
+      ],
+      "attributes": {
+        "drive:angular:physics:damping": 2.0,
+        "drive:angular:physics:maxForce": 2.0,
+        "drive:angular:physics:stiffness": 50.0,
+        "drive:angular:physics:targetPosition": 0.0,
+        "drive:angular:physics:type": "force",
+        "physics:JointEquivalentInertia": 0.000436538306530565,
+        "physics:axis": "X",
+        "physics:breakForce": 3.4028234663852886e+38,
+        "physics:breakTorque": 3.4028234663852886e+38,
+        "physics:localPos0": "(-0.037350614, -0.00073375774, -0.05529621)",
+        "physics:localPos1": "(0, 0, 0)",
+        "physics:localRot0": "(0.9899901, -0.0063849837, 0.124815844, -0.065571785)",
+        "physics:localRot1": "(1, 0, 0, 0)",
+        "physics:lowerLimit": -59.98868179321289,
+        "physics:upperLimit": 89.9543685913086,
+        "physxJoint:maxJointVelocity": 469.99725341796875
+      },
+      "name": "r_pinky_mcp_flex",
+      "path": "/wujihand2_right/joints/r_pinky_mcp_flex",
+      "relationships": {
+        "physics:body0": [
+          "/wujihand2_right/r_wrist"
+        ],
+        "physics:body1": [
+          "/wujihand2_right/r_pinky_proximal"
+        ]
+      },
+      "type": "PhysicsRevoluteJoint"
+    },
+    {
+      "applied_schemas": [
+        "PhysicsDriveAPI:angular"
+      ],
+      "attributes": {
+        "drive:angular:physics:damping": 2.0,
+        "drive:angular:physics:maxForce": 2.0,
+        "drive:angular:physics:stiffness": 50.0,
+        "drive:angular:physics:targetPosition": 0.0,
+        "drive:angular:physics:type": "force",
+        "physics:JointEquivalentInertia": 0.0002000480453716591,
+        "physics:axis": "Y",
+        "physics:breakForce": 3.4028234663852886e+38,
+        "physics:breakTorque": 3.4028234663852886e+38,
+        "physics:localPos0": "(0, -0.0012009802, -0.0145)",
+        "physics:localPos1": "(0, 0, 0)",
+        "physics:localRot0": "(1, 0, 0, 0.000018136534)",
+        "physics:localRot1": "(1, 0, 0, 0)",
+        "physics:lowerLimit": -39.992454528808594,
+        "physics:upperLimit": 39.992454528808594,
+        "physxJoint:maxJointVelocity": 464.6687316894531
+      },
+      "name": "r_pinky_mcp_abd",
+      "path": "/wujihand2_right/joints/r_pinky_mcp_abd",
+      "relationships": {
+        "physics:body0": [
+          "/wujihand2_right/r_pinky_proximal"
+        ],
+        "physics:body1": [
+          "/wujihand2_right/r_pinky_proximal_abd"
+        ]
+      },
+      "type": "PhysicsRevoluteJoint"
+    },
+    {
+      "applied_schemas": [
+        "PhysicsDriveAPI:angular"
+      ],
+      "attributes": {
+        "drive:angular:physics:damping": 2.0,
+        "drive:angular:physics:maxForce": 2.0,
+        "drive:angular:physics:stiffness": 50.0,
+        "drive:angular:physics:targetPosition": 0.0,
+        "drive:angular:physics:type": "force",
+        "physics:JointEquivalentInertia": 0.000125416336231865,
+        "physics:axis": "X",
+        "physics:breakForce": 3.4028234663852886e+38,
+        "physics:breakTorque": 3.4028234663852886e+38,
+        "physics:localPos0": "(0.000100000034, 0, -0.0336)",
+        "physics:localPos1": "(0, 0, 0)",
+        "physics:localRot0": "(1, 0, 0, -0.000018136514)",
+        "physics:localRot1": "(1, 0, 0, 0)",
+        "physics:lowerLimit": -59.98868179321289,
+        "physics:upperLimit": 119.97736358642578,
+        "physxJoint:maxJointVelocity": 736.8236694335938
+      },
+      "name": "r_pinky_pip",
+      "path": "/wujihand2_right/joints/r_pinky_pip",
+      "relationships": {
+        "physics:body0": [
+          "/wujihand2_right/r_pinky_proximal_abd"
+        ],
+        "physics:body1": [
+          "/wujihand2_right/r_pinky_middle"
+        ]
+      },
+      "type": "PhysicsRevoluteJoint"
+    },
+    {
+      "applied_schemas": [
+        "PhysicsDriveAPI:angular"
+      ],
+      "attributes": {
+        "drive:angular:physics:damping": 2.0,
+        "drive:angular:physics:maxForce": 2.0,
+        "drive:angular:physics:stiffness": 50.0,
+        "drive:angular:physics:targetPosition": 0.0,
+        "drive:angular:physics:type": "force",
+        "physics:JointEquivalentInertia": 1.8071301383315586e-05,
+        "physics:axis": "X",
+        "physics:breakForce": 3.4028234663852886e+38,
+        "physics:breakTorque": 3.4028234663852886e+38,
+        "physics:localPos0": "(0, 0, -0.0275)",
+        "physics:localPos1": "(0, 0, 0)",
+        "physics:localRot0": "(1, 0, 0, 0)",
+        "physics:localRot1": "(1, 0, 0, 0)",
+        "physics:lowerLimit": -59.98868179321289,
+        "physics:upperLimit": 89.9543685913086,
+        "physxJoint:maxJointVelocity": 773.4929809570312
+      },
+      "name": "r_pinky_dip",
+      "path": "/wujihand2_right/joints/r_pinky_dip",
+      "relationships": {
+        "physics:body0": [
+          "/wujihand2_right/r_pinky_middle"
+        ],
+        "physics:body1": [
+          "/wujihand2_right/r_pinky_distal"
+        ]
+      },
+      "type": "PhysicsRevoluteJoint"
+    },
+    {
+      "applied_schemas": [],
+      "attributes": {
+        "physics:JointEquivalentInertia": 0.0,
+        "physics:breakForce": 3.4028234663852886e+38,
+        "physics:breakTorque": 3.4028234663852886e+38,
+        "physics:localPos0": "(0, 0, -0.02475)",
+        "physics:localPos1": "(0, 0, 0)",
+        "physics:localRot0": "(1, 0, 0, 0)",
+        "physics:localRot1": "(1, 0, 0, 0)"
+      },
+      "name": "r_pinky_tip_fixed",
+      "path": "/wujihand2_right/joints/r_pinky_tip_fixed",
+      "relationships": {
+        "physics:body0": [
+          "/wujihand2_right/r_pinky_distal"
+        ],
+        "physics:body1": [
+          "/wujihand2_right/r_pinky_tip"
+        ]
+      },
+      "type": "PhysicsFixedJoint"
+    },
+    {
+      "applied_schemas": [
+        "PhysicsDriveAPI:angular"
+      ],
+      "attributes": {
+        "drive:angular:physics:damping": 2.0,
+        "drive:angular:physics:maxForce": 2.0,
+        "drive:angular:physics:stiffness": 50.0,
+        "drive:angular:physics:targetPosition": 0.0,
+        "drive:angular:physics:type": "force",
+        "physics:JointEquivalentInertia": 0.00040681136306375265,
+        "physics:axis": "X",
+        "physics:breakForce": 3.4028234663852886e+38,
+        "physics:breakTorque": 3.4028234663852886e+38,
+        "physics:localPos0": "(-0.019744, -0.0055929, -0.0654)",
+        "physics:localPos1": "(0, 0, 0)",
+        "physics:localRot0": "(0.9968973, -0.005885221, 0.070995785, -0.03347771)",
+        "physics:localRot1": "(1, 0, 0, 0)",
+        "physics:lowerLimit": -59.98868179321289,
+        "physics:upperLimit": 89.9543685913086,
+        "physxJoint:maxJointVelocity": 469.99725341796875
+      },
+      "name": "r_ring_finger_mcp_flex",
+      "path": "/wujihand2_right/joints/r_ring_finger_mcp_flex",
+      "relationships": {
+        "physics:body0": [
+          "/wujihand2_right/r_wrist"
+        ],
+        "physics:body1": [
+          "/wujihand2_right/r_ring_finger_proximal"
+        ]
+      },
+      "type": "PhysicsRevoluteJoint"
+    },
+    {
+      "applied_schemas": [
+        "PhysicsDriveAPI:angular"
+      ],
+      "attributes": {
+        "drive:angular:physics:damping": 2.0,
+        "drive:angular:physics:maxForce": 2.0,
+        "drive:angular:physics:stiffness": 50.0,
+        "drive:angular:physics:targetPosition": 0.0,
+        "drive:angular:physics:type": "force",
+        "physics:JointEquivalentInertia": 0.00023508477897848934,
+        "physics:axis": "Y",
+        "physics:breakForce": 3.4028234663852886e+38,
+        "physics:breakTorque": 3.4028234663852886e+38,
+        "physics:localPos0": "(0, -0.0012009802, -0.0145)",
+        "physics:localPos1": "(0, 0, 0)",
+        "physics:localRot0": "(1, 0, 0, 0)",
+        "physics:localRot1": "(1, 0, 0, 0)",
+        "physics:lowerLimit": -39.992454528808594,
+        "physics:upperLimit": 39.992454528808594,
+        "physxJoint:maxJointVelocity": 464.6687316894531
+      },
+      "name": "r_ring_finger_mcp_abd",
+      "path": "/wujihand2_right/joints/r_ring_finger_mcp_abd",
+      "relationships": {
+        "physics:body0": [
+          "/wujihand2_right/r_ring_finger_proximal"
+        ],
+        "physics:body1": [
+          "/wujihand2_right/r_ring_finger_proximal_abd"
+        ]
+      },
+      "type": "PhysicsRevoluteJoint"
+    },
+    {
+      "applied_schemas": [
+        "PhysicsDriveAPI:angular"
+      ],
+      "attributes": {
+        "drive:angular:physics:damping": 2.0,
+        "drive:angular:physics:maxForce": 2.0,
+        "drive:angular:physics:stiffness": 50.0,
+        "drive:angular:physics:targetPosition": 0.0,
+        "drive:angular:physics:type": "force",
+        "physics:JointEquivalentInertia": 0.00015907319902908057,
+        "physics:axis": "X",
+        "physics:breakForce": 3.4028234663852886e+38,
+        "physics:breakTorque": 3.4028234663852886e+38,
+        "physics:localPos0": "(0, 0, -0.0376)",
+        "physics:localPos1": "(0, 0, 0)",
+        "physics:localRot0": "(1, 0, 0, 0)",
+        "physics:localRot1": "(1, 0, 0, 0)",
+        "physics:lowerLimit": -59.98868179321289,
+        "physics:upperLimit": 119.97736358642578,
+        "physxJoint:maxJointVelocity": 736.8236694335938
+      },
+      "name": "r_ring_finger_pip",
+      "path": "/wujihand2_right/joints/r_ring_finger_pip",
+      "relationships": {
+        "physics:body0": [
+          "/wujihand2_right/r_ring_finger_proximal_abd"
+        ],
+        "physics:body1": [
+          "/wujihand2_right/r_ring_finger_middle"
+        ]
+      },
+      "type": "PhysicsRevoluteJoint"
+    },
+    {
+      "applied_schemas": [
+        "PhysicsDriveAPI:angular"
+      ],
+      "attributes": {
+        "drive:angular:physics:damping": 2.0,
+        "drive:angular:physics:maxForce": 2.0,
+        "drive:angular:physics:stiffness": 50.0,
+        "drive:angular:physics:targetPosition": 0.0,
+        "drive:angular:physics:type": "force",
+        "physics:JointEquivalentInertia": 1.986789175134618e-05,
+        "physics:axis": "X",
+        "physics:breakForce": 3.4028234663852886e+38,
+        "physics:breakTorque": 3.4028234663852886e+38,
+        "physics:localPos0": "(0, 0, -0.0295)",
+        "physics:localPos1": "(0, 0, 0)",
+        "physics:localRot0": "(1, 0, 0, 0)",
+        "physics:localRot1": "(1, 0, 0, 0)",
+        "physics:lowerLimit": -59.98868179321289,
+        "physics:upperLimit": 89.9543685913086,
+        "physxJoint:maxJointVelocity": 773.4929809570312
+      },
+      "name": "r_ring_finger_dip",
+      "path": "/wujihand2_right/joints/r_ring_finger_dip",
+      "relationships": {
+        "physics:body0": [
+          "/wujihand2_right/r_ring_finger_middle"
+        ],
+        "physics:body1": [
+          "/wujihand2_right/r_ring_finger_distal"
+        ]
+      },
+      "type": "PhysicsRevoluteJoint"
+    },
+    {
+      "applied_schemas": [],
+      "attributes": {
+        "physics:JointEquivalentInertia": 0.0,
+        "physics:breakForce": 3.4028234663852886e+38,
+        "physics:breakTorque": 3.4028234663852886e+38,
+        "physics:localPos0": "(0, 0, -0.02475)",
+        "physics:localPos1": "(0, 0, 0)",
+        "physics:localRot0": "(1, 0, 0, 0)",
+        "physics:localRot1": "(1, 0, 0, 0)"
+      },
+      "name": "r_ring_finger_tip_fixed",
+      "path": "/wujihand2_right/joints/r_ring_finger_tip_fixed",
+      "relationships": {
+        "physics:body0": [
+          "/wujihand2_right/r_ring_finger_distal"
+        ],
+        "physics:body1": [
+          "/wujihand2_right/r_ring_finger_tip"
+        ]
+      },
+      "type": "PhysicsFixedJoint"
+    },
+    {
+      "applied_schemas": [
+        "PhysicsDriveAPI:angular"
+      ],
+      "attributes": {
+        "drive:angular:physics:damping": 2.0,
+        "drive:angular:physics:maxForce": 2.0,
+        "drive:angular:physics:stiffness": 50.0,
+        "drive:angular:physics:targetPosition": 0.0,
+        "drive:angular:physics:type": "force",
+        "physics:JointEquivalentInertia": 0.00030513256206177175,
+        "physics:axis": "X",
+        "physics:breakForce": 3.4028234663852886e+38,
+        "physics:breakTorque": 3.4028234663852886e+38,
+        "physics:localPos0": "(0.017209614, 0.008137967, -0.01645754)",
+        "physics:localPos1": "(0, 0, 0)",
+        "physics:localRot0": "(0.62943083, -0.060634285, -0.72011006, 0.28562543)",
+        "physics:localRot1": "(1, 0, 0, 0)",
+        "physics:lowerLimit": -68.01008605957031,
+        "physics:upperLimit": 73.9688491821289,
+        "physxJoint:maxJointVelocity": 491.99884033203125
+      },
+      "name": "r_thumb_cmc_flex",
+      "path": "/wujihand2_right/joints/r_thumb_cmc_flex",
+      "relationships": {
+        "physics:body0": [
+          "/wujihand2_right/r_wrist"
+        ],
+        "physics:body1": [
+          "/wujihand2_right/r_thumb_proximal"
+        ]
+      },
+      "type": "PhysicsRevoluteJoint"
+    },
+    {
+      "applied_schemas": [
+        "PhysicsDriveAPI:angular"
+      ],
+      "attributes": {
+        "drive:angular:physics:damping": 2.0,
+        "drive:angular:physics:maxForce": 2.0,
+        "drive:angular:physics:stiffness": 50.0,
+        "drive:angular:physics:targetPosition": 0.0,
+        "drive:angular:physics:type": "force",
+        "physics:JointEquivalentInertia": 0.00016451187548227608,
+        "physics:axis": "Y",
+        "physics:breakForce": 3.4028234663852886e+38,
+        "physics:breakTorque": 3.4028234663852886e+38,
+        "physics:localPos0": "(0.00024787907, -0.0005365795, -0.01475354)",
+        "physics:localPos1": "(0, 0, 0)",
+        "physics:localRot0": "(0.93471086, 0.09192989, 0.34251794, -0.023366904)",
+        "physics:localRot1": "(1, 0, 0, 0)",
+        "physics:lowerLimit": -85.02693176269531,
+        "physics:upperLimit": 39.992454528808594,
+        "physxJoint:maxJointVelocity": 635.983154296875
+      },
+      "name": "r_thumb_cmc_abd",
+      "path": "/wujihand2_right/joints/r_thumb_cmc_abd",
+      "relationships": {
+        "physics:body0": [
+          "/wujihand2_right/r_thumb_proximal"
+        ],
+        "physics:body1": [
+          "/wujihand2_right/r_thumb_proximal_abd"
+        ]
+      },
+      "type": "PhysicsRevoluteJoint"
+    },
+    {
+      "applied_schemas": [
+        "PhysicsDriveAPI:angular"
+      ],
+      "attributes": {
+        "drive:angular:physics:damping": 2.0,
+        "drive:angular:physics:maxForce": 2.0,
+        "drive:angular:physics:stiffness": 50.0,
+        "drive:angular:physics:targetPosition": 0.0,
+        "drive:angular:physics:type": "force",
+        "physics:JointEquivalentInertia": 0.00019116768089588732,
+        "physics:axis": "X",
+        "physics:breakForce": 3.4028234663852886e+38,
+        "physics:breakTorque": 3.4028234663852886e+38,
+        "physics:localPos0": "(0, 0, -0.032500003)",
+        "physics:localPos1": "(0, 0, 0)",
+        "physics:localRot0": "(0.95700574, -0.065047264, 0.0264059, 0.28144574)",
+        "physics:localRot1": "(1, 0, 0, 0)",
+        "physics:lowerLimit": -59.98868179321289,
+        "physics:upperLimit": 89.9543685913086,
+        "physxJoint:maxJointVelocity": 736.8236694335938
+      },
+      "name": "r_thumb_mcp",
+      "path": "/wujihand2_right/joints/r_thumb_mcp",
+      "relationships": {
+        "physics:body0": [
+          "/wujihand2_right/r_thumb_proximal_abd"
+        ],
+        "physics:body1": [
+          "/wujihand2_right/r_thumb_middle"
+        ]
+      },
+      "type": "PhysicsRevoluteJoint"
+    },
+    {
+      "applied_schemas": [
+        "PhysicsDriveAPI:angular"
+      ],
+      "attributes": {
+        "drive:angular:physics:damping": 2.0,
+        "drive:angular:physics:maxForce": 2.0,
+        "drive:angular:physics:stiffness": 50.0,
+        "drive:angular:physics:targetPosition": 0.0,
+        "drive:angular:physics:type": "force",
+        "physics:JointEquivalentInertia": 5.6371078244410455e-05,
+        "physics:axis": "X",
+        "physics:breakForce": 3.4028234663852886e+38,
+        "physics:breakTorque": 3.4028234663852886e+38,
+        "physics:localPos0": "(-0.00005, 0.003851972, -0.034787387)",
+        "physics:localPos1": "(0, 0, 0)",
+        "physics:localRot0": "(0.9984802, 0.055111933, 0, 0)",
+        "physics:localRot1": "(1, 0, 0, 0)",
+        "physics:lowerLimit": -59.98868179321289,
+        "physics:upperLimit": 89.9543685913086,
+        "physxJoint:maxJointVelocity": 773.4929809570312
+      },
+      "name": "r_thumb_ip",
+      "path": "/wujihand2_right/joints/r_thumb_ip",
+      "relationships": {
+        "physics:body0": [
+          "/wujihand2_right/r_thumb_middle"
+        ],
+        "physics:body1": [
+          "/wujihand2_right/r_thumb_distal"
+        ]
+      },
+      "type": "PhysicsRevoluteJoint"
+    },
+    {
+      "applied_schemas": [],
+      "attributes": {
+        "physics:JointEquivalentInertia": 0.0,
+        "physics:breakForce": 3.4028234663852886e+38,
+        "physics:breakTorque": 3.4028234663852886e+38,
+        "physics:localPos0": "(0, 0, -0.02978)",
+        "physics:localPos1": "(0, 0, 0)",
+        "physics:localRot0": "(1, 0, 0, 0)",
+        "physics:localRot1": "(1, 0, 0, 0)"
+      },
+      "name": "r_thumb_tip_fixed",
+      "path": "/wujihand2_right/joints/r_thumb_tip_fixed",
+      "relationships": {
+        "physics:body0": [
+          "/wujihand2_right/r_thumb_distal"
+        ],
+        "physics:body1": [
+          "/wujihand2_right/r_thumb_tip"
+        ]
+      },
+      "type": "PhysicsFixedJoint"
+    },
+    {
+      "applied_schemas": [
+        "PhysicsArticulationRootAPI"
+      ],
+      "attributes": {
+        "physxArticulation:enabledSelfCollisions": true,
+        "physxArticulation:solverPositionIterationCount": 32,
+        "physxArticulation:solverVelocityIterationCount": 1
+      },
+      "name": "root_joint",
+      "path": "/wujihand2_right/root_joint",
+      "relationships": {
+        "physics:body1": [
+          "/wujihand2_right/r_wrist"
+        ]
+      },
+      "type": "PhysicsFixedJoint"
+    }
+  ],
+  "materials": [
+    {
+      "attributes": {},
+      "path": "/wujihand2_right/Looks/DefaultMaterial",
+      "relationships": {}
+    },
+    {
+      "attributes": {},
+      "path": "/wujihand2_right/Looks/material_CAD1EE",
+      "relationships": {}
+    },
+    {
+      "attributes": {},
+      "path": "/wujihand2_right/Looks/material_100100100",
+      "relationships": {}
+    },
+    {
+      "attributes": {},
+      "path": "/wujihand2_right/Looks/material_A0A0A0",
+      "relationships": {}
+    },
+    {
+      "attributes": {},
+      "path": "/wujihand2_right/Looks/BlackGlove",
+      "relationships": {}
+    },
+    {
+      "attributes": {},
+      "path": "/wujihand2_right/Looks/r_wrist_Material",
+      "relationships": {}
+    }
+  ],
+  "meters_per_unit": 1.0,
+  "rigid_bodies": [
+    {
+      "attributes": {
+        "physics:centerOfMass": "(-0.0035428996, -0.0034674723, -0.035695046)",
+        "physics:diagonalInertia": "(0.00009956445, 0.00015567071, 0.00007715459)",
+        "physics:mass": 0.23229999840259552,
+        "physics:principalAxes": "(0.9932055, -0.04674317, -0.10571287, 0.013517853)"
+      },
+      "path": "/wujihand2_right/r_wrist",
+      "type": "Xform"
+    },
+    {
+      "attributes": {
+        "physics:centerOfMass": "(1.8316102e-9, -0.0017813694, -0.007601387)",
+        "physics:diagonalInertia": "(9.19684e-7, 9.0860823e-7, 7.8841225e-7)",
+        "physics:mass": 0.011599999852478504,
+        "physics:principalAxes": "(0.9992754, -0.03806285, -1.3536277e-7, 0.0000230234)"
+      },
+      "path": "/wujihand2_right/r_index_finger_proximal",
+      "type": "Xform"
+    },
+    {
+      "attributes": {
+        "physics:centerOfMass": "(8.0467515e-8, 7.304037e-7, -0.01879938)",
+        "physics:diagonalInertia": "(0.0000070158853, 0.000007015545, 9.1448044e-7)",
+        "physics:mass": 0.033900000154972076,
+        "physics:principalAxes": "(0.98321337, -0.000015714395, 0.00000390826, 0.18245994)"
+      },
+      "path": "/wujihand2_right/r_index_finger_proximal_abd",
+      "type": "Xform"
+    },
+    {
+      "attributes": {
+        "physics:centerOfMass": "(-5.073354e-8, -0.00024788678, -0.019034835)",
+        "physics:diagonalInertia": "(0.000002405254, 0.0000024779683, 6.5247815e-7)",
+        "physics:mass": 0.021199999377131462,
+        "physics:principalAxes": "(0.99988335, 0.015275455, 0.000007822324, -0.00029798015)"
+      },
+      "path": "/wujihand2_right/r_index_finger_middle",
+      "type": "Xform"
+    },
+    {
+      "attributes": {
+        "physics:centerOfMass": "(0.0002736164, -0.000030207486, -0.012184869)",
+        "physics:diagonalInertia": "(5.4052435e-7, 5.744417e-7, 2.7383018e-7)",
+        "physics:mass": 0.007799999788403511,
+        "physics:principalAxes": "(0.9970315, -0.050483104, 0.046238344, -0.035236992)"
+      },
+      "path": "/wujihand2_right/r_index_finger_distal",
+      "type": "Xform"
+    },
+    {
+      "attributes": {
+        "physics:diagonalInertia": "(0.0001, 0.0001, 0.0001)"
+      },
+      "path": "/wujihand2_right/r_index_finger_tip",
+      "type": "Xform"
+    },
+    {
+      "attributes": {
+        "physics:centerOfMass": "(1.8316102e-9, -0.0017813694, -0.007601387)",
+        "physics:diagonalInertia": "(9.19684e-7, 9.0860823e-7, 7.8841225e-7)",
+        "physics:mass": 0.011599999852478504,
+        "physics:principalAxes": "(0.9992754, -0.03806285, -1.3536277e-7, 0.0000230234)"
+      },
+      "path": "/wujihand2_right/r_middle_finger_proximal",
+      "type": "Xform"
+    },
+    {
+      "attributes": {
+        "physics:centerOfMass": "(8.0467515e-8, 7.304037e-7, -0.01879938)",
+        "physics:diagonalInertia": "(0.0000070158853, 0.000007015545, 9.1448044e-7)",
+        "physics:mass": 0.033900000154972076,
+        "physics:principalAxes": "(0.98321337, -0.000015714395, 0.00000390826, 0.18245994)"
+      },
+      "path": "/wujihand2_right/r_middle_finger_proximal_abd",
+      "type": "Xform"
+    },
+    {
+      "attributes": {
+        "physics:centerOfMass": "(-5.073354e-8, -0.00024788678, -0.019034835)",
+        "physics:diagonalInertia": "(0.000002405254, 0.0000024779683, 6.5247815e-7)",
+        "physics:mass": 0.021199999377131462,
+        "physics:principalAxes": "(0.99988335, 0.015275455, 0.000007822324, -0.00029798015)"
+      },
+      "path": "/wujihand2_right/r_middle_finger_middle",
+      "type": "Xform"
+    },
+    {
+      "attributes": {
+        "physics:centerOfMass": "(0.0002736164, -0.000030207486, -0.012184869)",
+        "physics:diagonalInertia": "(5.4052435e-7, 5.744417e-7, 2.7383018e-7)",
+        "physics:mass": 0.007799999788403511,
+        "physics:principalAxes": "(0.9970315, -0.050483104, 0.046238344, -0.035236992)"
+      },
+      "path": "/wujihand2_right/r_middle_finger_distal",
+      "type": "Xform"
+    },
+    {
+      "attributes": {
+        "physics:diagonalInertia": "(0.0001, 0.0001, 0.0001)"
+      },
+      "path": "/wujihand2_right/r_middle_finger_tip",
+      "type": "Xform"
+    },
+    {
+      "attributes": {
+        "physics:centerOfMass": "(-2.1264766e-7, -0.0017813565, -0.007601449)",
+        "physics:diagonalInertia": "(9.196641e-7, 9.086034e-7, 7.884134e-7)",
+        "physics:mass": 0.011599999852478504,
+        "physics:principalAxes": "(0.9992754, -0.038061496, 0.000024318506, 0.00010696743)"
+      },
+      "path": "/wujihand2_right/r_pinky_proximal",
+      "type": "Xform"
+    },
+    {
+      "attributes": {
+        "physics:centerOfMass": "(0.0000015564691, 5.453202e-7, -0.016784972)",
+        "physics:diagonalInertia": "(0.000005379439, 0.000005380142, 8.177098e-7)",
+        "physics:mass": 0.030400000512599945,
+        "physics:principalAxes": "(0.9967015, -0.000026854994, 0.000015865999, -0.081154644)"
+      },
+      "path": "/wujihand2_right/r_pinky_proximal_abd",
+      "type": "Xform"
+    },
+    {
+      "attributes": {
+        "physics:centerOfMass": "(-3.2323635e-7, -0.0002644906, -0.017880667)",
+        "physics:diagonalInertia": "(0.000001986474, 0.0000020595742, 5.8491133e-7)",
+        "physics:mass": 0.018799999728798866,
+        "physics:principalAxes": "(0.9998725, 0.015965119, 0.000003900562, -0.0003171072)"
+      },
+      "path": "/wujihand2_right/r_pinky_middle",
+      "type": "Xform"
+    },
+    {
+      "attributes": {
+        "physics:centerOfMass": "(0.0002736164, -0.000030207482, -0.012184869)",
+        "physics:diagonalInertia": "(5.4052435e-7, 5.744417e-7, 2.7383018e-7)",
+        "physics:mass": 0.007799999788403511,
+        "physics:principalAxes": "(0.9970315, -0.050483104, 0.046238344, -0.035236992)"
+      },
+      "path": "/wujihand2_right/r_pinky_distal",
+      "type": "Xform"
+    },
+    {
+      "attributes": {
+        "physics:diagonalInertia": "(0.0001, 0.0001, 0.0001)"
+      },
+      "path": "/wujihand2_right/r_pinky_tip",
+      "type": "Xform"
+    },
+    {
+      "attributes": {
+        "physics:centerOfMass": "(1.8316102e-9, -0.0017813694, -0.007601387)",
+        "physics:diagonalInertia": "(9.19684e-7, 9.0860823e-7, 7.8841225e-7)",
+        "physics:mass": 0.011599999852478504,
+        "physics:principalAxes": "(0.9992754, -0.03806285, -1.3536277e-7, 0.0000230234)"
+      },
+      "path": "/wujihand2_right/r_ring_finger_proximal",
+      "type": "Xform"
+    },
+    {
+      "attributes": {
+        "physics:centerOfMass": "(8.0467515e-8, 7.304037e-7, -0.01879938)",
+        "physics:diagonalInertia": "(0.0000070158853, 0.000007015545, 9.1448044e-7)",
+        "physics:mass": 0.033900000154972076,
+        "physics:principalAxes": "(0.98321337, -0.000015714395, 0.00000390826, 0.18245994)"
+      },
+      "path": "/wujihand2_right/r_ring_finger_proximal_abd",
+      "type": "Xform"
+    },
+    {
+      "attributes": {
+        "physics:centerOfMass": "(-5.073354e-8, -0.00024788678, -0.019034835)",
+        "physics:diagonalInertia": "(0.000002405254, 0.0000024779683, 6.5247815e-7)",
+        "physics:mass": 0.021199999377131462,
+        "physics:principalAxes": "(0.99988335, 0.015275455, 0.000007822324, -0.00029798015)"
+      },
+      "path": "/wujihand2_right/r_ring_finger_middle",
+      "type": "Xform"
+    },
+    {
+      "attributes": {
+        "physics:centerOfMass": "(0.0002736164, -0.000030207486, -0.012184869)",
+        "physics:diagonalInertia": "(5.4052435e-7, 5.744417e-7, 2.7383018e-7)",
+        "physics:mass": 0.007799999788403511,
+        "physics:principalAxes": "(0.9970315, -0.050483104, 0.046238344, -0.035236992)"
+      },
+      "path": "/wujihand2_right/r_ring_finger_distal",
+      "type": "Xform"
+    },
+    {
+      "attributes": {
+        "physics:diagonalInertia": "(0.0001, 0.0001, 0.0001)"
+      },
+      "path": "/wujihand2_right/r_ring_finger_tip",
+      "type": "Xform"
+    },
+    {
+      "attributes": {
+        "physics:centerOfMass": "(0.00085365743, -0.0019561846, -0.0073180855)",
+        "physics:diagonalInertia": "(8.386536e-7, 7.810448e-7, 6.3307994e-7)",
+        "physics:mass": 0.010999999940395355,
+        "physics:principalAxes": "(0.9265342, 0.01786668, -0.07831728, -0.36753455)"
+      },
+      "path": "/wujihand2_right/r_thumb_proximal",
+      "type": "Xform"
+    },
+    {
+      "attributes": {
+        "physics:centerOfMass": "(0.000012793403, 0.00000647331, -0.013054362)",
+        "physics:diagonalInertia": "(0.000004084753, 0.000004228797, 0.000001235601)",
+        "physics:mass": 0.03359999880194664,
+        "physics:principalAxes": "(0.9700145, 0.00081224967, -0.0025706077, 0.24303208)"
+      },
+      "path": "/wujihand2_right/r_thumb_proximal_abd",
+      "type": "Xform"
+    },
+    {
+      "attributes": {
+        "physics:centerOfMass": "(-0.00004929243, 0.0015744619, -0.014218667)",
+        "physics:diagonalInertia": "(0.0000048195957, 0.000004928588, 0.0000013268804)",
+        "physics:mass": 0.03579999879002571,
+        "physics:principalAxes": "(0.9984794, 0.05511256, -0.00011193182, 0.0011781228)"
+      },
+      "path": "/wujihand2_right/r_thumb_middle",
+      "type": "Xform"
+    },
+    {
+      "attributes": {
+        "physics:centerOfMass": "(-0.000019689998, 0.0005841133, -0.01492969)",
+        "physics:diagonalInertia": "(0.0000013338973, 0.0000013809891, 6.7998604e-7)",
+        "physics:mass": 0.01590000092983246,
+        "physics:principalAxes": "(0.99821377, -0.05270214, -0.0060289465, 0.027485449)"
+      },
+      "path": "/wujihand2_right/r_thumb_distal",
+      "type": "Xform"
+    },
+    {
+      "attributes": {
+        "physics:diagonalInertia": "(0.0001, 0.0001, 0.0001)"
+      },
+      "path": "/wujihand2_right/r_thumb_tip",
+      "type": "Xform"
+    }
+  ],
+  "root_layer": "/home/lin/Projects/DexGraspNet2_Wuji2/01_environment/vendor/wuji-description/hand2/hand2_beta1/body/usd/right/wujihand2.usd",
+  "time_codes_per_second": 24.0,
+  "type_counts": {
+    "Material": 6,
+    "Mesh": 21,
+    "PhysicsFixedJoint": 6,
+    "PhysicsRevoluteJoint": 20,
+    "Scope": 2,
+    "Shader": 10,
+    "Xform": 100
+  },
+  "up_axis": "Z"
+}

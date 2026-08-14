@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "status": "table_and_dual_arm_manual_layout_ready_camera_deferred",
+  "coordinate_contract": {
+    "world_origin": "table_top_surface_center",
+    "world_up_axis": "+Z",
+    "camera_status": "deferred_until_table_and_robot_layout_is_accepted"
+  },
+  "table": {
+    "assembly_prim_path": "/World/Layout/TableAssembly",
+    "prim_path": "/World/Layout/TableAssembly/Table",
+    "size_m": [1.6, 0.4, 0.04],
+    "center_local_m": [0.0, 0.0, -0.02],
+    "top_z_world_m": 0.0
+  },
+  "zones": {
+    "source": {
+      "prim_path": "/World/Layout/TableAssembly/SourceZone",
+      "size_m": [0.5, 0.3],
+      "center_local_m": [-0.5, 0.0, 0.0005],
+      "collision": false
+    },
+    "placement": {
+      "prim_path": "/World/Layout/TableAssembly/PlacementZone",
+      "size_m": [1.0, 0.3],
+      "center_local_m": [0.25, 0.0, 0.0005],
+      "collision": false
+    }
+  },
+  "robot": {
+    "mount_prim_path": "/World/Layout/DualArmMount",
+    "prim_path": "/World/Layout/DualArmMount/DualArm",
+    "root_link": "arm_base_link",
+    "world_from_root": null,
+    "root_pose_policy": "calibrate_in_gui_then_freeze",
+    "fixed_base_during_layout": true,
+    "editable_initial_mount_translation_m": [0.0, 0.42, 0.8],
+    "editable_initial_mount_rotation_xyz_deg": [0.0, 0.0, 0.0]
+  },
+  "top_d435i_camera": {
+    "status": "not_created_in_current_stage",
+    "reason": "user requested that table and robot layout be accepted first"
+  },
+  "distance_annotations": [
+    "robot_root_to_table_center",
+    "robot_root_to_source_center",
+    "source_center_to_placement_center"
+  ]
+}

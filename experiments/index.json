@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "updated_local_date": "2026-08-14",
+  "verified_diagnostics": [
+    "08_dual_arm_scene_layout/isaaclab_control/outputs/mass_tree_audit_round1_mass_fixed",
+    "08_dual_arm_scene_layout/isaaclab_control/outputs/force_nf_finetune/ft04_j1_50_j3_45_j5_55_j6_50",
+    "08_dual_arm_scene_layout/isaaclab_control/outputs/short_motion_ft04_z20_fixed"
+  ],
+  "history_groups": [
+    "grouped_pd",
+    "acceleration_nf_scan",
+    "force_nf_scan",
+    "explicit_pd",
+    "j6_scan",
+    "old_short_motion"
+  ],
+  "rejected": [
+    "08_dual_arm_scene_layout/isaaclab_control/rejected/mp4_export"
+  ],
+  "inventory": "archive/migration_snapshots/pre_reorg_20260814/08_reorg_plan.tsv",
+  "note": "Phase 0-2 preserved all files; practical final reorganization later moved small source/config/history entries and removed only rejected video caches and regenerable bytecode."
+}

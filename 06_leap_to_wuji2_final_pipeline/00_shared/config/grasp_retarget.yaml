@@ -1,0 +1,72 @@
+# Isolated copy of the official Wuji Hand 2 retargeting configuration.
+#
+# The vendor package is not edited.  w_pos/w_dir are the user-requested global
+# weights.  The four_finger_adapter block is consumed only by this experiment's
+# thin correspondence adapter; the official Retargeter ignores unknown blocks.
+# Pinky stays neutral only inside the four-finger optimization.  The reviewed
+# post-policy in pinky_ring_coupling.json copies ring flexion and adds outward
+# MCP abduction after the optimizer returns.
+
+optimizer:
+  type: "AdaptiveOptimizerAnalytical"
+  urdf_path: "../../../01_environment/vendor/wuji-description/hand2/hand2_beta1/body/urdf/right.urdf"
+  mjcf_path: "../../../01_environment/vendor/wuji-description/hand2/hand2_beta1/body/mjcf/right.xml"
+  link_naming:
+    prefix: "r_"
+    palm: "wrist"
+    fingers: [thumb, index_finger, middle_finger, ring_finger, pinky]
+    pip: "{finger}_middle"
+    dip: "{finger}_distal"
+    tip: "{finger}_tip"
+    link1: "{finger}_proximal_abd"
+
+retarget:
+  huber_delta: 2.0
+  huber_delta_dir: 0.1
+  norm_delta: 0.04
+  w_pos: 1.5
+  w_dir: 2.5
+  project_tip_dir: false
+  scaling: 1.0
+  w_full_hand: 0.2
+  thumb_skip_pip: false
+  w_hyper: 1.0
+  soft_min: 0.0
+  w_couple: 0.1
+  couple_ratio: 0.7
+  lp_alpha: 0.2
+  segment_scaling:
+    thumb: [1.0, 1.0, 1.0]
+    index: [1.0, 1.0, 1.0]
+    middle: [1.0, 1.0, 1.0]
+    ring: [1.0, 1.0, 1.0]
+    pinky: [1.0, 1.0, 1.0]
+  pinch_thresholds:
+    index: {d1: 8.0, d2: 15.0}
+    middle: {d1: 8.0, d2: 15.0}
+    ring: {d1: 8.0, d2: 15.0}
+    pinky: {d1: 2.0, d2: 4.0}
+  mediapipe_rotation:
+    x: 0.0
+    y: 180.0
+    z: -90.0
+  # Official Retargeter offset for the three non-thumb source fingers.  This
+  # compensates the measured Wuji2-vs-LEAP fingertip residual while keeping
+  # the hand root and all solver equations unchanged.
+  wrist_offset_cm: [-0.24, -2.8, 0.8]
+  thumb_offset_cm: [0.13, 1.2, 1.7]
+
+four_finger_adapter:
+  active_fingers: [thumb, index, middle, ring]
+  thumb_robot_landmarks:
+    pip_role_link: "r_thumb_proximal_abd"
+    dip_role_link: "r_thumb_middle"
+    tip_role_link: "r_thumb_tip"
+  thumb_physical_constraint_links:
+    pip: "r_thumb_middle"
+    dip: "r_thumb_distal"
+  fixed_pinky_joint_positions_rad:
+    r_pinky_mcp_flex: 0.0
+    r_pinky_mcp_abd: 0.0
+    r_pinky_pip: 0.0
+    r_pinky_dip: 0.0

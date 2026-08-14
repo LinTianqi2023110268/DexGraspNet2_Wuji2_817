@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "purpose": "Post-run diagnosis for minimal +20mm IK smoke test; no further simulation run",
+  "source_report": "/home/lin/Projects/DexGraspNet2_Wuji2/08_dual_arm_scene_layout/isaaclab_control/outputs/short_motion_ft04_z20/report.json",
+  "source_trace": "/home/lin/Projects/DexGraspNet2_Wuji2/08_dual_arm_scene_layout/isaaclab_control/outputs/short_motion_ft04_z20/trace.csv",
+  "status": "FAIL",
+  "observations": [
+    "The commanded task was only +20 mm in world Z and return.",
+    "OUTBOUND reached about 104.8 mm Cartesian position error and 14.1 deg orientation error.",
+    "RETURN ended about 480.5 mm away from the start pose and 74.0 deg rotated.",
+    "The joint command limiter stayed at its 0.20 rad/s velocity cap for most of the run.",
+    "The actual end-effector moved primarily sideways/down instead of tracking the +Z target."
+  ],
+  "likely_root_cause": "Differential IK frame/Jacobian/control convention mismatch, not static drive instability.",
+  "do_not_do_next": [
+    "Do not proceed to camera, point cloud, grasp, or object manipulation.",
+    "Do not tune arm stiffness/damping to hide this IK-frame failure.",
+    "Do not increase the 20 mm test distance."
+  ],
+  "recommended_next_debug": [
+    "Run a read-only Jacobian sign/frame diagnostic at the initial pose: compare predicted flange delta from J columns against finite-difference FK for tiny joint perturbations.",
+    "Verify whether root_physx_view.get_jacobians() is expressed in world frame or articulation root frame in this Isaac Lab/PhysX version.",
+    "Verify DifferentialIKController expected pose frame and quaternion order.",
+    "Test one-axis differential command with very small step and no integration until Jacobian sign/frame is confirmed."
+  ],
+  "summary_from_report": {
+    "final_return_position_error_m": 0.4804805517196655,
+    "final_return_orientation_error_deg": 74.04701261229279,
+    "max_raw_reported_joint_velocity_rad_s": 0.45070526003837585,
+    "max_command_joint_velocity_rad_s": 0.20000000298023224
+  }
+}
