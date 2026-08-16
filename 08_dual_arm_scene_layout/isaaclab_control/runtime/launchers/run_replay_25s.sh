@@ -10,8 +10,9 @@ SCRIPT="$ROOT/08_dual_arm_scene_layout/isaaclab_control/runtime/scripts/11_repla
 cd "$ROOT"
 export TERM=xterm-256color PYTHONUNBUFFERED=1
 source "$CONDA_SETUP"
-conda activate wuji2_factory
+conda activate isaaclab22_sim50
 set +u
 source "$ISAAC_SIM_ENV"
 set -u
+export PYTHONPATH="$LAB_ROOT/source/isaaclab:$LAB_ROOT/source/isaaclab_assets:$LAB_ROOT/source/isaaclab_tasks${PYTHONPATH:+:$PYTHONPATH}"
 exec bash "$LAB_ROOT/isaaclab.sh" -p "$SCRIPT" "$@"

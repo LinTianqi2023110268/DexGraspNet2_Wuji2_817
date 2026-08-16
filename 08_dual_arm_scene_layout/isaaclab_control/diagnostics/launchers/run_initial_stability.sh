@@ -60,13 +60,14 @@ echo "[SLEEP INHIBITOR] Suspend and lid-switch sleep are blocked only while this
 
 export TERM=xterm-256color PYTHONUNBUFFERED=1
 source "${CONDA_SETUP}"
-conda activate wuji2_factory
+conda activate isaaclab22_sim50
 
 # setup_conda_env.sh probes optional shell variables. Keep nounset disabled
 # only while sourcing it; command failures remain fatal throughout.
 set +u
 source "${ISAAC_SIM_ENV}"
 set -u
+export PYTHONPATH="${ISAACLAB_ROOT}/source/isaaclab:${ISAACLAB_ROOT}/source/isaaclab_assets:${ISAACLAB_ROOT}/source/isaaclab_tasks${PYTHONPATH:+:${PYTHONPATH}}"
 
 exec systemd-inhibit \
     --what=sleep:handle-lid-switch \

@@ -24,8 +24,9 @@ fi
 
 export TERM=xterm-256color PYTHONUNBUFFERED=1
 source "${CONDA_SETUP}"
-conda activate wuji2_factory
+conda activate isaaclab22_sim50
 set +u
 source "${ISAAC_SIM_ENV}"
 set -u
+export PYTHONPATH="${ISAACLAB_ROOT}/source/isaaclab:${ISAACLAB_ROOT}/source/isaaclab_assets:${ISAACLAB_ROOT}/source/isaaclab_tasks${PYTHONPATH:+:${PYTHONPATH}}"
 exec bash "${ISAACLAB_ROOT}/isaaclab.sh" -p "${PROGRAM}" "$@"

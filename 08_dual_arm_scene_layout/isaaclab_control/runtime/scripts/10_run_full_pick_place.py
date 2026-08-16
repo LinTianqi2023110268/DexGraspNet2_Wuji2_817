@@ -29,14 +29,15 @@ import numpy as np
 
 from isaaclab.app import AppLauncher
 
-from runtime_rebase_ik import (
-    pose_from_position_quaternion_wxyz,
-    rebase_pick_waypoints,
-    solve_right_arm_targets,
-)
-
-
 PROJECT_ROOT = Path(__file__).resolve().parents[4]
+ISAACLAB_CONTROL_ROOT = PROJECT_ROOT / "08_dual_arm_scene_layout/isaaclab_control"
+sys.path.insert(0, str(ISAACLAB_CONTROL_ROOT))
+
+from core.bridge import CuroboWorkerClient
+from core.config import DEFAULT_INITIAL_RIGHT_ARM_DEG
+from core.runtime_math import pose_from_position_quaternion_wxyz, rebase_pick_waypoints
+
+
 DEFAULT_CONFIG = PROJECT_ROOT / "08_dual_arm_scene_layout/isaaclab_control/runtime/config/full_pick_place.json"
 DEFAULT_CASE = (
     PROJECT_ROOT
@@ -420,17 +421,20 @@ def run() -> Path:
     if len(frozen_inputs) != 1:
         raise RuntimeError(f"Expected one frozen network input, got {frozen_inputs}")
     case_prediction = case_root / "01_input/official_leap_1024.npz"
-    case_selection = case_root / "01_input/leap_selected_rank0.npz"
     grounded_sam_result = capture_root / "grounded_sam" / target_key / "result.json"
+    grounded_sam_mask = capture_root / "grounded_sam" / target_key / "mask.npy"
     target_dgn2_root = capture_root / "dgn2" / target_key
     live_perception = grounded_sam_result.is_file()
     required_inputs = {
         "frozen RGB-D/40K input": frozen_inputs[0],
         "DGN2 prediction": case_prediction if case_prediction.is_file() else target_dgn2_root / "official_leap_1024_target_ranked.npz",
-        "target selection": case_selection if case_selection.is_file() else target_dgn2_root / "official_leap_target_collision_filtered.npz",
+        "selected DGN2 candidate metadata": case_root / "case.json",
         "retargeted waypoints": case_root / "06_isaacsim/final_waypoints.npz",
-        "arm IK": case_root / "07_arm_execution/full_arm_waypoint_ik.npz",
-        "path collision": case_root / "07_arm_execution/full_joint_path_collision_report.json",
+        "Cartesian arm target plan (legacy q ignored)": case_root / "07_arm_execution/full_arm_waypoint_ik.npz",
+        "depth_m": capture_root / "depth_m.npy",
+        "intrinsics": capture_root / "intrinsics.npy",
+        "T_world_camera": capture_root / "T_world_camera.npy",
+        "GroundedSAM target mask": grounded_sam_mask,
     }
     if "live_" in frozen_inputs[0].name and live_perception:
         required_inputs["GroundedSAM"] = grounded_sam_result
@@ -438,10 +442,6 @@ def run() -> Path:
         if not path.is_file():
             raise FileNotFoundError(path)
         print(f"  [PASS] {label}: {path}")
-    collision_report = load_json(required_inputs["path collision"])
-    if collision_report["status"] != "PASS":
-        raise RuntimeError("Offline joint-path collision audit did not pass")
-
     layout = load_json(PROJECT_ROOT / "08_dual_arm_scene_layout/outputs/manual_layout_calibrated.json")
     with np.load(case_root / "07_arm_execution/arm_flange_targets.npz", allow_pickle=False) as archive:
         source_world = np.asarray(archive["world_from_source_zone"], dtype=np.float64)
@@ -479,12 +479,9 @@ def run() -> Path:
     gain_audit = apply_ft04_gains(robot, [int(x) for x in arm_ids], config)
 
     with np.load(case_root / "07_arm_execution/full_arm_waypoint_ik.npz", allow_pickle=False) as archive:
-        if not bool(np.asarray(archive["all_reachable"]).item()):
-            raise RuntimeError("Full arm waypoint IK did not pass")
         stage_names = [str(x) for x in archive["waypoint_names"]]
-        arm_q = np.asarray(archive["solved_right_arm_q_rad"], dtype=np.float32)
         flange_targets = np.asarray(archive["world_from_right_flange"], dtype=np.float32)
-        initial_arm_q = np.asarray(archive["initial_right_arm_q_rad"], dtype=np.float32)
+    initial_arm_q = np.deg2rad(np.asarray(DEFAULT_INITIAL_RIGHT_ARM_DEG, dtype=np.float32))
     with np.load(case_root / "07_arm_execution/arm_flange_targets.npz", allow_pickle=False) as archive:
         pick_wrist_targets = np.asarray(archive["world_from_wuji2_wrist"], dtype=np.float32)
         source_world = np.asarray(archive["world_from_source_zone"], dtype=np.float64)
@@ -511,6 +508,7 @@ def run() -> Path:
         hand_stage_names = [str(x) for x in archive["waypoint_names"]]
         hand_q5 = np.asarray(archive["waypoint_joint_positions"][0], dtype=np.float32)
         squeeze_dense = np.asarray(archive["squeeze_dense_q20_path"], dtype=np.float32)
+    hand_index = {name: index for index, name in enumerate(hand_stage_names)}
     hand_ids, matched_hand_names = robot.find_joints(hand_names, preserve_order=True)
     if matched_hand_names != hand_names or len(hand_ids) != 20:
         raise RuntimeError("Wuji2 20-DOF mapping changed")
@@ -557,9 +555,6 @@ def run() -> Path:
     print("[STATE] INITIAL_SETTLE")
     for _ in range(round(float(config["initial_hold_s"]) / dt)):
         step()
-    if ARGS.dry_run:
-        print("[DRY RUN COMPLETE]")
-        return Path(config["output_directory"]) / "report.json"
 
     # Real operation captures RGB-D only after gravity has settled the scene.
     # Cached predictions retain a valid object-relative grasp, so carry that
@@ -583,30 +578,139 @@ def run() -> Path:
         wrist_targets[:5], object_before_settle, object_after_settle
     )
     flange_targets[:5] = wrist_targets[:5] @ np.linalg.inv(flange_from_wrist)[None]
-    arm_q[:5], runtime_ik_report = run_offline_with_gui_heartbeat(
-        "SETTLED-SCENE IK",
-        lambda: solve_right_arm_targets(
-            PROJECT_ROOT / "01_environment/vendor/wuji-description/dual_arm_right_wuji2"
-            / "urdf/dual_arm_right_wuji2.urdf",
-            PROJECT_ROOT / "08_dual_arm_scene_layout/outputs/manual_layout_calibrated.json",
-            flange_targets[:5], arm_q[:5], initial_arm_q,
-        ),
+    q_current = robot.data.joint_pos[0, arm_ids].detach().cpu().numpy().astype(np.float64)
+    measured_joint_state = {
+        str(name): float(value)
+        for name, value in zip(
+            robot.joint_names,
+            robot.data.joint_pos[0].detach().cpu().numpy(),
+        )
+    }
+    hand_state_for_stage = {
+        "pregrasp": "pregrasp", "cover": "cover", "grasp": "grasp",
+        "squeeze": "squeeze", "lift": "squeeze", "transfer": "squeeze",
+        "place": "squeeze", "release": "pregrasp", "retreat": "pregrasp",
+    }
+    phase_for_stage = {
+        "pregrasp": "pregrasp", "cover": "cover", "grasp": "grasp",
+        "squeeze": "squeeze", "lift": "lift", "transfer": "lift",
+        "place": "lift", "release": "lift", "retreat": "lift",
+    }
+    collision_joint_states = []
+    collision_phases = []
+    for stage_name in stage_names:
+        if stage_name not in hand_state_for_stage or stage_name not in phase_for_stage:
+            raise RuntimeError(f"Route-C V2 has no phase/hand collision policy for {stage_name}")
+        named = dict(measured_joint_state)
+        hand_stage = hand_state_for_stage[stage_name]
+        for name, value in zip(hand_names, hand_q5[hand_index[hand_stage]]):
+            named[name] = float(value)
+        collision_joint_states.append(named)
+        collision_phases.append(phase_for_stage[stage_name])
+
+    world_from_base = np.asarray(
+        layout["transforms"]["dual_arm_mount"]["Gf_local_to_world_row_major"],
+        dtype=np.float64,
+    ).T
+    base_from_world = np.linalg.inv(world_from_base)
+    flange_targets_base = np.stack(
+        [base_from_world @ np.asarray(target, dtype=np.float64) for target in flange_targets]
     )
-    if any(
-        item["position_error_mm"] > 5.0
-        or item["orientation_error_deg"] > 5.0
-        or item["minimum_limit_margin_deg"] < 3.0
-        for item in runtime_ik_report
+
+    def solve_route_c_v2():
+        with CuroboWorkerClient(PROJECT_ROOT) as client:
+            map_report = client.build_map(
+                required_inputs["depth_m"],
+                required_inputs["intrinsics"],
+                required_inputs["T_world_camera"],
+                required_inputs["GroundedSAM target mask"],
+            )
+            solve_report = client.solve_ik(
+                flange_targets_base,
+                q_current,
+                select_chain=True,
+                collision_context={
+                    "phases": collision_phases,
+                    "joint_positions_by_target": collision_joint_states,
+                    "T_world_base": world_from_base,
+                    "margin_m": 0.0,
+                },
+            )
+        return map_report, solve_report
+
+    map_report, route_c_v2_plan = run_offline_with_gui_heartbeat(
+        "ROUTE-C V2 GPU IK + OBSERVED ESDF", solve_route_c_v2
+    )
+    if route_c_v2_plan["selected"] is None:
+        raise RuntimeError(
+            "Route-C V2 found no continuous collision-feasible IK chain: "
+            f"ik={route_c_v2_plan['ik_accepted_per_target']}, "
+            f"collision={route_c_v2_plan['accepted_per_target']}"
+        )
+    arm_q = np.asarray(
+        [item["q_rad"] for item in route_c_v2_plan["selected"]], dtype=np.float32
+    )
+    if len(arm_q) != len(stage_names):
+        raise RuntimeError(f"Route-C V2 arm target count mismatch: {len(arm_q)} != {len(stage_names)}")
+    runtime_ik_report = []
+    for stage_name, selected, collision in zip(
+        stage_names, route_c_v2_plan["selected"], route_c_v2_plan["selected_collision"]
     ):
-        raise RuntimeError(f"Settled-scene runtime IK failed: {runtime_ik_report}")
+        runtime_ik_report.append({
+            "stage": stage_name,
+            "position_error_mm": 1000.0 * float(selected["position_error_m"]),
+            "orientation_error_deg": math.degrees(float(selected["orientation_error_rad"])),
+            "minimum_limit_margin_deg": math.degrees(float(selected["inner_limit_margin_rad"])),
+            "observed_scene_collision_pass": bool(collision["observed_scene_collision_pass"]),
+            "unknown_space_exposure": bool(collision["unknown_space_exposure"]),
+            "unknown_sphere_count": int(collision["unknown_sphere_count"]),
+        })
+    ik_pass = bool(route_c_v2_plan["ik_pass"] and route_c_v2_plan["selected"] is not None)
+    observed_scene_collision_pass = bool(route_c_v2_plan["observed_scene_collision_pass"])
+    unknown_space_exposure = bool(any(route_c_v2_plan["unknown_space_exposure"]))
+    unknown_space_safe_enough = not unknown_space_exposure
+    path_pass = None
+
+    planning_output = project_path(config["output_directory"]).resolve()
+    planning_output.mkdir(parents=True, exist_ok=True)
+    route_c_v2_planning_path = planning_output / "route_c_v2_planning.json"
+    route_c_v2_planning_path.write_text(json.dumps({
+        "schema_version": 1,
+        "production_planner": "core Route-C V2 cuRobo GPU IK + observed Mapper/TSDF/ESDF",
+        "q_current_rad": q_current.tolist(),
+        "stage_names": stage_names,
+        "map": map_report,
+        "solve": route_c_v2_plan,
+        "statuses": {
+            "ik_pass": ik_pass,
+            "observed_scene_collision_pass": observed_scene_collision_pass,
+            "unknown_space_exposure": unknown_space_exposure,
+            "unknown_space_safe_enough": unknown_space_safe_enough,
+            "path_pass": path_pass,
+            "physics_grasp_pass": None,
+        },
+        "limitations": [
+            "single-view unknown/unobserved/occluded space is not certified free",
+            "target contact allowance is phase-wide for GRASP/SQUEEZE/LIFT, not yet finger-link-specific",
+            "continuous-path observed collision is not yet evaluated; path_pass is null",
+        ],
+    }, indent=2) + "\n", encoding="utf-8")
+
     print("[STATE] SETTLED_SCENE_RELOCALIZED")
     print(f"  object delta xyz mm={np.round(1000.0 * object_delta[:3, 3], 3).tolist()}")
-    for name, item in zip(stage_names[:5], runtime_ik_report):
+    print(f"  q_current deg={np.degrees(q_current).round(3).tolist()}")
+    for name, item in zip(stage_names, runtime_ik_report):
         print(
             f"  {name}: {item['position_error_mm']:.3f} mm / "
             f"{item['orientation_error_deg']:.3f} deg; "
-            f"limit margin={item['minimum_limit_margin_deg']:.2f} deg"
+            f"limit margin={item['minimum_limit_margin_deg']:.2f} deg; "
+            f"observed_collision={item['observed_scene_collision_pass']}; "
+            f"unknown={item['unknown_space_exposure']}"
         )
+
+    if ARGS.dry_run:
+        print(f"[DRY RUN COMPLETE] {route_c_v2_planning_path}")
+        return route_c_v2_planning_path
 
     actual_arm_start = robot.data.joint_pos[:, arm_ids].clone()
     static_bias = command[:, arm_ids].clone() - actual_arm_start
@@ -988,8 +1092,15 @@ def run() -> Path:
             f"{int(load_json(case_root / 'case.json')['target_segmentation_id'])}"
         ),
         "candidate_index": int(load_json(case_root / "case.json")["source_candidate_index"]),
-        "control": "Isaac Lab 2.2 one AppLauncher/SimulationContext; ft04 right-arm Force Drive; official Wuji2 drives",
+        "control": "Isaac Lab 2.2 + core Route-C V2 persistent cuRobo worker; ft04 right-arm Force Drive; official Wuji2 drives",
         "cached_pipeline_inputs": {key: str(value) for key, value in required_inputs.items()},
+        "route_c_v2_planning_report": str(route_c_v2_planning_path),
+        "ik_pass": ik_pass,
+        "observed_scene_collision_pass": observed_scene_collision_pass,
+        "unknown_space_exposure": unknown_space_exposure,
+        "unknown_space_safe_enough": unknown_space_safe_enough,
+        "path_pass": path_pass,
+        "physics_grasp_pass": passed,
         "max_object_lift_mm": max_lift_mm,
         "action_duration_s": action_duration_s,
         "action_wall_duration_s": action_wall_duration_s,

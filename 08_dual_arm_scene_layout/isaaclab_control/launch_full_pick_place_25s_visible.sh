@@ -11,7 +11,7 @@ LOG_FILE="$LOG_DIR/visible_terminal.log"
 
 mkdir -p "$LOG_DIR"
 
-if pgrep -f "^/home/lin/miniconda3/envs/wuji2_factory/bin/python .*10_run_full_pick_place.py" >/dev/null; then
+if pgrep -f "^/home/lin/miniconda3/envs/isaaclab22_sim50/bin/python .*10_run_full_pick_place.py" >/dev/null; then
   echo "[REFUSED] Another full-pipeline Isaac process is already running." >&2
   exit 3
 fi
