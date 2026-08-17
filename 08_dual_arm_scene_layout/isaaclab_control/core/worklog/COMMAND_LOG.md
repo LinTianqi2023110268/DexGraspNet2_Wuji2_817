@@ -365,3 +365,483 @@
 - Exit code: `0`
 - Key output: Python `3.11.15`; NumPy `1.26.4`; Gymnasium `0.29.0`; flatdict `4.0.1`; prettytable `3.3.0`; trimesh `5.0.0`; h5py `3.16.0`.
 - Conclusion: only lightweight compatibility dependencies were added; CUDA, driver, PyTorch, Isaac Sim, and Isaac Lab were not upgraded or rebuilt.
+
+## 2026-08-16 18:47 +08:00 — Closed-loop V1 read-only kickoff audit
+
+- Purpose: confirm worktree/root, re-read durable rules and closed-loop instructions, inspect the closed-loop patch and local Grounded-SAM environment before editing.
+- Conda environment: shell/base for read-only repository audit; `groundedsam` for vision environment audit.
+- Working directory: `/home/lin/Projects/DexGraspNet2_Wuji2`
+- Commands:
+
+  ```bash
+  pwd
+  git status --short
+  git diff --stat
+  sed -n '1,260p' .agents/skills/isaaclab22-manipulator-control/SKILL.md
+  sed -n '1,220p' AGENTS.md
+  sed -n '1,260p' 08_dual_arm_scene_layout/isaaclab_control/closed_loop/CODEX_INSTRUCTION.md
+  find 08_dual_arm_scene_layout/isaaclab_control/closed_loop -type f | sort
+  conda env list
+  conda run -n groundedsam python scripts/check_environment.py
+  ```
+
+- Exit code: `0` for root/status/diff, closed-loop reads, env list, and Grounded-SAM audit; `reference.md`/`evaluations.md` referenced by the skill are absent.
+- Key output: project root correct; `closed_loop/` and `run_closed_loop.sh` are untracked patch files; tracked diff stat is empty; `groundedsam` exists with valid GroundingDINO/SAM weights and local third-party sources.
+- Conclusion: proceed with local integration only; physical execution remains locked because the previous ft04 static gate is FAIL.
+
+## 2026-08-16 18:50 +08:00 — Restricted-channel GPU visibility check
+
+- Purpose: distinguish real GPU availability from this execution channel's CUDA visibility while auditing cuRobo and Grounded-SAM.
+- Conda environment: `groundedsam`, `curobo_v2`.
+- Working directory: `/home/lin/Projects/DexGraspNet2_Wuji2`
+- Commands:
+
+  ```bash
+  conda run -n groundedsam python scripts/check_environment.py
+  conda run -n curobo_v2 python -c '<load cuRobo robot YAML on cuda:0>'
+  ```
+
+- Exit code: Grounded-SAM audit `0`; cuRobo CUDA load `1` in this restricted channel.
+- Key output: Grounded-SAM packages and weights are valid, but `torch.cuda.is_available()` is false in this channel; cuRobo CUDA load reports `RuntimeError: No CUDA GPUs are available`.
+- Conclusion: do not treat the restricted-channel CUDA failure as a hardware failure. GPU validation must use the host execution channel; CPU/static tests can proceed locally.
+
+## 2026-08-16 18:54 +08:00 — Closed-loop interface implementation and pure tests
+
+- Purpose: connect missing closed-loop interfaces without enabling physical motion.
+- Conda environment: shell/base for edits; `curobo_v2` for pure Python compile/unit tests; `groundedsam` for vision smoke.
+- Working directory: `/home/lin/Projects/DexGraspNet2_Wuji2`
+- Commands:
+
+  ```bash
+  find 08_dual_arm_scene_layout/isaaclab_control/closed_loop 08_dual_arm_scene_layout/isaaclab_control/core 08_dual_arm_scene_layout/isaaclab_control/runtime/scripts 08_dual_arm_scene_layout/isaaclab_control/tools -name '*.py' -print0 | xargs -0 python -m py_compile
+  python -m unittest discover -s 08_dual_arm_scene_layout/isaaclab_control/closed_loop/tests -t /home/lin/Projects/DexGraspNet2_Wuji2
+  python -m unittest discover -s 08_dual_arm_scene_layout/isaaclab_control/core/tests -t 08_dual_arm_scene_layout/isaaclab_control
+  python -m json.tool 08_dual_arm_scene_layout/isaaclab_control/closed_loop/config/closed_loop.json
+  python -m json.tool 08_dual_arm_scene_layout/isaaclab_control/runtime/config/full_pick_place_closed_loop_template.json
+  conda run --no-capture-output -n groundedsam python closed_loop/scripts/grounded_sam_backend.py --image <GroundedSAM smoke dog RGB> --text dog --output /tmp/dgn2_closed_loop_groundedsam_smoke
+  ```
+
+- Exit code: `0` for py_compile, core tests, closed-loop tests after adding `tests/__init__.py`, JSON parsing, and Grounded-SAM smoke.
+- Key output: closed-loop tests `4/4 PASS`; core tests `15/15 PASS`; GroundingDINO `dog` score `0.917552`, SAM mask `76198` pixels, required `mask.npy`, `overlay.png`, and normalized `result.json` written.
+- Conclusion: live Grounded-SAM adapter, measured capture state output, generic runtime launcher/template, self-collision field wiring, continuous-path field wiring, and fail-closed runtime gate are ready for GPU/Isaac planning validation.
+
+## 2026-08-16 19:37 +08:00 — GPU batch screening regression and gate semantics
+
+- Purpose: stop slow per-candidate scanning, restore a known-good GPU IK regression first, then implement and validate the grouped batched worker primitive for production candidate screening.
+- Conda environment: `isaaclab22_sim50` parent process; cuRobo worker subprocess in `curobo_v2`.
+- Working directory: `/home/lin/Projects/DexGraspNet2_Wuji2`
+- Commands:
+
+  ```bash
+  /home/lin/miniconda3/envs/isaaclab22_sim50/bin/python \
+    08_dual_arm_scene_layout/isaaclab_control/closed_loop/scripts/regress_known_good_5stage_ik.py \
+    --project-root /home/lin/Projects/DexGraspNet2_Wuji2 \
+    --output 08_dual_arm_scene_layout/isaaclab_control/core/worklog/raw/known_good_5stage_ik_regression.json
+
+  /home/lin/miniconda3/envs/isaaclab22_sim50/bin/python \
+    08_dual_arm_scene_layout/isaaclab_control/closed_loop/scripts/regress_known_good_5stage_ik.py \
+    --project-root /home/lin/Projects/DexGraspNet2_Wuji2 \
+    --output 08_dual_arm_scene_layout/isaaclab_control/core/worklog/raw/known_good_5stage_ik_regression_after_batch_patch.json
+
+  /home/lin/miniconda3/envs/isaaclab22_sim50/bin/python - <<'PY'
+  # grouped known-good IK regression; raw report:
+  # core/worklog/raw/known_good_grouped_ik_regression.json
+  PY
+
+  /home/lin/miniconda3/envs/isaaclab22_sim50/bin/python \
+    08_dual_arm_scene_layout/isaaclab_control/closed_loop/scripts/validate_collision_gate_semantics.py \
+    --project-root /home/lin/Projects/DexGraspNet2_Wuji2 \
+    --output 08_dual_arm_scene_layout/isaaclab_control/core/worklog/raw/collision_gate_semantics.json
+
+  python3 -m py_compile \
+    08_dual_arm_scene_layout/isaaclab_control/core/bridge/worker_client.py \
+    08_dual_arm_scene_layout/isaaclab_control/core/bridge/curobo_worker.py \
+    08_dual_arm_scene_layout/isaaclab_control/closed_loop/scripts/*.py \
+    08_dual_arm_scene_layout/isaaclab_control/closed_loop/orchestrator.py \
+    06_leap_to_wuji2_final_pipeline/02_scripts/case_paths.py \
+    06_leap_to_wuji2_final_pipeline/02_scripts/05_build_isaacsim_validation.py
+
+  /home/lin/miniconda3/envs/isaaclab22_sim50/bin/python -m unittest \
+    08_dual_arm_scene_layout.isaaclab_control.closed_loop.tests.test_closed_loop_logic
+  ```
+
+- Exit code: `0` for known-good regression before/after patch, grouped IK regression, collision semantics validation, py_compile, and closed-loop unit tests. One base `python3 -m unittest` attempt failed because base Python has no NumPy; it was rerun in `isaaclab22_sim50` and passed.
+- Key output: known-good candidate3800 first five stages old raw `[32,36,36,36,31]`, current raw `[33,37,37,37,31]`; grouped request `group_count=1`, `pose_count=5`, raw `[33,37,37,37,31]`; self/path semantics PASS with safe self `true`, folded self `false`, safe path `true`, colliding path `false`; closed-loop logic tests `4/4 PASS`.
+- Conclusion: current worker contract is not the cause of the earlier raw-success concern. The slow path was architectural: one candidate process/worker/map per candidate. The new grouped worker primitive and chunk gate are ready for same-frame planning validation, but no physical action was run.
+
+## 2026-08-16 19:51 +08:00 — Top-16 lazy batch pick validation
+
+- Purpose: fix the pick-stage path contract, guarantee one worker/map per closed-loop screening call, lazy-materialize only the current 16-candidate chunk, and validate on one real capture + mask without full-route or physical motion.
+- Conda environment: parent `isaaclab22_sim50`; cuRobo worker subprocess in `curobo_v2`; DGN2 case builder in `graspnet2.0`; retarget scripts in `wuji_retargeting`.
+- Working directory: `/home/lin/Projects/DexGraspNet2_Wuji2`
+- Commands:
+
+  ```bash
+  python3 -m py_compile \
+    08_dual_arm_scene_layout/isaaclab_control/core/bridge/curobo_worker.py \
+    08_dual_arm_scene_layout/isaaclab_control/core/bridge/worker_client.py \
+    08_dual_arm_scene_layout/isaaclab_control/closed_loop/scripts/screen_pick_batches.py \
+    08_dual_arm_scene_layout/isaaclab_control/closed_loop/scripts/batch_pick_candidate_gate.py \
+    08_dual_arm_scene_layout/isaaclab_control/closed_loop/orchestrator.py
+
+  /home/lin/miniconda3/envs/isaaclab22_sim50/bin/python \
+    08_dual_arm_scene_layout/isaaclab_control/closed_loop/scripts/screen_pick_batches.py \
+    --project-root /home/lin/Projects/DexGraspNet2_Wuji2 \
+    --prediction 08_dual_arm_scene_layout/isaaclab_control/outputs/closed_loop_sessions/20260816_190311/cycle_001/capture/dgn2/dog/official_leap_1024_target_ranked.npz \
+    --network-input 08_dual_arm_scene_layout/isaaclab_control/outputs/closed_loop_sessions/20260816_190311/cycle_001/capture/dgn2/dog/network_input.npz \
+    --capture-root 08_dual_arm_scene_layout/isaaclab_control/outputs/closed_loop_sessions/20260816_190311/cycle_001/capture \
+    --settled-manifest 08_dual_arm_scene_layout/isaaclab_control/outputs/closed_loop_sessions/20260816_190311/cycle_001/capture/settled_scene_manifest.json \
+    --robot-state 08_dual_arm_scene_layout/isaaclab_control/outputs/closed_loop_sessions/20260816_190311/cycle_001/capture/robot_state.json \
+    --mask 08_dual_arm_scene_layout/isaaclab_control/outputs/closed_loop_sessions/20260816_190311/cycle_001/capture/grounded_sam/dog/mask.npy \
+    --sim-target-segmentation-id 3 \
+    --scratch-root 08_dual_arm_scene_layout/isaaclab_control/outputs/closed_loop_sessions/20260816_190311/cycle_001/scratch/top16_batch_validation \
+    --output 08_dual_arm_scene_layout/isaaclab_control/core/worklog/raw/top16_batch_pick_validation.json \
+    --network-python /home/lin/miniconda3/envs/graspnet2.0/bin/python \
+    --retarget-python /home/lin/Projects/DexGraspNet2_Wuji2/01_environment/conda/wuji_retargeting/bin/python \
+    --planner-python /home/lin/miniconda3/envs/isaaclab22_sim50/bin/python \
+    --candidate-case-prefix top16batch \
+    --limit 16 \
+    --chunk-size 16
+
+  /home/lin/miniconda3/envs/isaaclab22_sim50/bin/python -m unittest \
+    08_dual_arm_scene_layout.isaaclab_control.closed_loop.tests.test_closed_loop_logic
+
+  git diff --check
+  git status --short
+  git diff --stat
+  ```
+
+- Exit code: `0` for py_compile, Top-16 validation command, closed-loop unit tests, and `git diff --check`.
+- Key output: Top-16 validation status `FAIL` because no candidate passed every pick gate; worker_start_count `1`; map_build_count `1`; chunk_size `16`; tested/materialized candidates `16`; one grouped solve contained `80` poses; mean wall time per tested candidate `4.137 s`; rank14/candidate1422 had raw IK `[36,37,37,37,34]` and IK accepted `[33,35,35,35,33]` but collision-filtered accepted `[0,0,0,0,0]`.
+- Conclusion: the three requested architecture corrections are in place. Top-16 same-frame pick screening did not find a feasible candidate, and the run stopped before full-route/placement/physical execution as requested.
+
+## 2026-08-16 20:08 +08:00 — Candidate1422 collision diagnosis and all-candidate GPU prefilter
+
+- Purpose: diagnose why candidate1422 collision filtering kills every IK solution, then benchmark all-candidate GPU prefilter without retarget/full-route/physical motion.
+- Conda environment: parent `isaaclab22_sim50`; cuRobo worker subprocess in `curobo_v2`.
+- Working directory: `/home/lin/Projects/DexGraspNet2_Wuji2`
+- Commands:
+
+  ```bash
+  /home/lin/miniconda3/envs/isaaclab22_sim50/bin/python \
+    08_dual_arm_scene_layout/isaaclab_control/closed_loop/scripts/diagnose_candidate_collision.py \
+    --project-root /home/lin/Projects/DexGraspNet2_Wuji2 \
+    --case-root 08_dual_arm_scene_layout/isaaclab_control/outputs/closed_loop_sessions/20260816_190311/cycle_001/scratch/top16_batch_validation/chunk_000/top16batch_r014_cand1422 \
+    --capture-root 08_dual_arm_scene_layout/isaaclab_control/outputs/closed_loop_sessions/20260816_190311/cycle_001/capture \
+    --robot-state 08_dual_arm_scene_layout/isaaclab_control/outputs/closed_loop_sessions/20260816_190311/cycle_001/capture/robot_state.json \
+    --mask 08_dual_arm_scene_layout/isaaclab_control/outputs/closed_loop_sessions/20260816_190311/cycle_001/capture/grounded_sam/dog/mask.npy \
+    --output 08_dual_arm_scene_layout/isaaclab_control/core/worklog/raw/candidate1422_collision_diagnosis.json \
+    --top-k 6
+
+  /home/lin/miniconda3/envs/isaaclab22_sim50/bin/python - <<'PY'
+  # measured baseline and candidate1422 hand-state self-collision spot checks
+  PY
+
+  /home/lin/miniconda3/envs/isaaclab22_sim50/bin/python \
+    08_dual_arm_scene_layout/isaaclab_control/closed_loop/scripts/all_candidate_gpu_prefilter.py \
+    --project-root /home/lin/Projects/DexGraspNet2_Wuji2 \
+    --prediction 08_dual_arm_scene_layout/isaaclab_control/outputs/closed_loop_sessions/20260816_190311/cycle_001/capture/dgn2/dog/official_leap_1024_target_ranked.npz \
+    --capture-root 08_dual_arm_scene_layout/isaaclab_control/outputs/closed_loop_sessions/20260816_190311/cycle_001/capture \
+    --robot-state 08_dual_arm_scene_layout/isaaclab_control/outputs/closed_loop_sessions/20260816_190311/cycle_001/capture/robot_state.json \
+    --mask 08_dual_arm_scene_layout/isaaclab_control/outputs/closed_loop_sessions/20260816_190311/cycle_001/capture/grounded_sam/dog/mask.npy \
+    --output 08_dual_arm_scene_layout/isaaclab_control/core/worklog/raw/all_candidate_gpu_prefilter.json \
+    --gpu-batch-size 512
+
+  /home/lin/miniconda3/envs/isaaclab22_sim50/bin/python -m unittest \
+    08_dual_arm_scene_layout.isaaclab_control.closed_loop.tests.test_closed_loop_logic
+
+  git diff --check
+  git status --short
+  git diff --stat
+  ```
+
+- Exit code: `0` for collision diagnosis, baseline self-collision spot checks, all-candidate prefilter, unit tests, and `git diff --check`.
+- Key output: candidate1422 stage counts: pregrasp `raw=36 threshold=33 self=33 scene=0 target=0 survivors=0`; cover `37/35 self=35`; grasp `37/35 self=35 target=35 multiple=35`; squeeze `37/35 self=35 target=35 multiple=35`; lift `34/33 self=33`. Measured baseline alone reports one self-collision pair with max penetration `0.000251 m`, indicating systematic sphere/self-collision configuration sensitivity. All-candidate prefilter: total proposals `8192`, target proposals `7454`, batch size `512`, batch count `15`, raw IK reachable `4435`, threshold accepted `4347`, scene collision pass `4269`, self collision pass `0`, coarse survivors `0`, IK time `2.387 s`, total wall `18.242 s`, `408.6 candidates/s`, peak VRAM `1608 MiB`.
+- Conclusion: all-candidate GPU IK prefilter is fast and viable, but current self-collision sphere semantics are over-rejecting at baseline; do not treat zero coarse survivors as proven physical impossibility until self-collision model semantics are corrected or calibrated under explicit review.
+
+## 2026-08-16 20:22 +08:00 — Self-collision report-only policy patch
+
+- Purpose: switch closed-loop planning-only candidate feasibility to `SELF_COLLISION_POLICY=REPORT_ONLY_UNRESOLVED` while preserving self-collision computation and diagnostics.
+- Conda environment: shell/base for syntax and Git checks; attempted `isaaclab22_sim50` parent with `curobo_v2` worker for GPU rerun.
+- Working directory: `/home/lin/Projects/DexGraspNet2_Wuji2`
+- Commands:
+
+  ```bash
+  python3 -m py_compile \
+    08_dual_arm_scene_layout/isaaclab_control/core/bridge/curobo_worker.py \
+    08_dual_arm_scene_layout/isaaclab_control/core/bridge/worker_client.py \
+    08_dual_arm_scene_layout/isaaclab_control/closed_loop/scripts/all_candidate_gpu_prefilter.py \
+    08_dual_arm_scene_layout/isaaclab_control/closed_loop/scripts/screen_pick_batches.py \
+    08_dual_arm_scene_layout/isaaclab_control/closed_loop/scripts/batch_pick_candidate_gate.py \
+    08_dual_arm_scene_layout/isaaclab_control/closed_loop/scripts/route_candidate_gate.py
+
+  /home/lin/miniconda3/envs/isaaclab22_sim50/bin/python \
+    08_dual_arm_scene_layout/isaaclab_control/closed_loop/scripts/all_candidate_gpu_prefilter.py \
+    --project-root /home/lin/Projects/DexGraspNet2_Wuji2 \
+    --prediction 08_dual_arm_scene_layout/isaaclab_control/outputs/closed_loop_sessions/20260816_190311/cycle_001/capture/dgn2/dog/official_leap_1024_target_ranked.npz \
+    --capture-root 08_dual_arm_scene_layout/isaaclab_control/outputs/closed_loop_sessions/20260816_190311/cycle_001/capture \
+    --robot-state 08_dual_arm_scene_layout/isaaclab_control/outputs/closed_loop_sessions/20260816_190311/cycle_001/capture/robot_state.json \
+    --mask 08_dual_arm_scene_layout/isaaclab_control/outputs/closed_loop_sessions/20260816_190311/cycle_001/capture/grounded_sam/dog/mask.npy \
+    --output 08_dual_arm_scene_layout/isaaclab_control/core/worklog/raw/all_candidate_gpu_prefilter_self_report_only.json \
+    --gpu-batch-size 512 \
+    --pregrasp-offset-m 0.10
+
+  git diff --check
+  git diff --stat
+  ```
+
+- Exit code: `0` for py_compile and `git diff --check`. GPU rerun in the non-escalated channel failed because `CUDA is not visible to PyTorch in curobo_v2`; the escalated rerun request was rejected by execution policy.
+- Key output: policy code is patched and syntax-valid. The previous completed all-candidate run already establishes `survivors_without_self_collision = scene_collision_pass = 4269` for GRASP coarse filtering. The new PREGRASP/approach-path benchmark code is present but not executed successfully due to GPU channel access.
+- Conclusion: report-only policy is implemented locally; PREGRASP/approach-path benchmark requires a GPU-visible execution channel before reporting measured counts.
+
+## 2026-08-16 20:58 +08:00 — One-command planning-only orchestrator integration attempt
+
+- Purpose: integrate existing closed-loop modules into `./run_closed_loop.sh --planning-only` and attempt a real scene_0000 / dog one-command run.
+- Conda environment: launcher now uses `isaaclab22_sim50`; cuRobo worker subprocess is configured for `curobo_v2`.
+- Working directory: `/home/lin/Projects/DexGraspNet2_Wuji2`
+- Commands:
+
+  ```bash
+  pwd
+  git status --short
+  git diff --stat -- 08_dual_arm_scene_layout/isaaclab_control/closed_loop \
+    08_dual_arm_scene_layout/isaaclab_control/core/bridge \
+    08_dual_arm_scene_layout/isaaclab_control/core/worklog run_closed_loop.sh
+
+  /home/lin/miniconda3/envs/isaaclab22_sim50/bin/python -m py_compile \
+    08_dual_arm_scene_layout/isaaclab_control/closed_loop/orchestrator.py \
+    08_dual_arm_scene_layout/isaaclab_control/closed_loop/scripts/all_candidate_gpu_prefilter.py \
+    08_dual_arm_scene_layout/isaaclab_control/closed_loop/scripts/screen_pick_batches.py \
+    08_dual_arm_scene_layout/isaaclab_control/closed_loop/scripts/build_cartesian_route.py
+
+  ./run_closed_loop.sh --planning-only
+  # stdin:
+  # /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_test60_10upright_10view_v1/scenes/scene_0000
+  # dog
+
+  nvidia-smi
+
+  /home/lin/miniconda3/envs/curobo_v2/bin/python - <<'PY'
+  import torch
+  print(torch.cuda.is_available())
+  print(torch.cuda.device_count())
+  PY
+
+  git diff --check
+  ```
+
+- Exit code: `0` for syntax checks and `git diff --check`; the first `./run_closed_loop.sh --planning-only` was manually interrupted after Isaac capture hung with GPU initialization failures in this Codex execution channel. Escalated rerun was rejected by execution policy.
+- Key output: Isaac/Kit reported `NVML_ERROR_DRIVER_NOT_LOADED`, `No device could be created`, and `no CUDA-capable device is detected`; in the same Codex channel, `nvidia-smi` failed and `curobo_v2` reported `torch.cuda.is_available() == False`.
+- Conclusion: the orchestrator integration is syntax-valid, but the actual one-command validation cannot be completed from this restricted command channel because it cannot see the host NVIDIA driver/GPU. This does not contradict the user's terminal `nvidia-smi`; it is a channel visibility/permission blocker.
+
+## 2026-08-16 21:xx +08:00 — Scratch case path contract and strict coarse prefilter funnel
+
+- Purpose: fix final-planning scratch case path contract and enforce cheap-to-expensive all-candidate coarse prefilter ordering.
+- Conda environment: syntax checks in `isaaclab22_sim50`; no GPU/Isaac rerun in the restricted Codex channel.
+- Working directory: `/home/lin/Projects/DexGraspNet2_Wuji2`
+- Commands:
+
+  ```bash
+  grep -n "case_root =\\|coarse_prefilter\\|coarse_approach\\|survivor_indices" \
+    08_dual_arm_scene_layout/isaaclab_control/closed_loop/orchestrator.py \
+    08_dual_arm_scene_layout/isaaclab_control/closed_loop/scripts/all_candidate_gpu_prefilter.py \
+    08_dual_arm_scene_layout/isaaclab_control/core/bridge/curobo_worker.py
+
+  /home/lin/miniconda3/envs/isaaclab22_sim50/bin/python -m py_compile \
+    08_dual_arm_scene_layout/isaaclab_control/closed_loop/orchestrator.py \
+    08_dual_arm_scene_layout/isaaclab_control/closed_loop/scripts/all_candidate_gpu_prefilter.py
+
+  git diff --check
+  ```
+
+- Exit code: `0` for py_compile and `git diff --check`.
+- Key output: final planning case root is now `scratch/final_planning/rank_{rank:04d}/{case_id}`, so `Path(case_root).name == case_id`. The strict prefilter function now forwards only previous-stage survivors through GRASP IK/threshold/scene, PREGRASP IK/threshold/scene, q_current→PREGRASP path, and PREGRASP→GRASP path.
+- Conclusion: path contract is fixed without changing `build_candidate_case.py`; coarse prefilter ordering no longer runs PREGRASP/path checks for candidates that failed earlier hard gates.
+
+## 2026-08-17 -- Simulation diagnostic execution wiring
+
+- Purpose: restore existing closed-loop execution wiring and add explicit Isaac Sim diagnostic execution flags.
+- Conda environment: syntax checks in `isaaclab22_sim50`; no full Isaac/GPU run in the restricted Codex channel.
+- Working directory: `/home/lin/Projects/DexGraspNet2_Wuji2`
+- Commands:
+
+  ```bash
+  /home/lin/miniconda3/envs/isaaclab22_sim50/bin/python -m py_compile \
+    08_dual_arm_scene_layout/isaaclab_control/closed_loop/orchestrator.py \
+    08_dual_arm_scene_layout/isaaclab_control/runtime/scripts/10_run_full_pick_place.py
+
+  git diff --check
+
+  grep -n "sim-execute\\|no-planner-collision-check\\|diagnostic-ignore-static-gate\\|build_next_scene_manifest" \
+    08_dual_arm_scene_layout/isaaclab_control/closed_loop/orchestrator.py \
+    08_dual_arm_scene_layout/isaaclab_control/runtime/scripts/10_run_full_pick_place.py
+  ```
+
+- Exit code: `0` for py_compile and `git diff --check`.
+- Key output: `orchestrator.py` now supports `--sim-execute --no-planner-collision-check --diagnostic-ignore-static-gate`, creates a session-local placement registry, calls the existing runtime launcher, calls `build_next_scene_manifest.py`, updates `current_scene_manifest`, and continues the existing `while True` loop.
+- Conclusion: no second state machine or executor was added. Planner collision checks can be skipped without disabling Isaac/PhysX collisions; static gate remains recorded false with an explicit diagnostic override flag.
+
+## 2026-08-17 -- Batch retarget + grouped exact IK wiring
+
+- Purpose: replace per-survivor retarget subprocess churn with score-ordered chunk retargeting and one grouped exact IK call per chunk.
+- Conda environment: build/finalize wrappers in `graspnet2.0`; LEAP->Wuji2 wrapper in `wuji_retargeting`; syntax checks in `isaaclab22_sim50`.
+- Working directory: `/home/lin/Projects/DexGraspNet2_Wuji2`
+- Commands:
+
+  ```bash
+  /home/lin/miniconda3/envs/graspnet2.0/bin/python \
+    08_dual_arm_scene_layout/isaaclab_control/closed_loop/scripts/batch_build_candidate_cases.py \
+    --project-root /home/lin/Projects/DexGraspNet2_Wuji2 \
+    --prediction 08_dual_arm_scene_layout/isaaclab_control/outputs/closed_loop_sessions/20260816_190311/cycle_001/capture/dgn2/dog/official_leap_1024_target_ranked.npz \
+    --network-input 08_dual_arm_scene_layout/isaaclab_control/outputs/closed_loop_sessions/20260816_190311/cycle_001/capture/dgn2/dog/network_input.npz \
+    --capture-root 08_dual_arm_scene_layout/isaaclab_control/outputs/closed_loop_sessions/20260816_190311/cycle_001/capture \
+    --settled-manifest 08_dual_arm_scene_layout/isaaclab_control/outputs/closed_loop_sessions/20260816_190311/cycle_001/capture/settled_scene_manifest.json \
+    --sim-target-segmentation-id 3 \
+    --items-json /tmp/batch_retarget_regression_seg3/items.json \
+    --output /tmp/batch_retarget_regression_seg3/build_report.json
+
+  /home/lin/Projects/DexGraspNet2_Wuji2/01_environment/conda/wuji_retargeting/bin/python \
+    08_dual_arm_scene_layout/isaaclab_control/closed_loop/scripts/batch_retarget_cases.py \
+    --items-json /tmp/batch_retarget_regression_seg3/items.json \
+    --output /tmp/batch_retarget_regression_seg3/retarget_report.json
+
+  /home/lin/miniconda3/envs/graspnet2.0/bin/python \
+    08_dual_arm_scene_layout/isaaclab_control/closed_loop/scripts/batch_finalize_candidate_cases.py \
+    --items-json /tmp/batch_retarget_regression_seg3/items.json \
+    --output /tmp/batch_retarget_regression_seg3/finalize_report.json
+
+  /home/lin/miniconda3/envs/isaaclab22_sim50/bin/python -m py_compile \
+    08_dual_arm_scene_layout/isaaclab_control/closed_loop/orchestrator.py \
+    08_dual_arm_scene_layout/isaaclab_control/closed_loop/scripts/batch_build_candidate_cases.py \
+    08_dual_arm_scene_layout/isaaclab_control/closed_loop/scripts/batch_retarget_cases.py \
+    08_dual_arm_scene_layout/isaaclab_control/closed_loop/scripts/batch_finalize_candidate_cases.py
+
+  git diff --check
+  ```
+
+- Exit code: `0`.
+- Key output: candidate330 regression against the old top16 scratch case has max numeric abs diff `0.0` for `grasp_official.npz`, `root_alignment.npz`, `squeeze_official.npz`, `final_waypoints.npz`, and `arm_flange_targets.npz`; only `retarget_source_npz` path metadata differs. One-candidate wrapper timing: build `1.005 s`, retarget `0.347 s`, finalize `1.019 s`.
+- Conclusion: batch wrappers preserve retarget/flange numerical outputs. Orchestrator now processes coarse survivors by score-ordered chunks (`retarget_chunk_size=32`) and sends each chunk's `N*5` exact pick poses to one `solve_ik_groups` call.
+
+## 2026-08-17 -- Retarget chunk size 64 and bash runtime launcher
+
+- Purpose: increase batch retarget chunk size from 32 to 64 and avoid executable-bit dependency for the runtime launcher.
+- Conda environment: syntax check in `isaaclab22_sim50`; no full Isaac/GPU run in the restricted Codex channel.
+- Working directory: `/home/lin/Projects/DexGraspNet2_Wuji2`
+- Commands:
+
+  ```bash
+  /home/lin/miniconda3/envs/isaaclab22_sim50/bin/python -m py_compile \
+    08_dual_arm_scene_layout/isaaclab_control/closed_loop/orchestrator.py
+
+  git diff --check
+
+  grep -n '"retarget_chunk_size"\\|cfg.get("retarget_chunk_size"\\|sim_cmd = \\[\\|"bash"\\|runtime_launcher' \
+    08_dual_arm_scene_layout/isaaclab_control/closed_loop/config/closed_loop.json \
+    08_dual_arm_scene_layout/isaaclab_control/closed_loop/orchestrator.py
+  ```
+
+- Exit code: `0`.
+- Key output: config has `"retarget_chunk_size": 64`; orchestrator fallback is `cfg.get("retarget_chunk_size", 64)`; runtime launcher command is `["bash", runtime_launcher, ...]`.
+- Conclusion: each batch now targets 64 score-ordered survivors, and the runtime launcher no longer requires executable permission.
+
+## 2026-08-17 -- Runtime shutdown watchdog for closed-loop continuation
+
+- Purpose: allow the orchestrator to continue to `build_next_scene_manifest.py` after runtime has written `report.json` and `physical_replay_30fps.npz`, even if Isaac/Kit hangs during shutdown.
+- Conda environment: syntax check in `isaaclab22_sim50`; no full Isaac/GPU run in the restricted Codex channel.
+- Working directory: `/home/lin/Projects/DexGraspNet2_Wuji2`
+- Commands:
+
+  ```bash
+  /home/lin/miniconda3/envs/isaaclab22_sim50/bin/python -m py_compile \
+    08_dual_arm_scene_layout/isaaclab_control/closed_loop/orchestrator.py
+
+  git diff --check
+
+  grep -n "run_runtime_until_report\\|runtime_exit_grace_s\\|RUNTIME WATCHDOG" \
+    08_dual_arm_scene_layout/isaaclab_control/closed_loop/orchestrator.py \
+    08_dual_arm_scene_layout/isaaclab_control/closed_loop/config/closed_loop.json
+  ```
+
+- Exit code: `0`.
+- Key output: `run_runtime_until_report()` streams runtime output, detects a completed `report.json` plus replay file, waits `runtime_exit_grace_s=20`, then terminates a lingering runtime process group and continues.
+- Conclusion: the observed stop after `[FULL PIPELINE PASS]` is handled as an Isaac/Kit shutdown tail, not a state-machine failure.
+
+## 2026-08-17 -- 25s runtime timing template audit
+
+- Purpose: compare the validated `full_pick_place_25s_dog_candidate3800.json` timing/controller fields against the current closed-loop generated `runtime_config.json`.
+- Conda environment: syntax check in `isaaclab22_sim50`; comparison with local Python JSON reader.
+- Working directory: `/home/lin/Projects/DexGraspNet2_Wuji2`
+- Commands:
+
+  ```bash
+  find 08_dual_arm_scene_layout/isaaclab_control/outputs/closed_loop_sessions \
+    -path '*/execution/runtime_config.json' -printf '%T@ %p\n' | sort -n | tail -n 5
+
+  python3 - <<'PY'
+  # Compare physics_dt_s, render_interval, initial_hold_s, telemetry_hz,
+  # replay_record_fps, action_duration_limit_s, durations_s,
+  # endpoint_refinement, and right_arm_force_natural_frequency_groups.
+  PY
+
+  /home/lin/miniconda3/envs/isaaclab22_sim50/bin/python -m py_compile \
+    08_dual_arm_scene_layout/isaaclab_control/closed_loop/orchestrator.py \
+    08_dual_arm_scene_layout/isaaclab_control/runtime/scripts/10_run_full_pick_place.py
+
+  git diff --check
+  ```
+
+- Exit code: `0`.
+- Key output: all requested timing/controller fields in the latest closed-loop runtime config match the 25s candidate3800 config exactly.
+- Conclusion: no code/config change was needed for 25s timing reuse. The observed long wall time is Isaac/renderer/simulation wall-clock slowdown; simulated action time remains within the 25s template (`23.58 s / 25.00 s`).
+
+## 2026-08-17 -- Nonblocking runtime watchdog fix
+
+- Purpose: fix the orchestrator still hanging after `[FULL PIPELINE PASS]` because the watchdog loop blocked on `stdout.readline()` and could not check `report.json`.
+- Conda environment: syntax check in `isaaclab22_sim50`.
+- Working directory: `/home/lin/Projects/DexGraspNet2_Wuji2`
+- Commands:
+
+  ```bash
+  /home/lin/miniconda3/envs/isaaclab22_sim50/bin/python -m py_compile \
+    08_dual_arm_scene_layout/isaaclab_control/closed_loop/orchestrator.py
+
+  git diff --check
+  ```
+
+- Exit code: `0`.
+- Key output: `run_runtime_until_report()` now uses `selectors.select(timeout=0.2)` before reading stdout, so it continues polling `report.json`/replay even when Isaac/Kit has stopped printing but has not exited.
+- Conclusion: after report/replay are ready, the watchdog can now terminate lingering Kit shutdown and continue to `build_next_scene_manifest.py` / cycle 002.
+
+## 2026-08-17 -- Rank 0..684 failure histogram and concise logging
+
+- Purpose: analyze completed session `20260817_102537` without recomputation and simplify default terminal output.
+- Conda environment: JSON/CSV parsing and syntax checks in `isaaclab22_sim50`.
+- Working directory: `/home/lin/Projects/DexGraspNet2_Wuji2`
+- Commands:
+
+  ```bash
+  /home/lin/miniconda3/envs/isaaclab22_sim50/bin/python - <<'PY'
+  # Parse cycle_001/planning_result.json and batch reports only.
+  # Write rank_0_684_failure_histogram.json/csv.
+  PY
+
+  /home/lin/miniconda3/envs/isaaclab22_sim50/bin/python -m py_compile \
+    08_dual_arm_scene_layout/isaaclab_control/closed_loop/orchestrator.py
+
+  git diff --check
+  ```
+
+- Exit code: `0`.
+- Key output: rank0..684 counts: `EXACT_PICK_IK_FAIL=210`, `FULL_ROUTE_IK_FAIL=30`, `NOT_EVALUATED_OR_MISSING=445`; counts sum to `685`. First exact 5-stage pass is rank `14` candidate `1422`. Rank `622` candidate `6718` and rank `640` candidate `2597` both passed pick exact IK but failed full-route IK. Rank `685` candidate `5989` is the first full-route PASS in score order.
+- Conclusion: histogram artifacts are written under `core/worklog/raw/`. Default terminal output is now concise; detailed subprocess stdout/stderr is written to `<session>/debug.log`, and `--verbose` restores detailed output.
+
+
+## 2026-08-17 16:18:00 +0800 - final worktree cleanup
+- Purpose: clean generated outputs/history in `/home/lin/Projects/DexGraspNet2_Wuji2`, preserve vendor submodule gitlinks, retain compact candidate5989 evidence.
+- Conda env: base / no GPU workloads.
+- Working directory: /home/lin/Projects/DexGraspNet2_Wuji2
+- Command: guarded Python cleanup script on explicit cleanup paths; no DINO/SAM/DGN2/retarget/cuRobo/Isaac/training.
+- Exit code: 0
+- Key output: copied compact evidence, removed generated outputs/captures/archive/scratch, moved layout calibration to config, pruned intermediate checkpoints, updated docs and .gitignore.
+- Conclusion: cleanup edits prepared for user review; no git add/commit/push performed.

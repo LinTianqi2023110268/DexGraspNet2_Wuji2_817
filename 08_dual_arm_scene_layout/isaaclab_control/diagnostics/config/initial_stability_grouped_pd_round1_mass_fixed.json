@@ -2,7 +2,7 @@
   "schema_version": 1,
   "purpose": "One-variable A/B: Round-1 grouped-PD after removing six non-physical default-mass frame bodies; no IK",
   "stage": "08_dual_arm_scene_layout/scenes/manual_layout_calibrated_mass_fixed.usda",
-  "layout_manifest": "08_dual_arm_scene_layout/outputs/manual_layout_calibrated.json",
+  "layout_manifest": "08_dual_arm_scene_layout/config/manual_layout_calibrated.json",
   "robot_prim": "/World/Layout/DualArmMount/DualArm",
   "right_arm_joints": [
     "arm_r_joint_1",

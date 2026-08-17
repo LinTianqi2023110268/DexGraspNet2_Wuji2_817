@@ -26,9 +26,9 @@
     "C_dual_arm": {
       "case_id": "full_pick_place_25s_dog_candidate3800",
       "target": "dog",
-      "path": "08_dual_arm_scene_layout/isaaclab_control/outputs/full_pick_place_25s_dog_candidate3800",
-      "result": "08_dual_arm_scene_layout/isaaclab_control/outputs/full_pick_place_25s_dog_candidate3800/report.json",
-      "physical_replay": "08_dual_arm_scene_layout/isaaclab_control/outputs/full_pick_place_25s_dog_candidate3800/physical_replay_30fps.npz",
+      "path": "08_dual_arm_scene_layout/isaaclab_control/evidence/closed_loop_20260817_candidate5989",
+      "result": "08_dual_arm_scene_layout/isaaclab_control/evidence/closed_loop_20260817_candidate5989/report.json",
+      "physical_replay": "08_dual_arm_scene_layout/isaaclab_control/evidence/closed_loop_20260817_candidate5989/physical_replay_30fps.npz",
       "action_duration_s": 24.85,
       "wall_duration_s": 272.97884852599964,
       "status": "PASS"

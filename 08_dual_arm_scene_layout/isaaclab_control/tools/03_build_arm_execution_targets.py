@@ -17,10 +17,10 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 from pathlib import Path
 
 import numpy as np
-from scipy.spatial.transform import Rotation
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
@@ -35,13 +35,67 @@ ASSEMBLY_SPEC = (
     / "config/assembly_spec.json"
 )
 LAYOUT_JSON = (
-    PROJECT_ROOT / "08_dual_arm_scene_layout/outputs/manual_layout_calibrated.json"
+    PROJECT_ROOT / "08_dual_arm_scene_layout/config/manual_layout_calibrated.json"
 )
+
+
+def rotation_x(angle: float) -> np.ndarray:
+    c, s = math.cos(angle), math.sin(angle)
+    return np.asarray([[1.0, 0.0, 0.0], [0.0, c, -s], [0.0, s, c]], dtype=np.float64)
+
+
+def rotation_y(angle: float) -> np.ndarray:
+    c, s = math.cos(angle), math.sin(angle)
+    return np.asarray([[c, 0.0, s], [0.0, 1.0, 0.0], [-s, 0.0, c]], dtype=np.float64)
+
+
+def rotation_z(angle: float) -> np.ndarray:
+    c, s = math.cos(angle), math.sin(angle)
+    return np.asarray([[c, -s, 0.0], [s, c, 0.0], [0.0, 0.0, 1.0]], dtype=np.float64)
+
+
+def euler_xyz_matrix(rpy: list[float]) -> np.ndarray:
+    roll, pitch, yaw = [float(value) for value in rpy]
+    return rotation_z(yaw) @ rotation_y(pitch) @ rotation_x(roll)
+
+
+def quaternion_xyzw_from_matrix(rotation: np.ndarray) -> list[float]:
+    matrix = np.asarray(rotation, dtype=np.float64)
+    trace = float(np.trace(matrix))
+    if trace > 0.0:
+        scale = math.sqrt(trace + 1.0) * 2.0
+        w = 0.25 * scale
+        x = (matrix[2, 1] - matrix[1, 2]) / scale
+        y = (matrix[0, 2] - matrix[2, 0]) / scale
+        z = (matrix[1, 0] - matrix[0, 1]) / scale
+    else:
+        index = int(np.argmax(np.diag(matrix)))
+        if index == 0:
+            scale = math.sqrt(1.0 + matrix[0, 0] - matrix[1, 1] - matrix[2, 2]) * 2.0
+            w = (matrix[2, 1] - matrix[1, 2]) / scale
+            x = 0.25 * scale
+            y = (matrix[0, 1] + matrix[1, 0]) / scale
+            z = (matrix[0, 2] + matrix[2, 0]) / scale
+        elif index == 1:
+            scale = math.sqrt(1.0 + matrix[1, 1] - matrix[0, 0] - matrix[2, 2]) * 2.0
+            w = (matrix[0, 2] - matrix[2, 0]) / scale
+            x = (matrix[0, 1] + matrix[1, 0]) / scale
+            y = 0.25 * scale
+            z = (matrix[1, 2] + matrix[2, 1]) / scale
+        else:
+            scale = math.sqrt(1.0 + matrix[2, 2] - matrix[0, 0] - matrix[1, 1]) * 2.0
+            w = (matrix[1, 0] - matrix[0, 1]) / scale
+            x = (matrix[0, 2] + matrix[2, 0]) / scale
+            y = (matrix[1, 2] + matrix[2, 1]) / scale
+            z = 0.25 * scale
+    quat = np.asarray([x, y, z, w], dtype=np.float64)
+    quat /= np.linalg.norm(quat)
+    return quat.tolist()
 
 
 def transform_from_xyz_rpy(xyz: list[float], rpy: list[float]) -> np.ndarray:
     transform = np.eye(4, dtype=np.float64)
-    transform[:3, :3] = Rotation.from_euler("xyz", rpy).as_matrix()
+    transform[:3, :3] = euler_xyz_matrix(rpy)
     transform[:3, 3] = np.asarray(xyz, dtype=np.float64)
     return transform
 
@@ -72,9 +126,7 @@ def main() -> None:
     layout = json.loads(LAYOUT_JSON.read_text(encoding="utf-8"))
     mount = assembly["mount_transform_parent_to_child"]
     world_from_source = source_zone_transform(layout)
-    world_from_source[:3, :3] = Rotation.from_euler(
-        "z", args.source_yaw_deg, degrees=True
-    ).as_matrix()
+    world_from_source[:3, :3] = rotation_z(math.radians(args.source_yaw_deg))
     world_from_source[:2, 3] += np.asarray(
         [args.source_offset_x_m, args.source_offset_y_m], dtype=np.float64
     )
@@ -105,7 +157,7 @@ def main() -> None:
                 "stage": str(name),
                 "wuji2_wrist_position_world_m": wrist[:3, 3].tolist(),
                 "right_flange_position_world_m": flange[:3, 3].tolist(),
-                "right_flange_quaternion_xyzw": Rotation.from_matrix(flange[:3, :3]).as_quat().tolist(),
+                "right_flange_quaternion_xyzw": quaternion_xyzw_from_matrix(flange[:3, :3]),
             }
         )
     report = {

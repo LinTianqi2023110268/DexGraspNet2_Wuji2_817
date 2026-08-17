@@ -2,7 +2,7 @@
   "schema_version": 1,
   "purpose": "Diagnostic only: distinguish gravity sag from initial-state/contact/mapping failure",
   "stage": "08_dual_arm_scene_layout/scenes/manual_layout_calibrated.usda",
-  "layout_manifest": "08_dual_arm_scene_layout/outputs/manual_layout_calibrated.json",
+  "layout_manifest": "08_dual_arm_scene_layout/config/manual_layout_calibrated.json",
   "robot_prim": "/World/Layout/DualArmMount/DualArm",
   "right_arm_joints": [
     "arm_r_joint_1",

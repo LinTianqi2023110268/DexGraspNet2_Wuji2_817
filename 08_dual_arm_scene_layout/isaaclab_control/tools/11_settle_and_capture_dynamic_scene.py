@@ -16,6 +16,8 @@ from __future__ import annotations
 import argparse
 import json
 import math
+import os
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -212,6 +214,51 @@ def apply_ft04(robot: Articulation, arm_ids: list[int]) -> None:
     robot.reset()
 
 
+def write_robot_state(
+    output: Path,
+    robot: Articulation,
+    arm_ids: list[int],
+    arm_names: list[str],
+) -> Path:
+    """Persist the measured post-settle articulation state for downstream planning."""
+    joint_positions = robot.data.joint_pos[0].detach().cpu().numpy().astype(np.float64)
+    joint_names = [str(name) for name in robot.joint_names]
+    if len(joint_names) != len(joint_positions):
+        raise RuntimeError(
+            f"Joint-name/state length mismatch: {len(joint_names)} != {len(joint_positions)}"
+        )
+    right_q = joint_positions[np.asarray(arm_ids, dtype=np.int64)]
+    report = {
+        "schema_version": 1,
+        "status": "measured_robot_state_after_settle",
+        "created_utc": datetime.now(timezone.utc).isoformat(),
+        "robot_prim": ROBOT_PRIM,
+        "joint_count": int(robot.num_joints),
+        "joint_names": joint_names,
+        "joint_positions_by_name": {
+            name: float(value) for name, value in zip(joint_names, joint_positions)
+        },
+        "right_arm_joint_names": [str(name) for name in arm_names],
+        "right_arm_joint_indices": [int(index) for index in arm_ids],
+        "right_arm_q_current_rad": right_q.tolist(),
+        "fixed_base_audit": {
+            "is_fixed_base": bool(robot.is_fixed_base),
+            "expected_total_joints": 35,
+            "expected_right_arm_joint_names": RIGHT_ARM_NAMES,
+            "right_arm_order_match": [str(name) for name in arm_names] == RIGHT_ARM_NAMES,
+        },
+    }
+    if (
+        int(robot.num_joints) != 35
+        or not bool(robot.is_fixed_base)
+        or [str(name) for name in arm_names] != RIGHT_ARM_NAMES
+    ):
+        raise RuntimeError(f"Robot state audit failed: {report['fixed_base_audit']}")
+    path = output / "robot_state.json"
+    path.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    return path
+
+
 def camera_calibration(stage: Usd.Stage, width: int, height: int) -> tuple[np.ndarray, np.ndarray, dict]:
     camera = UsdGeom.Camera(stage.GetPrimAtPath(CAMERA_PRIM))
     focal_mm = float(camera.GetFocalLengthAttr().Get())
@@ -395,6 +442,12 @@ def main() -> Path:
         raise RuntimeError(
             f"Scene is not settled: v={max_linear:.5f} m/s, w={max_angular:.5f} rad/s"
         )
+    robot_state_path = write_robot_state(
+        output,
+        robot,
+        [int(value) for value in arm_ids],
+        [str(value) for value in arm_names],
+    )
 
     settled_objects = []
     for wrapper, record in zip(objects, object_records):
@@ -444,6 +497,7 @@ def main() -> Path:
                     "status": "PASS",
                     "stage": "SCENE_SETTLE",
                     "settled_scene_manifest": str(settled_path),
+                    "robot_state": str(robot_state_path),
                     "observed_max_linear_m_s": max_linear,
                     "observed_max_angular_rad_s": max_angular,
                 },
@@ -491,6 +545,7 @@ def main() -> Path:
         "extrinsics": {"file": "T_world_camera.npy", "matrix": world_from_camera.tolist()},
         "camera_model": camera_model,
         "settled_scene_manifest": str(settled_path),
+        "robot_state": str(robot_state_path),
         "settled_object_speed_limits": {
             "linear_m_s": ARGS.settled_speed_m_s,
             "angular_rad_s": ARGS.settled_angular_speed_rad_s,
@@ -509,5 +564,13 @@ def main() -> Path:
 
 try:
     RESULT = main()
-finally:
+except Exception:
     SIMULATION_APP.close()
+    raise
+else:
+    # In the current headless Isaac Sim 5.0 setup, a normal close can hang after
+    # the capture files are fully written.  This one-shot capture process owns no
+    # caller-visible state after main() returns, so exit directly on success.
+    sys.stdout.flush()
+    sys.stderr.flush()
+    os._exit(0)

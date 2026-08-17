@@ -30,7 +30,7 @@ from pxr import Gf, Sdf, Usd, UsdGeom
 PROJECT_ROOT = Path("/home/lin/Projects/DexGraspNet2_Wuji2")
 LAYOUT_JSON = (
     PROJECT_ROOT
-    / "08_dual_arm_scene_layout/outputs/manual_layout_calibrated.json"
+    / "08_dual_arm_scene_layout/config/manual_layout_calibrated.json"
 )
 CAMERA_CONFIG_JSON = (
     PROJECT_ROOT

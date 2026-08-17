@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "created_local": "20260817_102537",
+  "source_scene_folder": "/home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_test60_10upright_10view_v1/scenes/scene_0000",
+  "source_scene_manifest": "/home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_test60_10upright_10view_v1/scenes/scene_0000/scene_manifest.json",
+  "sim_execute": true,
+  "no_planner_collision_check": true,
+  "diagnostic_ignore_static_gate": true
+}

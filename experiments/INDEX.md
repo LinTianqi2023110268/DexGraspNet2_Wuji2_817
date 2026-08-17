@@ -1,6 +1,6 @@
 # Experiment Index
 
-正式业务案例只在 `../verified/` 登记。本目录索引历史诊断和失败；实际控制研究已归入 `../08_dual_arm_scene_layout/isaaclab_control/history/` 与 `diagnostics/`。
+正式业务案例只在 `../verified/` 和长期 evidence 目录登记。本目录仅保留历史分类说明；实际可复用诊断工具在 `../08_dual_arm_scene_layout/isaaclab_control/diagnostics/`，阶段结论在 `../08_dual_arm_scene_layout/isaaclab_control/core/worklog/`。
 
 ## VERIFIED_DIAGNOSTIC
 
@@ -19,15 +19,13 @@
 
 ## FAILED_HISTORY
 
-只保留少量有独立原因的代表：抓取失败、IK/路径失败、控制失败。Route B 同质可再生成案例已集中到 `06_leap_to_wuji2_final_pipeline/99_archive/regenerable_cases/`。
+只保留少量有独立原因的代表结论；可重新生成的 payload 已从工作树清理，必要时通过 Git 历史恢复。
 
 ## REJECTED
 
-逐帧 PNG/MP4 视频导出。稳定实时回放保留，自动视频不是正式功能。
+逐帧 PNG/MP4 视频导出已被否决；自动视频不是正式功能，结论保留在 worklog 中。
 
 机器清单：
 
-- `../archive/migration_snapshots/pre_reorg_20260814/case_inventory.tsv`
-- `../archive/migration_snapshots/pre_reorg_20260814/06_case_reduction_plan.tsv`
-- `../archive/migration_snapshots/pre_reorg_20260814/08_reorg_plan.tsv`
-- `../archive/migration_snapshots/pre_reorg_20260814/delete_candidates.tsv`
+- 清理前完整历史由 Git 快照保存。
+- 当前权威状态见根目录 `README.md`、`PROJECT_STATUS.md`、`verified/`、`08_dual_arm_scene_layout/isaaclab_control/evidence/` 和 core worklog。

@@ -1,4 +1,0 @@
-source	future_destination	action	phase	guard
-07_wuji2_network_3p3r_sim/01_cases/selected_native_case	07_wuji2_network_3p3r_sim/04_verified_baseline/scene0000_view0001_ashtray_source0462	COPY_MINIMAL_FREEZE	Phase 2	Execute only after final_result verification; source remains untouched
-06_leap_to_wuji2_final_pipeline/01_cases/* except active	06_leap_to_wuji2_final_pipeline/01_cases/archive_candidate/	PLANNED_NOT_EXECUTED	Phase 4	Requires user approval after Phase 0-2
-08_dual_arm_scene_layout/isaaclab_control/outputs/* history	08_dual_arm_scene_layout/isaaclab_control/history/	PLANNED_NOT_EXECUTED	Phase 4	No output moved in this run

@@ -32,12 +32,12 @@ SOURCE = CASE_ROOT / "04_squeeze/squeeze_official.npz"
 VALIDATION = CASE_ROOT / "04_squeeze/squeeze_official_report.json"
 LEAP_JOB = CASE_ROOT / "01_input/leap_official_waypoints.npz"
 BASE_JOB = (
-    CASE_ROOT.parents[1] / "00_shared/isaacsim/runtime_contract_template.npz"
+    SHARED_ROOT / "isaacsim/runtime_contract_template.npz"
 )
 SIM_ROOT = CASE_ROOT / "06_isaacsim"
 OUTPUT = SIM_ROOT / "final_waypoints.npz"
 NATIVE_DIRECTION_CONFIG = (
-    CASE_ROOT.parents[1] / "00_shared/config/wuji2_native_width_mapper.json"
+    SHARED_ROOT / "config/wuji2_native_width_mapper.json"
 )
 WUJI_URDF = (
     PROJECT_ROOT
@@ -62,7 +62,7 @@ from pathlib import Path
 
 PROJECT_ROOT = Path("/home/lin/Projects/DexGraspNet2_Wuji2")
 PIPELINE_ROOT = PROJECT_ROOT / "06_leap_to_wuji2_final_pipeline"
-CASE_ROOT = PIPELINE_ROOT / "01_cases/active/{case_id}"
+CASE_ROOT = Path("{CASE_ROOT.resolve().as_posix()}")
 ROOT = CASE_ROOT / "06_isaacsim/{output_dir.relative_to(SIM_ROOT).as_posix()}"
 JOB = (ROOT / "{relative_job.as_posix()}").resolve()
 RESULT = ROOT / "{result_name}"

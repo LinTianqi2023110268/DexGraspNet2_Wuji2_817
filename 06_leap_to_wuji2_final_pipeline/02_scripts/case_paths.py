@@ -1,8 +1,13 @@
 """Resolve the active case without duplicating algorithm code.
 
-The default case is selected by ``active_case.json``.  For a one-off run, set
-the environment variable ``DGN2_CASE_ID`` to another directory name under
+The default case is selected by ``active_case.json``.  For a one-off legacy run,
+set the environment variable ``DGN2_CASE_ID`` to another directory name under
 ``01_cases/active``.
+
+Closed-loop batch screening may instead set ``DGN2_CASE_ROOT`` to an explicit
+scratch case directory.  This keeps rejected candidates out of the long-lived
+production ``01_cases/active`` tree while reusing the reviewed retargeting
+scripts unchanged.
 """
 
 from __future__ import annotations
@@ -20,6 +25,8 @@ ACTIVE_CASE_FILE = PIPELINE_ROOT / "active_case.json"
 
 
 def active_case_id() -> str:
+    if os.environ.get("DGN2_CASE_ROOT"):
+        return Path(os.environ["DGN2_CASE_ROOT"]).expanduser().resolve().name
     if os.environ.get("DGN2_CASE_ID"):
         return os.environ["DGN2_CASE_ID"].strip()
     data = json.loads(ACTIVE_CASE_FILE.read_text(encoding="utf-8"))
@@ -27,6 +34,17 @@ def active_case_id() -> str:
 
 
 def active_case_root() -> Path:
+    if os.environ.get("DGN2_CASE_ROOT"):
+        case_root = Path(os.environ["DGN2_CASE_ROOT"]).expanduser().resolve()
+        manifest = case_root / "case.json"
+        if not manifest.is_file():
+            raise FileNotFoundError(manifest)
+        data = json.loads(manifest.read_text(encoding="utf-8"))
+        if str(data.get("case_id")) != case_root.name:
+            raise RuntimeError(
+                f"case_id mismatch: directory={case_root.name}, json={data.get('case_id')}"
+            )
+        return case_root
     case_root = (CASES_ROOT / active_case_id()).resolve()
     if case_root.parent != CASES_ROOT.resolve():
         raise RuntimeError(f"invalid case path: {case_root}")

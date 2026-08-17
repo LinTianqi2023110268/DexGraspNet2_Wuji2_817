@@ -23,7 +23,7 @@ OUTPUT_USD = (
 )
 OUTPUT_JSON = (
     PROJECT_ROOT
-    / "08_dual_arm_scene_layout/outputs/manual_layout_calibrated.json"
+    / "08_dual_arm_scene_layout/config/manual_layout_calibrated.json"
 )
 
 PATHS = {

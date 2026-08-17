@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
-  "updated_local_date": "2026-08-14",
+  "updated_local_date": "2026-08-17",
   "verified_diagnostics": [
-    "08_dual_arm_scene_layout/isaaclab_control/outputs/mass_tree_audit_round1_mass_fixed",
-    "08_dual_arm_scene_layout/isaaclab_control/outputs/force_nf_finetune/ft04_j1_50_j3_45_j5_55_j6_50",
-    "08_dual_arm_scene_layout/isaaclab_control/outputs/short_motion_ft04_z20_fixed"
+    "08_dual_arm_scene_layout/isaaclab_control/core/worklog/static_gate_ft04.json",
+    "08_dual_arm_scene_layout/isaaclab_control/core/worklog/SESSION_SUMMARY.md",
+    "08_dual_arm_scene_layout/isaaclab_control/diagnostics/"
   ],
   "history_groups": [
     "grouped_pd",
@@ -15,8 +15,8 @@
     "old_short_motion"
   ],
   "rejected": [
-    "08_dual_arm_scene_layout/isaaclab_control/rejected/mp4_export"
+    "mp4_export_rejected_documented_in_core_worklog"
   ],
-  "inventory": "archive/migration_snapshots/pre_reorg_20260814/08_reorg_plan.tsv",
-  "note": "Phase 0-2 preserved all files; practical final reorganization later moved small source/config/history entries and removed only rejected video caches and regenerable bytecode."
+  "inventory": "git_history_pre_cleanup_snapshot",
+  "note": "Generated history/output payloads were removed from the working tree during the 2026-08-17 cleanup. Current evidence and conclusions live in verified/, evidence/, diagnostics/, and the core worklog."
 }

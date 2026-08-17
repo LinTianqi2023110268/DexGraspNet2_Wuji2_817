@@ -8,16 +8,16 @@
 
 ```bash
 cd /home/lin/Projects/DexGraspNet2_Wuji2
-./08_dual_arm_scene_layout/isaaclab_control/launch_full_pick_place_25s_visible.sh
+./run_closed_loop.sh
 ```
 
 稳定实时回放（747帧，不运行物理、IK或网络）：
 
 ```bash
-./08_dual_arm_scene_layout/isaaclab_control/launch_replay_25s_visible.sh
+replay is not the current primary entry; use compact evidence or run ./run_closed_loop.sh
 ```
 
-正式证据：`outputs/full_pick_place_25s_dog_candidate3800/`。物理动作时长 24.85 s；本机计算墙钟时间约 273 s，两者不可混写。
+正式证据：`evidence/closed_loop_20260817_candidate5989/`。物理动作时长 24.85 s；本机计算墙钟时间约 273 s，两者不可混写。
 
 ## 冻结控制合同
 

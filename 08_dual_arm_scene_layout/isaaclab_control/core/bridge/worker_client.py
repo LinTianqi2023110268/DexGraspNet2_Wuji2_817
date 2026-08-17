@@ -160,6 +160,127 @@ class CuroboWorkerClient:
             payload["collision_context"] = collision_context
         return self.request(payload)
 
+    def solve_ik_groups(
+        self,
+        target_matrices_base,
+        q_reference_rad,
+        group_sizes,
+        select_chain: bool = True,
+        collision_context: dict | None = None,
+    ) -> dict:
+        """Solve multiple ordered waypoint groups in one worker/GPU request.
+
+        ``target_matrices_base`` is flattened as [sum(group_sizes),4,4].  The
+        worker runs one batched cuRobo solve over all poses, then performs
+        continuity-based branch selection independently inside each group.  This
+        is the production screening primitive for candidate chunks.
+        """
+        payload = {
+            "op": "solve_ik_groups",
+            "targets": target_matrices_base,
+            "q_reference_rad": q_reference_rad,
+            "group_sizes": [int(x) for x in group_sizes],
+            "select_chain": bool(select_chain),
+        }
+        if collision_context is not None:
+            payload["collision_context"] = collision_context
+        return self.request(payload)
+
+    def check_self_collision(self, joint_positions_by_name: dict) -> dict:
+        return self.request({
+            "op": "check_self_collision",
+            "joint_positions_by_name": joint_positions_by_name,
+        })
+
+    def check_joint_path(
+        self,
+        q_nodes_rad,
+        joint_positions_by_name: dict,
+        *,
+        joint_positions_by_node=None,
+        T_world_base=None,
+        phases=None,
+        margin_m: float = 0.0,
+        path_max_joint_step_rad=None,
+        check_observed_map: bool = False,
+    ) -> dict:
+        payload = {
+            "op": "check_joint_path",
+            "q_nodes_rad": q_nodes_rad,
+            "joint_positions_by_name": joint_positions_by_name,
+            "joint_positions_by_node": joint_positions_by_node,
+            "T_world_base": T_world_base,
+            "phases": phases,
+            "margin_m": float(margin_m),
+            "check_observed_map": bool(check_observed_map),
+        }
+        if path_max_joint_step_rad is not None:
+            payload["path_max_joint_step_rad"] = float(path_max_joint_step_rad)
+        return self.request(payload)
+
+    def diagnose_ik_collisions(
+        self,
+        target_matrices_base,
+        q_reference_rad,
+        collision_context: dict,
+        top_k: int = 5,
+    ) -> dict:
+        return self.request({
+            "op": "diagnose_ik_collisions",
+            "targets": target_matrices_base,
+            "q_reference_rad": q_reference_rad,
+            "collision_context": collision_context,
+            "top_k": int(top_k),
+        })
+
+    def coarse_prefilter(
+        self,
+        target_matrices_base,
+        q_reference_rad,
+        *,
+        joint_positions_by_name: dict,
+        T_world_base,
+        phase: str = "pregrasp",
+        margin_m: float = 0.0,
+        arm_link_prefixes=None,
+    ) -> dict:
+        return self.request({
+            "op": "coarse_prefilter",
+            "targets": target_matrices_base,
+            "q_reference_rad": q_reference_rad,
+            "joint_positions_by_name": joint_positions_by_name,
+            "T_world_base": T_world_base,
+            "phase": phase,
+            "margin_m": float(margin_m),
+            "arm_link_prefixes": arm_link_prefixes,
+        })
+
+    def coarse_approach_prefilter(
+        self,
+        pregrasp_matrices_base,
+        grasp_matrices_base,
+        q_reference_rad,
+        *,
+        joint_positions_by_name: dict,
+        T_world_base,
+        margin_m: float = 0.0,
+        path_max_joint_step_rad=None,
+        arm_link_prefixes=None,
+    ) -> dict:
+        payload = {
+            "op": "coarse_approach_prefilter",
+            "pregrasp_targets": pregrasp_matrices_base,
+            "grasp_targets": grasp_matrices_base,
+            "q_reference_rad": q_reference_rad,
+            "joint_positions_by_name": joint_positions_by_name,
+            "T_world_base": T_world_base,
+            "margin_m": float(margin_m),
+            "arm_link_prefixes": arm_link_prefixes,
+        }
+        if path_max_joint_step_rad is not None:
+            payload["path_max_joint_step_rad"] = float(path_max_joint_step_rad)
+        return self.request(payload)
+
     def build_map(self, depth_path, intrinsics_path, T_world_camera_path, target_mask_path=None) -> dict:
         return self.request({
             "op": "build_map",

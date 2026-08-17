@@ -3,7 +3,7 @@
 > 最新进度：正式测试集 `scene_0000` 的现场重拍版本已完成顶部 RGB-D、
 > GroundingDINO+SAM 缓存、官方 DexGraspNet 2.0 缓存、LEAP→Wuji2 迁移、
 > 全位姿 IK、完整路径碰撞以及 24.85 s 完整抓放。正式业务结果见
-> `isaaclab_control/outputs/full_pick_place_25s_dog_candidate3800/report.json`；
+> `isaaclab_control/evidence/closed_loop_20260817_candidate5989/report.json`；
 > 17.78 s 结果只到 LIFT，保留为阶段性汇报，不是第二个完整案例。
 
 本 README 的前半部分说明桌面、抓取区、放置区、相机和双臂机械臂的手工标定；
@@ -214,7 +214,7 @@ Fix Articulation Base = On
 
 ```text
 08_dual_arm_scene_layout/scenes/manual_layout_calibrated.usda
-08_dual_arm_scene_layout/outputs/manual_layout_calibrated.json
+08_dual_arm_scene_layout/config/manual_layout_calibrated.json
 ```
 
 USD用于以后重新打开场景；JSON明确保存桌面、两个区域和机械臂根的世界变换。

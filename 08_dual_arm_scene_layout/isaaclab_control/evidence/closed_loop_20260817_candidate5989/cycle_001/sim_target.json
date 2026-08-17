@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "status": "PASS",
+  "semantic_source": "GroundingDINO+SAM mask only",
+  "sim_binding_method": "nearest settled rigid origin to median masked RGB-D point",
+  "mask_centroid_world_m": [
+    -0.4372436700316955,
+    -0.062094089541028685,
+    0.5218516741073593
+  ],
+  "segmentation_id": 33,
+  "object_pool_index": 32,
+  "object_code": "sem-Dog-2526b1f358f773034203f59b4fda924b",
+  "nearest_origin_distance_m": 0.017984898297261215,
+  "second_nearest_origin_distance_m": 0.14862398058691995
+}

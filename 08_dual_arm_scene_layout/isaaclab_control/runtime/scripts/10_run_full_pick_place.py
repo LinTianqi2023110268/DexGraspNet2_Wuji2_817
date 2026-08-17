@@ -55,6 +55,16 @@ def parse_arguments() -> argparse.Namespace:
         "--stop-after-lift", action="store_true",
         help="Run the monitored pipeline only through LIFT_HOLD and validate real object lift.",
     )
+    parser.add_argument(
+        "--no-planner-collision-check",
+        action="store_true",
+        help="Diagnostic Isaac Sim execution only: skip planner ESDF/self/path collision vetoes; PhysX collisions stay enabled.",
+    )
+    parser.add_argument(
+        "--diagnostic-ignore-static-gate",
+        action="store_true",
+        help="Diagnostic Isaac Sim execution only: do not block motion on static_stability_gate_passed=false.",
+    )
     AppLauncher.add_app_launcher_args(parser)
     return parser.parse_args()
 
@@ -442,7 +452,7 @@ def run() -> Path:
         if not path.is_file():
             raise FileNotFoundError(path)
         print(f"  [PASS] {label}: {path}")
-    layout = load_json(PROJECT_ROOT / "08_dual_arm_scene_layout/outputs/manual_layout_calibrated.json")
+    layout = load_json(PROJECT_ROOT / "08_dual_arm_scene_layout/config/manual_layout_calibrated.json")
     with np.load(case_root / "07_arm_execution/arm_flange_targets.npz", allow_pickle=False) as archive:
         source_world = np.asarray(archive["world_from_source_zone"], dtype=np.float64)
     objects, target_object_index, target_rigid_path = spawn_dynamic_objects(case_root, source_world)
@@ -616,25 +626,45 @@ def run() -> Path:
     flange_targets_base = np.stack(
         [base_from_world @ np.asarray(target, dtype=np.float64) for target in flange_targets]
     )
+    if ARGS.no_planner_collision_check or ARGS.diagnostic_ignore_static_gate:
+        print(
+            "\n============================================\n"
+            "SIMULATION DIAGNOSTIC EXECUTION\n"
+            f"PLANNER COLLISION CHECKS: {'DISABLED' if ARGS.no_planner_collision_check else 'ENABLED'}\n"
+            f"STATIC STABILITY GATE: {'DIAGNOSTIC OVERRIDE' if ARGS.diagnostic_ignore_static_gate else 'ENFORCED'}\n"
+            "ISAAC / PHYSX COLLISIONS: ENABLED\n"
+            "REAL ROBOT OUTPUT: DISABLED\n"
+            "============================================\n",
+            flush=True,
+        )
 
     def solve_route_c_v2():
         with CuroboWorkerClient(PROJECT_ROOT) as client:
-            map_report = client.build_map(
-                required_inputs["depth_m"],
-                required_inputs["intrinsics"],
-                required_inputs["T_world_camera"],
-                required_inputs["GroundedSAM target mask"],
-            )
+            if ARGS.no_planner_collision_check:
+                map_report = {
+                    "status": "SKIPPED_BY_NO_PLANNER_COLLISION_CHECK",
+                    "planner_collision_checks": "DISABLED",
+                }
+                collision_context = None
+            else:
+                map_report = client.build_map(
+                    required_inputs["depth_m"],
+                    required_inputs["intrinsics"],
+                    required_inputs["T_world_camera"],
+                    required_inputs["GroundedSAM target mask"],
+                )
+                collision_context = {
+                    "phases": collision_phases,
+                    "joint_positions_by_name": measured_joint_state,
+                    "joint_positions_by_target": collision_joint_states,
+                    "T_world_base": world_from_base,
+                    "margin_m": 0.0,
+                }
             solve_report = client.solve_ik(
                 flange_targets_base,
                 q_current,
                 select_chain=True,
-                collision_context={
-                    "phases": collision_phases,
-                    "joint_positions_by_target": collision_joint_states,
-                    "T_world_base": world_from_base,
-                    "margin_m": 0.0,
-                },
+                collision_context=collision_context,
             )
         return map_report, solve_report
 
@@ -653,23 +683,35 @@ def run() -> Path:
     if len(arm_q) != len(stage_names):
         raise RuntimeError(f"Route-C V2 arm target count mismatch: {len(arm_q)} != {len(stage_names)}")
     runtime_ik_report = []
+    selected_collisions = route_c_v2_plan.get("selected_collision")
+    if selected_collisions is None:
+        selected_collisions = [None] * len(stage_names)
     for stage_name, selected, collision in zip(
-        stage_names, route_c_v2_plan["selected"], route_c_v2_plan["selected_collision"]
+        stage_names, route_c_v2_plan["selected"], selected_collisions
     ):
         runtime_ik_report.append({
             "stage": stage_name,
             "position_error_mm": 1000.0 * float(selected["position_error_m"]),
             "orientation_error_deg": math.degrees(float(selected["orientation_error_rad"])),
             "minimum_limit_margin_deg": math.degrees(float(selected["inner_limit_margin_rad"])),
-            "observed_scene_collision_pass": bool(collision["observed_scene_collision_pass"]),
-            "unknown_space_exposure": bool(collision["unknown_space_exposure"]),
-            "unknown_sphere_count": int(collision["unknown_sphere_count"]),
+            "observed_scene_collision_pass": None if collision is None else bool(collision["observed_scene_collision_pass"]),
+            "unknown_space_exposure": None if collision is None else bool(collision["unknown_space_exposure"]),
+            "unknown_sphere_count": None if collision is None else int(collision["unknown_sphere_count"]),
         })
     ik_pass = bool(route_c_v2_plan["ik_pass"] and route_c_v2_plan["selected"] is not None)
-    observed_scene_collision_pass = bool(route_c_v2_plan["observed_scene_collision_pass"])
-    unknown_space_exposure = bool(any(route_c_v2_plan["unknown_space_exposure"]))
+    if ARGS.no_planner_collision_check:
+        observed_scene_collision_pass = True
+        self_collision_pass = True
+        unknown_space_exposure = False
+        path_pass = True
+    else:
+        observed_scene_collision_pass = bool(route_c_v2_plan["observed_scene_collision_pass"])
+        self_collision_pass = bool(route_c_v2_plan.get("self_collision_pass") is True)
+        unknown_space_exposure = bool(any(route_c_v2_plan["unknown_space_exposure"]))
+        path_pass = bool(route_c_v2_plan.get("path_pass") is True)
     unknown_space_safe_enough = not unknown_space_exposure
-    path_pass = None
+    static_stability_gate_passed = bool(config.get("static_stability_gate_passed", False))
+    static_gate_override = bool(ARGS.diagnostic_ignore_static_gate)
 
     planning_output = project_path(config["output_directory"]).resolve()
     planning_output.mkdir(parents=True, exist_ok=True)
@@ -684,15 +726,19 @@ def run() -> Path:
         "statuses": {
             "ik_pass": ik_pass,
             "observed_scene_collision_pass": observed_scene_collision_pass,
+            "self_collision_pass": self_collision_pass,
             "unknown_space_exposure": unknown_space_exposure,
             "unknown_space_safe_enough": unknown_space_safe_enough,
             "path_pass": path_pass,
+            "static_stability_gate_passed": static_stability_gate_passed,
+            "static_gate_override": static_gate_override,
+            "planner_collision_checks_disabled": bool(ARGS.no_planner_collision_check),
             "physics_grasp_pass": None,
         },
         "limitations": [
             "single-view unknown/unobserved/occluded space is not certified free",
             "target contact allowance is phase-wide for GRASP/SQUEEZE/LIFT, not yet finger-link-specific",
-            "continuous-path observed collision is not yet evaluated; path_pass is null",
+            "physical execution remains locked unless a fresh static stability gate is explicitly recorded in config",
         ],
     }, indent=2) + "\n", encoding="utf-8")
 
@@ -711,6 +757,17 @@ def run() -> Path:
     if ARGS.dry_run:
         print(f"[DRY RUN COMPLETE] {route_c_v2_planning_path}")
         return route_c_v2_planning_path
+
+    required_motion_gates = {
+        "static_stability_gate_passed_or_diagnostic_override": static_stability_gate_passed or static_gate_override,
+        "ik_pass": ik_pass,
+        "observed_scene_collision_pass": observed_scene_collision_pass,
+        "self_collision_pass": self_collision_pass,
+        "path_pass": path_pass,
+        "selected_candidate_exists": route_c_v2_plan["selected"] is not None,
+    }
+    if not all(required_motion_gates.values()):
+        raise RuntimeError(f"Physical action locked by failed gate(s): {required_motion_gates}")
 
     actual_arm_start = robot.data.joint_pos[:, arm_ids].clone()
     static_bias = command[:, arm_ids].clone() - actual_arm_start
@@ -1097,9 +1154,13 @@ def run() -> Path:
         "route_c_v2_planning_report": str(route_c_v2_planning_path),
         "ik_pass": ik_pass,
         "observed_scene_collision_pass": observed_scene_collision_pass,
+        "self_collision_pass": self_collision_pass,
         "unknown_space_exposure": unknown_space_exposure,
         "unknown_space_safe_enough": unknown_space_safe_enough,
         "path_pass": path_pass,
+        "static_stability_gate_passed": static_stability_gate_passed,
+        "static_gate_override": static_gate_override,
+        "planner_collision_checks_disabled": bool(ARGS.no_planner_collision_check),
         "physics_grasp_pass": passed,
         "max_object_lift_mm": max_lift_mm,
         "action_duration_s": action_duration_s,

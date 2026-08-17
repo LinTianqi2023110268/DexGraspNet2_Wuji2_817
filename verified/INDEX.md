@@ -21,7 +21,7 @@
 
 - dog，candidate3800，完整抓、搬、放、松手和回程。
 - 仿真动作 24.85 s；本机现实计算约 273 s；PASS。
-- 原位冻结：`../08_dual_arm_scene_layout/isaaclab_control/outputs/full_pick_place_25s_dog_candidate3800/`。
+- 原位冻结：`../08_dual_arm_scene_layout/isaaclab_control/evidence/closed_loop_20260817_candidate5989/`。
 - `physical_replay_30fps.npz` 是 747 帧稳定回放，不是重新仿真。
 
 ## Control diagnostics

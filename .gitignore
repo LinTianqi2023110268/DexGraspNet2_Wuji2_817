@@ -74,3 +74,12 @@ outputs_*/
 # Operating-system metadata
 .DS_Store
 Thumbs.db
+# Runtime/generated outputs
+06_leap_to_wuji2_final_pipeline/01_cases/active/closedloop_*/
+07_wuji2_network_3p3r_sim/01_cases/*
+!07_wuji2_network_3p3r_sim/01_cases/README.md
+!07_wuji2_network_3p3r_sim/01_cases/.gitkeep
+08_dual_arm_scene_layout/isaaclab_control/outputs/
+**/__pycache__/
+**/frames/
+**/png_frames/

@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "capture_launcher": "08_dual_arm_scene_layout/isaaclab_control/closed_loop/launchers/run_capture_cycle.sh",
+  "grounded_sam_backend": [
+    "/home/lin/miniconda3/bin/conda",
+    "run",
+    "--no-capture-output",
+    "-n",
+    "groundedsam",
+    "python",
+    "{project_root}/08_dual_arm_scene_layout/isaaclab_control/closed_loop/scripts/grounded_sam_backend.py",
+    "--image",
+    "{rgb}",
+    "--text",
+    "{text}",
+    "--output",
+    "{output}"
+  ],
+  "network_python": "/home/lin/miniconda3/envs/graspnet2.0/bin/python",
+  "retarget_python": "/home/lin/Projects/DexGraspNet2_Wuji2/01_environment/conda/wuji_retargeting/bin/python",
+  "planner_python": "/home/lin/miniconda3/envs/isaaclab22_sim50/bin/python",
+  "dgn2_rounds": 8,
+  "dgn2_target_membership_id": 1,
+  "max_candidates_to_test": 128,
+  "candidate_screen_chunk_size": 16,
+  "gpu_ik_seeds": 48,
+  "gpu_ik_batch_size": 512,
+  "worker_startup_timeout_s": 180.0,
+  "worker_request_timeout_s": 600.0,
+  "pregrasp_offset_m": 0.1,
+  "approach_path_max_joint_step_deg": 3.0,
+  "path_collision_progress_batch_size": 256,
+  "retarget_chunk_size": 64,
+  "runtime_exit_grace_s": 20.0,
+  "candidate_case_prefix": "closedloop",
+  "runtime_config_template": "08_dual_arm_scene_layout/isaaclab_control/runtime/config/full_pick_place_closed_loop_template.json",
+  "runtime_launcher": "08_dual_arm_scene_layout/isaaclab_control/runtime/launchers/run_full_pick_place_closed_loop.sh",
+  "placement_policy": "08_dual_arm_scene_layout/isaaclab_control/runtime/config/placement_policy.json",
+  "session_root": "08_dual_arm_scene_layout/isaaclab_control/outputs/closed_loop_sessions",
+  "show_rgb_command": [
+    "xdg-open",
+    "{rgb}"
+  ],
+  "show_overlay_command": [
+    "xdg-open",
+    "{overlay}"
+  ],
+  "block_unknown_space": false,
+  "execution_enabled": false,
+  "self_collision_policy": "REPORT_ONLY_UNRESOLVED",
+  "require_self_collision_pass": false,
+  "require_continuous_path_pass": true
+}
