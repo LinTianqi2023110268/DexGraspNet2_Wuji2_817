@@ -32,6 +32,11 @@
   "isaac_startup_timeout_s": 300.0,
   "isaac_request_timeout_s": 300.0,
   "approach_path_max_joint_step_deg": 3.0,
+  "home_pregrasp_collision_gate": {
+    "enabled": true,
+    "path_max_joint_step_deg": 3.0,
+    "margin_m": 0.0
+  },
   "session_root": "08_dual_arm_scene_layout/isaaclab_control/outputs/closed_loop_sessions",
   "show_rgb_command": [
     "xdg-open",

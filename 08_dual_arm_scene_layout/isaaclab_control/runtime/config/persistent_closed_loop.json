@@ -39,10 +39,10 @@
   "object_lift_pass_mm": 30.0,
   "placement_center_edge_margin_m": 0.01,
   "task_object_mass_kg": 0.1,
+  "object_table_penetration_warn_mm": 2.0,
   "endpoint_refinement_stages": [
     "cover",
-    "grasp",
-    "squeeze"
+    "grasp"
   ],
   "durations_s": {
     "form_pregrasp": 0.5,

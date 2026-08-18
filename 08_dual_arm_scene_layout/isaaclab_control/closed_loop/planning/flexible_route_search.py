@@ -701,6 +701,44 @@ def plan_flexible_route(
     if required.difference(by_stage):
         raise RuntimeError(f"internal beam chain missing stages: {sorted(required.difference(by_stage))}")
 
+    # Mandatory far-field HOME -> PREGRASP safety gate.
+    # HOME and PREGRASP both use PREGRASP q20, matching FORM_PREGRASP
+    # before arm motion in the real executor.
+    home_gate_cfg = config.get("home_pregrasp_collision_gate", {})
+    if bool(home_gate_cfg.get("enabled", True)):
+        pregrasp_named = _named_state(geometry, measured, "pregrasp")
+        home_pregrasp_path_report = client.check_joint_path(
+            np.stack([q_current, by_stage["pregrasp"].q_rad]),
+            measured,
+            joint_positions_by_node=[pregrasp_named, pregrasp_named],
+            T_world_base=T_world_base,
+            phases=["pregrasp"],
+            margin_m=float(home_gate_cfg.get("margin_m", 0.0)),
+            path_max_joint_step_rad=math.radians(
+                float(
+                    home_gate_cfg.get(
+                        "path_max_joint_step_deg",
+                        config.get("approach_path_max_joint_step_deg", 3.0),
+                    )
+                )
+            ),
+            check_observed_map=True,
+        )
+        summaries.append({
+            "stage": "home_pregrasp_collision_gate",
+            "path_pass": bool(home_pregrasp_path_report.get("path_pass")),
+            "path_max_joint_step_rad": home_pregrasp_path_report.get("path_max_joint_step_rad"),
+            "path_first_failure": home_pregrasp_path_report.get("path_first_failure"),
+            "path_segments": home_pregrasp_path_report.get("path_segments"),
+        })
+        if not bool(home_pregrasp_path_report.get("path_pass")):
+            return {
+                "status": "FAIL",
+                "reason": "HOME->PREGRASP observed-map collision gate failed",
+                "stage_summaries": summaries,
+                "home_pregrasp_path_report": home_pregrasp_path_report,
+            }
+
     # Optional final continuous observed-map check.  In the user's current
     # diagnostic mode this is skipped exactly like the existing flag requests.
     final_path_report = None

@@ -76,6 +76,7 @@ ROBOT_PRIM = "/World/Layout/DualArmMount/DualArm"
 CAMERA_PRIM = "/World/Sensors/TopD435iVirtual/Camera"
 TASK_ROOT = "/World/Layout/TableAssembly/TestScene0000"
 SOURCE_ZONE_PRIM = "/World/Layout/TableAssembly/SourceZone"
+TABLE_PRIM = "/World/Layout/TableAssembly/Table"
 RIGHT_ARM_NAMES = [f"arm_r_joint_{index}" for index in range(1, 8)]
 ROUTE_STAGES = [
     "pregrasp", "cover", "grasp", "squeeze", "lift",
@@ -371,6 +372,8 @@ class PersistentScene:
         self.robot.update(self.dt)
         for obj in self.objects:
             obj.update(self.dt)
+        # Read-only startup audit. Never silently repairs assets.
+        self.object_physics_audit = self._audit_task_objects(emit_terminal=True)
         self.arm_ids, self.arm_names = self.robot.find_joints(config["right_arm_joints"], preserve_order=True)
         if self.arm_names != config["right_arm_joints"] or self.robot.num_joints != int(config["expected_total_actuated_joints"]) or not self.robot.is_fixed_base:
             raise RuntimeError("persistent robot audit failed")
@@ -472,6 +475,131 @@ class PersistentScene:
             physicsUtils.add_collision_to_collision_group(self.stage, root_path, group_path)
         print(f"[Isaac] ✓ 动态物体={len(wrappers)}，对象对过滤={len(list(itertools.combinations(root_paths, 2)))}", flush=True)
         return wrappers, records
+
+
+    def _collision_aabb_world(self, root_path: str) -> tuple[np.ndarray | None, np.ndarray | None, int]:
+        # Union world AABB of prims carrying UsdPhysics.CollisionAPI.
+        root = self.stage.GetPrimAtPath(root_path)
+        if not root.IsValid():
+            return None, None, 0
+        cache = UsdGeom.BBoxCache(
+            Usd.TimeCode.Default(),
+            [UsdGeom.Tokens.default_],
+            useExtentsHint=True,
+        )
+        mins: list[np.ndarray] = []
+        maxs: list[np.ndarray] = []
+        collision_count = 0
+        for prim in Usd.PrimRange(root):
+            if not prim.HasAPI(UsdPhysics.CollisionAPI):
+                continue
+            collision_count += 1
+            aligned = cache.ComputeWorldBound(prim).ComputeAlignedBox()
+            lower = np.asarray(aligned.GetMin(), dtype=np.float64)
+            upper = np.asarray(aligned.GetMax(), dtype=np.float64)
+            if np.all(np.isfinite(lower)) and np.all(np.isfinite(upper)):
+                mins.append(lower)
+                maxs.append(upper)
+        if not mins:
+            return None, None, collision_count
+        return np.min(np.stack(mins), axis=0), np.max(np.stack(maxs), axis=0), collision_count
+
+    def _audit_task_objects(self, *, emit_terminal: bool) -> dict:
+        table_min, table_max, table_collision_count = self._collision_aabb_world(TABLE_PRIM)
+        table_top = None if table_max is None else float(table_max[2])
+        warn_penetration_mm = float(self.config.get("object_table_penetration_warn_mm", 2.0))
+        rows = []
+        for wrapper, record in zip(self.objects, self.object_records):
+            rigid = self.stage.GetPrimAtPath(str(record["rigid_path"]))
+            rb = UsdPhysics.RigidBodyAPI(rigid)
+            rigid_enabled_value = rb.GetRigidBodyEnabledAttr().Get() if rb else None
+            kinematic_value = rb.GetKinematicEnabledAttr().Get() if rb else None
+            rigid_enabled = True if rigid_enabled_value is None else bool(rigid_enabled_value)
+            kinematic_enabled = False if kinematic_value is None else bool(kinematic_value)
+
+            mass_api = UsdPhysics.MassAPI(rigid)
+            mass_value = mass_api.GetMassAttr().Get() if mass_api else None
+            mass_kg = None if mass_value is None else float(mass_value)
+
+            lower, upper, collision_count = self._collision_aabb_world(str(record["root_path"]))
+            bottom_minus_table_mm = None
+            penetration_mm = None
+            if lower is not None and table_top is not None:
+                bottom_minus_table_mm = 1000.0 * float(lower[2] - table_top)
+                penetration_mm = max(0.0, -bottom_minus_table_mm)
+
+            warnings = []
+            if not rigid_enabled:
+                warnings.append("rigidBodyEnabled=false")
+            if kinematic_enabled:
+                warnings.append("kinematicEnabled=true")
+            if collision_count <= 0:
+                warnings.append("no CollisionAPI prim")
+            if penetration_mm is not None and penetration_mm > warn_penetration_mm:
+                warnings.append(
+                    f"collision AABB penetrates table by {penetration_mm:.1f}mm "
+                    f"> {warn_penetration_mm:.1f}mm"
+                )
+
+            row = {
+                "segmentation_id": int(record["segmentation_id"]),
+                "object_code": str(record["object_code"]),
+                "rigid_path": str(record["rigid_path"]),
+                "simulation_usd": str(record["simulation_usd"]),
+                "rigid_body_enabled": bool(rigid_enabled),
+                "kinematic_enabled": bool(kinematic_enabled),
+                "mass_kg": mass_kg,
+                "collision_prim_count": int(collision_count),
+                "collision_aabb_world_min_m": None if lower is None else lower.tolist(),
+                "collision_aabb_world_max_m": None if upper is None else upper.tolist(),
+                "table_top_world_z_m": table_top,
+                "collision_bottom_minus_table_top_mm": bottom_minus_table_mm,
+                "table_penetration_mm": penetration_mm,
+                "warnings": warnings,
+            }
+            rows.append(row)
+
+            if emit_terminal:
+                mass_text = "NA" if mass_kg is None else f"{mass_kg:.3f}kg"
+                bottom_text = (
+                    "NA" if bottom_minus_table_mm is None
+                    else f"{bottom_minus_table_mm:+.1f}mm"
+                )
+                print(
+                    f"[PHYS-AUDIT] seg={row['segmentation_id']:>3d} "
+                    f"rigid={int(rigid_enabled)} kin={int(kinematic_enabled)} "
+                    f"mass={mass_text} collision={collision_count} "
+                    f"bottom-table={bottom_text} | {row['object_code']}",
+                    flush=True,
+                )
+                if warnings:
+                    print(
+                        f"[PHYS-AUDIT WARNING] seg={row['segmentation_id']}: "
+                        + "; ".join(warnings),
+                        flush=True,
+                    )
+
+        return {
+            "schema_version": 1,
+            "status": "WARN" if any(row["warnings"] for row in rows) else "PASS",
+            "table_prim": TABLE_PRIM,
+            "table_collision_prim_count": int(table_collision_count),
+            "table_collision_aabb_world_min_m": None if table_min is None else table_min.tolist(),
+            "table_collision_aabb_world_max_m": None if table_max is None else table_max.tolist(),
+            "table_top_world_z_m": table_top,
+            "penetration_warning_threshold_mm": warn_penetration_mm,
+            "objects": rows,
+        }
+
+    def _write_object_physics_audit(self, output_dir: Path) -> Path:
+        audit = self._audit_task_objects(emit_terminal=False)
+        self.object_physics_audit = audit
+        path = Path(output_dir).resolve() / "object_physics_audit.json"
+        path.write_text(
+            json.dumps(audit, ensure_ascii=False, indent=2) + "\n",
+            encoding="utf-8",
+        )
+        return path
 
     def step(self, *, render: bool = False) -> None:
         self.robot.set_joint_position_target(self.command)
@@ -575,6 +703,7 @@ class PersistentScene:
         # arbitrarily long without q_current or the objects drifting.
         self.pause()
         self.capture_count += 1
+        physics_audit_path = self._write_object_physics_audit(output)
 
         intrinsic, world_from_camera, camera_model = camera_calibration(
             self.stage, self.camera_width, self.camera_height
@@ -613,6 +742,7 @@ class PersistentScene:
             "camera_model": camera_model,
             "settled_scene_manifest": str(settled_path),
             "robot_state": str(robot_state),
+            "object_physics_audit": str(physics_audit_path),
             "post_home_hold_s": requested_hold,
             "persistent_session": True,
         }
@@ -627,6 +757,7 @@ class PersistentScene:
             "T_world_camera": str(output / "T_world_camera.npy"),
             "settled_scene_manifest": str(settled_path),
             "robot_state": str(robot_state),
+            "object_physics_audit": str(physics_audit_path),
             "hold_s": requested_hold,
             "valid_depth_fraction": depth_stats["valid_fraction"],
         }
@@ -761,7 +892,7 @@ class PersistentScene:
         def refine_exact_stage(state: str, stage_name: str, desired_arm: np.ndarray) -> tuple[bool, str | None]:
             nonlocal sim_time, current_stage
             current_stage = state
-            if stage_name not in set(self.config.get("endpoint_refinement_stages", ["cover", "grasp", "squeeze"])):
+            if stage_name not in set(self.config.get("endpoint_refinement_stages", ["cover", "grasp"])):
                 return True, None
             target_matrix = flange_targets[index_of[stage_name]]
             desired = torch.as_tensor(desired_arm, device=self.robot.device, dtype=self.command.dtype).reshape(1, 7)
@@ -1003,18 +1134,29 @@ class PersistentScene:
                     (path_index - 1) * steps_each + local,
                 )
         print()
-        endpoint_ok, endpoint_reason = refine_exact_stage(
-            "SQUEEZE_REFINE", "squeeze", arm_q[index_of["squeeze"]]
-        )
-        if not endpoint_ok:
-            return recover_execution(
-                failure_stage="SQUEEZE_REFINE",
-                failure_type="ENDPOINT_ERROR",
-                failure_reason=endpoint_reason or "SQUEEZE exact endpoint failed",
-                retreat_to_pregrasp=True,
+
+        # SQUEEZE is a persistent closing command. Finger target error is
+        # expected when the object blocks closure; VERIFY_LIFT decides success.
+        squeeze_hold_s = float(durations.get("squeeze_hold", 0.4))
+        squeeze_hold_steps = max(1, round(squeeze_hold_s / self.dt))
+        squeeze_target = torch.as_tensor(
+            hand_q5[hand_index["squeeze"]],
+            device=self.robot.device,
+            dtype=self.command.dtype,
+        ).reshape(1, 20)
+        self.command[:, hand_ids] = squeeze_target
+        current_stage = "SQUEEZE_HOLD"
+        for hold_index in range(squeeze_hold_steps):
+            self.command[:, hand_ids] = squeeze_target
+            self.step(render=not bool(getattr(ARGS, "headless", False)))
+            sim_time += self.dt
+            monitor(
+                "SQUEEZE_HOLD",
+                (hold_index + 1) / squeeze_hold_steps,
+                flange_targets[index_of["squeeze"]],
+                hold_index,
             )
-        self.hold(float(durations.get("squeeze_hold", 0.4)), render=not bool(getattr(ARGS, "headless", False)))
-        sim_time += float(durations.get("squeeze_hold", 0.4))
+        print()
 
         execute_segment("LIFT", arm_q[index_of["lift"]], hand_q5[hand_index["squeeze"]], durations["lift"], flange_targets[index_of["lift"]])
         self.hold(float(durations.get("lift_hold", 0.4)), render=not bool(getattr(ARGS, "headless", False)))
