@@ -52,15 +52,15 @@
     "pregrasp": {
       "samples": 256,
       "distance_range_m": [
-        0.06,
-        0.16
+        0.09,
+        0.12
       ],
       "nominal_distance_m": 0.1,
       "lateral_half_width_m": 0.008,
       "rotation_half_range_deg_xyz": [
-        10.0,
-        10.0,
-        15.0
+        3.0,
+        3.0,
+        5.0
       ]
     },
     "lift": {

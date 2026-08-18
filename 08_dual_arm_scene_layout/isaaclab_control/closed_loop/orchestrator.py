@@ -309,7 +309,7 @@ def main() -> int:
     print("\n============================================================")
     print("  Wuji2 语义灵巧抓取闭环 V2")
     print("  ✓ Isaac Sim 持续会话：一次启动，全程保留物理场景")
-    print("  ✓ cuRobo 持续 GPU Worker")
+    print("  ✓ cuRobo 按轮启动，规划完成后释放 GPU")
     print("  ✓ COVER 精确 IK；其余阶段采用 6D 可行域批量 IK")
     print("  ✓ 执行前不再重复 IK / FK")
     print("============================================================")
@@ -324,17 +324,8 @@ def main() -> int:
             headless=bool(args.isaac_headless),
             verbose=VERBOSE,
             log_callback=debug_write,
-        ) as isaac, CuroboWorkerClient(
-            root,
-            worker_config=worker_cfg,
-            seeds=int(cfg.get("gpu_ik_seeds", 48)),
-            batch_size=int(cfg.get("gpu_ik_batch_size", 512)),
-        ) as curobo:
+        ) as isaac:
             print("✓ Isaac 持续场景已连接")
-            print(
-                f"✓ cuRobo 已连接 | seeds={int(cfg.get('gpu_ik_seeds', 48))} "
-                f"| GPU batch={int(cfg.get('gpu_ik_batch_size', 512))}"
-            )
 
             cycle = 0
             while True:
@@ -433,192 +424,204 @@ def main() -> int:
                 sim_target_id = int(bind["segmentation_id"])
                 q_current, measured = load_robot_state(robot_state_path)
 
-                if args.no_planner_collision_check:
-                    map_report = {"status": "SKIPPED", "reason": "--no-planner-collision-check"}
-                    print("[5] ✓ 规划器碰撞检查：关闭（Isaac/PhysX物理碰撞仍开启）")
-                else:
-                    started = time.perf_counter()
-                    map_report = curobo.build_map(
-                        capture_root / "depth_m.npy",
-                        capture_root / "intrinsics.npy",
-                        capture_root / "T_world_camera.npy",
-                        gs_root / "mask.npy",
-                    )
-                    print(f"[5] ✓ RGB-D ESDF地图完成 | {time.perf_counter()-started:.2f}s")
-
-                # Optional legacy approximate prefilter; OFF by default.
-                coarse_cfg = cfg["coarse_ik_prefilter"]
-                if bool(coarse_cfg.get("grasp_enabled")) or bool(coarse_cfg.get("pregrasp_enabled")):
-                    candidates, survivor_indices, coarse_report = legacy_coarse_prefilter(
-                        client=curobo,
-                        project_root=root,
-                        prediction=prediction,
-                        q_current=q_current,
-                        cfg=cfg,
-                    )
+                print("[5] cuRobo 按轮启动（规划完成后释放 GPU）")
+                with CuroboWorkerClient(
+                    root,
+                    worker_config=worker_cfg,
+                    seeds=int(cfg.get("gpu_ik_seeds", 48)),
+                    batch_size=int(cfg.get("gpu_ik_batch_size", 512)),
+                ) as curobo:
                     print(
-                        f"[6] 旧粗筛已启用 | target={len(candidates)} -> survivors={len(survivor_indices)}"
-                    )
-                else:
-                    candidates = candidates_plain
-                    survivor_indices = list(range(len(candidates)))
-                    coarse_report = {
-                        "enabled": False,
-                        "grasp_enabled": False,
-                        "pregrasp_enabled": False,
-                        "survivors": len(survivor_indices),
-                    }
-                    print(
-                        f"[6] ✓ 旧粗 GRASP/PREGRASP IK：关闭 | {len(candidates)} 个目标候选直接进入真实 Wuji2"
+                        f"    ✓ cuRobo 已连接 | seeds={int(cfg.get('gpu_ik_seeds', 48))} "
+                        f"| GPU batch={int(cfg.get('gpu_ik_batch_size', 512))}"
                     )
 
-                max_to_test = int(cfg.get("max_candidates_to_test", 0))
-                if max_to_test > 0:
-                    survivor_indices = survivor_indices[:max_to_test]
-                retarget_chunk_size = int(cfg.get("retarget_chunk_size", 64))
-                selected = None
-                tested_cover = 0
-                retargeted = 0
-
-                print("[7] Wuji2 重定向 + 精确 COVER + Flexible IK 搜索")
-                for chunk_index, start in enumerate(range(0, len(survivor_indices), retarget_chunk_size), start=1):
-                    local_indices = survivor_indices[start:start + retarget_chunk_size]
-                    chunk_items = []
-                    for local_index in local_indices:
-                        item = candidates[local_index]
-                        rank = int(item["target_rank"])
-                        idx = int(item["candidate_index"])
-                        case_id = f"{cfg.get('candidate_case_prefix','closedloop')}_r{rank:04d}_cand{idx:04d}"
-                        case_root = scratch_root / f"rank_{rank:04d}" / case_id
-                        chunk_items.append({
-                            "local_target_index": int(local_index),
-                            "target_rank": rank,
-                            "candidate_index": idx,
-                            "official_score": float(item.get("score", item.get("official_score", float('nan')))),
-                            "case_id": case_id,
-                            "case_root": str(case_root),
-                        })
-                    if not chunk_items:
-                        continue
-                    chunk_dir = scratch_root / f"batch_{chunk_index:03d}"
-                    chunk_dir.mkdir(parents=True, exist_ok=True)
-                    items_json = chunk_dir / "items.json"
-                    items_json.write_text(json.dumps(chunk_items, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-                    batch_started = time.perf_counter()
-                    run("batch build candidate cases", [
-                        network_py, SCRIPTS / "batch_build_candidate_cases.py",
-                        "--project-root", root,
-                        "--prediction", prediction,
-                        "--network-input", dgn_root / "network_input.npz",
-                        "--capture-root", capture_root,
-                        "--settled-manifest", settled,
-                        "--sim-target-segmentation-id", str(sim_target_id),
-                        "--items-json", items_json,
-                        "--output", chunk_dir / "batch_build_report.json",
-                    ], cwd=root, capture_json=True)
-                    run("batch LEAP->Wuji2 retarget", [
-                        retarget_py, SCRIPTS / "batch_retarget_cases.py",
-                        "--items-json", items_json,
-                        "--output", chunk_dir / "batch_retarget_report.json",
-                    ], cwd=root, capture_json=True)
-                    finalize_report = run("batch finalize Wuji2 + arm targets", [
-                        network_py, SCRIPTS / "batch_finalize_candidate_cases.py",
-                        "--items-json", items_json,
-                        "--output", chunk_dir / "batch_finalize_report.json",
-                    ], cwd=root, capture_json=True)
-                    retargeted += len(chunk_items)
-                    finalized_case_roots = {
-                        str(Path(row["case_root"]).resolve())
-                        for row in json.loads((chunk_dir / "batch_finalize_report.json").read_text(encoding="utf-8")).get("results", [])
-                        if row.get("status") == "PASS"
-                    }
-                    finalized_items = [
-                        item for item in chunk_items
-                        if str(Path(item["case_root"]).resolve()) in finalized_case_roots
-                    ]
-                    finalize_reject_count = int(finalize_report.get("reject_count", len(chunk_items) - len(finalized_items)))
-                    if not finalized_items:
-                        print(
-                            f"    Batch {chunk_index:02d} ✓ 重定向={len(chunk_items)} | "
-                            f"finalize PASS=0 REJECT={finalize_reject_count} | "
-                            f"{time.perf_counter()-batch_started:.1f}s"
+                    if args.no_planner_collision_check:
+                        map_report = {"status": "SKIPPED", "reason": "--no-planner-collision-check"}
+                        print("[5] ✓ 规划器碰撞检查：关闭（Isaac/PhysX物理碰撞仍开启）")
+                    else:
+                        started = time.perf_counter()
+                        map_report = curobo.build_map(
+                            capture_root / "depth_m.npy",
+                            capture_root / "intrinsics.npy",
+                            capture_root / "T_world_camera.npy",
+                            gs_root / "mask.npy",
                         )
-                        continue
+                        print(f"[5] ✓ RGB-D ESDF地图完成 | {time.perf_counter()-started:.2f}s")
 
-                    cover_rows = screen_exact_cover_batch(
-                        client=curobo,
-                        case_roots=[Path(item["case_root"]) for item in finalized_items],
-                        q_current=q_current,
-                        measured=measured,
-                        T_base_from_world=T_base_from_world,
-                        T_world_base=T_world_base,
-                        no_planner_collision_check=bool(args.no_planner_collision_check),
-                        block_unknown=bool(cfg.get("block_unknown_space", False)),
-                        solutions_per_candidate=int(cfg["flexible_ik"]["selection"]["cover_solutions_per_candidate"]),
-                    )
-                    passed_cover = [row for row in cover_rows if row["pass"]]
-                    tested_cover += len(cover_rows)
-                    print(
-                        f"    Batch {chunk_index:02d} ✓ 重定向={len(chunk_items)} | "
-                        f"finalize PASS={len(finalized_items)} REJECT={finalize_reject_count} | "
-                        f"精确COVER可达={len(passed_cover)} | {time.perf_counter()-batch_started:.1f}s"
-                    )
-
-                    # Preserve official DGN2 order inside the batch.
-                    by_case = {str(Path(item["case_root"]).resolve()): item for item in finalized_items}
-                    for cover_row in passed_cover:
-                        item = by_case[cover_row["case_root"]]
-                        route_started = time.perf_counter()
-                        route = plan_flexible_route(
+                    # Optional legacy approximate prefilter; OFF by default.
+                    coarse_cfg = cfg["coarse_ik_prefilter"]
+                    if bool(coarse_cfg.get("grasp_enabled")) or bool(coarse_cfg.get("pregrasp_enabled")):
+                        candidates, survivor_indices, coarse_report = legacy_coarse_prefilter(
                             client=curobo,
                             project_root=root,
-                            case_root=Path(item["case_root"]),
-                            cover_solutions=cover_row["cover_solutions"],
+                            prediction=prediction,
+                            q_current=q_current,
+                            cfg=cfg,
+                        )
+                        print(
+                            f"[6] 旧粗筛已启用 | target={len(candidates)} -> survivors={len(survivor_indices)}"
+                        )
+                    else:
+                        candidates = candidates_plain
+                        survivor_indices = list(range(len(candidates)))
+                        coarse_report = {
+                            "enabled": False,
+                            "grasp_enabled": False,
+                            "pregrasp_enabled": False,
+                            "survivors": len(survivor_indices),
+                        }
+                        print(
+                            f"[6] ✓ 旧粗 GRASP/PREGRASP IK：关闭 | {len(candidates)} 个目标候选直接进入真实 Wuji2"
+                        )
+
+                    max_to_test = int(cfg.get("max_candidates_to_test", 0))
+                    if max_to_test > 0:
+                        survivor_indices = survivor_indices[:max_to_test]
+                    retarget_chunk_size = int(cfg.get("retarget_chunk_size", 64))
+                    selected = None
+                    tested_cover = 0
+                    retargeted = 0
+
+                    print("[7] Wuji2 重定向 + 精确 COVER + Flexible IK 搜索")
+                    for chunk_index, start in enumerate(range(0, len(survivor_indices), retarget_chunk_size), start=1):
+                        local_indices = survivor_indices[start:start + retarget_chunk_size]
+                        chunk_items = []
+                        for local_index in local_indices:
+                            item = candidates[local_index]
+                            rank = int(item["target_rank"])
+                            idx = int(item["candidate_index"])
+                            case_id = f"{cfg.get('candidate_case_prefix','closedloop')}_r{rank:04d}_cand{idx:04d}"
+                            case_root = scratch_root / f"rank_{rank:04d}" / case_id
+                            chunk_items.append({
+                                "local_target_index": int(local_index),
+                                "target_rank": rank,
+                                "candidate_index": idx,
+                                "official_score": float(item.get("score", item.get("official_score", float('nan')))),
+                                "case_id": case_id,
+                                "case_root": str(case_root),
+                            })
+                        if not chunk_items:
+                            continue
+                        chunk_dir = scratch_root / f"batch_{chunk_index:03d}"
+                        chunk_dir.mkdir(parents=True, exist_ok=True)
+                        items_json = chunk_dir / "items.json"
+                        items_json.write_text(json.dumps(chunk_items, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+                        batch_started = time.perf_counter()
+                        run("batch build candidate cases", [
+                            network_py, SCRIPTS / "batch_build_candidate_cases.py",
+                            "--project-root", root,
+                            "--prediction", prediction,
+                            "--network-input", dgn_root / "network_input.npz",
+                            "--capture-root", capture_root,
+                            "--settled-manifest", settled,
+                            "--sim-target-segmentation-id", str(sim_target_id),
+                            "--items-json", items_json,
+                            "--output", chunk_dir / "batch_build_report.json",
+                        ], cwd=root, capture_json=True)
+                        run("batch LEAP->Wuji2 retarget", [
+                            retarget_py, SCRIPTS / "batch_retarget_cases.py",
+                            "--items-json", items_json,
+                            "--output", chunk_dir / "batch_retarget_report.json",
+                        ], cwd=root, capture_json=True)
+                        finalize_report = run("batch finalize Wuji2 + arm targets", [
+                            network_py, SCRIPTS / "batch_finalize_candidate_cases.py",
+                            "--items-json", items_json,
+                            "--output", chunk_dir / "batch_finalize_report.json",
+                        ], cwd=root, capture_json=True)
+                        retargeted += len(chunk_items)
+                        finalized_case_roots = {
+                            str(Path(row["case_root"]).resolve())
+                            for row in json.loads((chunk_dir / "batch_finalize_report.json").read_text(encoding="utf-8")).get("results", [])
+                            if row.get("status") == "PASS"
+                        }
+                        finalized_items = [
+                            item for item in chunk_items
+                            if str(Path(item["case_root"]).resolve()) in finalized_case_roots
+                        ]
+                        finalize_reject_count = int(finalize_report.get("reject_count", len(chunk_items) - len(finalized_items)))
+                        if not finalized_items:
+                            print(
+                                f"    Batch {chunk_index:02d} ✓ 重定向={len(chunk_items)} | "
+                                f"finalize PASS=0 REJECT={finalize_reject_count} | "
+                                f"{time.perf_counter()-batch_started:.1f}s"
+                            )
+                            continue
+
+                        cover_rows = screen_exact_cover_batch(
+                            client=curobo,
+                            case_roots=[Path(item["case_root"]) for item in finalized_items],
                             q_current=q_current,
                             measured=measured,
-                            placement_registry=registry,
-                            config=cfg,
+                            T_base_from_world=T_base_from_world,
+                            T_world_base=T_world_base,
                             no_planner_collision_check=bool(args.no_planner_collision_check),
                             block_unknown=bool(cfg.get("block_unknown_space", False)),
+                            solutions_per_candidate=int(cfg["flexible_ik"]["selection"]["cover_solutions_per_candidate"]),
                         )
-                        if route.get("status") == "PASS":
-                            selected = {
-                                "target_rank": int(item["target_rank"]),
-                                "candidate_index": int(item["candidate_index"]),
-                                "official_score": float(item["official_score"]),
-                                "case_root": str(Path(item["case_root"]).resolve()),
-                                "route": route,
-                            }
-                            print(
-                                f"    ✓ Flexible Route PASS | rank={selected['target_rank']} "
-                                f"candidate={selected['candidate_index']} | {time.perf_counter()-route_started:.2f}s"
-                            )
-                            _print_route_summary(route)
-                            break
-                        if VERBOSE:
-                            print(
-                                f"    ✗ route rank={item['target_rank']} cand={item['candidate_index']}: "
-                                f"{route.get('reason')}"
-                            )
-                    if selected is not None:
-                        break
+                        passed_cover = [row for row in cover_rows if row["pass"]]
+                        tested_cover += len(cover_rows)
+                        print(
+                            f"    Batch {chunk_index:02d} ✓ 重定向={len(chunk_items)} | "
+                            f"finalize PASS={len(finalized_items)} REJECT={finalize_reject_count} | "
+                            f"精确COVER可达={len(passed_cover)} | {time.perf_counter()-batch_started:.1f}s"
+                        )
 
-                planning_result = {
-                    "schema_version": 2,
-                    "status": "PASS" if selected is not None else "FAIL",
-                    "architecture": cfg.get("architecture"),
-                    "query": query,
-                    "total_proposals": total_proposals,
-                    "target_candidates": len(candidates),
-                    "retargeted_candidate_count": retargeted,
-                    "exact_cover_tested": tested_cover,
-                    "coarse_prefilter": coarse_report,
-                    "map": map_report,
-                    "selected": selected,
-                    "planning_wall_s": time.perf_counter() - cycle_started,
-                }
-                planning_path = cycle_root / "planning_result.json"
-                planning_path.write_text(json.dumps(planning_result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+                        # Preserve official DGN2 order inside the batch.
+                        by_case = {str(Path(item["case_root"]).resolve()): item for item in finalized_items}
+                        for cover_row in passed_cover:
+                            item = by_case[cover_row["case_root"]]
+                            route_started = time.perf_counter()
+                            route = plan_flexible_route(
+                                client=curobo,
+                                project_root=root,
+                                case_root=Path(item["case_root"]),
+                                cover_solutions=cover_row["cover_solutions"],
+                                q_current=q_current,
+                                measured=measured,
+                                placement_registry=registry,
+                                config=cfg,
+                                no_planner_collision_check=bool(args.no_planner_collision_check),
+                                block_unknown=bool(cfg.get("block_unknown_space", False)),
+                            )
+                            if route.get("status") == "PASS":
+                                selected = {
+                                    "target_rank": int(item["target_rank"]),
+                                    "candidate_index": int(item["candidate_index"]),
+                                    "official_score": float(item["official_score"]),
+                                    "case_root": str(Path(item["case_root"]).resolve()),
+                                    "route": route,
+                                }
+                                print(
+                                    f"    ✓ Flexible Route PASS | rank={selected['target_rank']} "
+                                    f"candidate={selected['candidate_index']} | {time.perf_counter()-route_started:.2f}s"
+                                )
+                                _print_route_summary(route)
+                                break
+                            if VERBOSE:
+                                print(
+                                    f"    ✗ route rank={item['target_rank']} cand={item['candidate_index']}: "
+                                    f"{route.get('reason')}"
+                                )
+                        if selected is not None:
+                            break
+
+                    planning_result = {
+                        "schema_version": 2,
+                        "status": "PASS" if selected is not None else "FAIL",
+                        "architecture": cfg.get("architecture"),
+                        "query": query,
+                        "total_proposals": total_proposals,
+                        "target_candidates": len(candidates),
+                        "retargeted_candidate_count": retargeted,
+                        "exact_cover_tested": tested_cover,
+                        "coarse_prefilter": coarse_report,
+                        "map": map_report,
+                        "selected": selected,
+                        "planning_wall_s": time.perf_counter() - cycle_started,
+                    }
+                    planning_path = cycle_root / "planning_result.json"
+                    planning_path.write_text(json.dumps(planning_result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
                 if selected is None:
                     print(f"\n✗ 本轮未找到完整可行路线；场景保持原样，可重新描述目标或继续尝试。")
