@@ -1,6 +1,7 @@
 {
-  "schema_version": 1,
-  "capture_launcher": "08_dual_arm_scene_layout/isaaclab_control/closed_loop/launchers/run_capture_cycle.sh",
+  "schema_version": 2,
+  "architecture": "persistent_isaac + persistent_curobo + flexible_task_set_ik",
+  "persistent_isaac_config": "08_dual_arm_scene_layout/isaaclab_control/runtime/config/persistent_closed_loop.json",
   "grounded_sam_backend": [
     "/home/lin/miniconda3/bin/conda",
     "run",
@@ -21,21 +22,16 @@
   "planner_python": "/home/lin/miniconda3/envs/isaaclab22_sim50/bin/python",
   "dgn2_rounds": 8,
   "dgn2_target_membership_id": 1,
-  "max_candidates_to_test": 128,
-  "candidate_screen_chunk_size": 16,
+  "candidate_case_prefix": "closedloop",
+  "retarget_chunk_size": 64,
+  "max_candidates_to_test": 2048,
   "gpu_ik_seeds": 48,
   "gpu_ik_batch_size": 512,
   "worker_startup_timeout_s": 180.0,
   "worker_request_timeout_s": 600.0,
-  "pregrasp_offset_m": 0.1,
+  "isaac_startup_timeout_s": 300.0,
+  "isaac_request_timeout_s": 300.0,
   "approach_path_max_joint_step_deg": 3.0,
-  "path_collision_progress_batch_size": 256,
-  "retarget_chunk_size": 64,
-  "runtime_exit_grace_s": 20.0,
-  "candidate_case_prefix": "closedloop",
-  "runtime_config_template": "08_dual_arm_scene_layout/isaaclab_control/runtime/config/full_pick_place_closed_loop_template.json",
-  "runtime_launcher": "08_dual_arm_scene_layout/isaaclab_control/runtime/launchers/run_full_pick_place_closed_loop.sh",
-  "placement_policy": "08_dual_arm_scene_layout/isaaclab_control/runtime/config/placement_policy.json",
   "session_root": "08_dual_arm_scene_layout/isaaclab_control/outputs/closed_loop_sessions",
   "show_rgb_command": [
     "xdg-open",
@@ -46,8 +42,127 @@
     "{overlay}"
   ],
   "block_unknown_space": false,
-  "execution_enabled": false,
-  "self_collision_policy": "REPORT_ONLY_UNRESOLVED",
-  "require_self_collision_pass": false,
-  "require_continuous_path_pass": true
+  "coarse_ik_prefilter": {
+    "grasp_enabled": false,
+    "pregrasp_enabled": false,
+    "legacy_pregrasp_offset_m": 0.1
+  },
+  "flexible_ik": {
+    "enabled": true,
+    "pregrasp": {
+      "samples": 256,
+      "distance_range_m": [
+        0.06,
+        0.16
+      ],
+      "nominal_distance_m": 0.1,
+      "lateral_half_width_m": 0.025,
+      "rotation_half_range_deg_xyz": [
+        10.0,
+        10.0,
+        15.0
+      ]
+    },
+    "lift": {
+      "samples": 256,
+      "distance_range_m": [
+        0.1,
+        0.25
+      ],
+      "nominal_distance_m": 0.2,
+      "lateral_half_width_m": 0.035,
+      "rotation_half_range_deg_xyz": [
+        7.0,
+        7.0,
+        15.0
+      ]
+    },
+    "transfer": {
+      "samples": 384,
+      "lambda_range": [
+        0.3,
+        0.85
+      ],
+      "height_above_place_range_m": [
+        0.12,
+        0.26
+      ],
+      "lateral_xy_half_width_m": 0.05,
+      "rotation_half_range_deg_xyz": [
+        10.0,
+        10.0,
+        20.0
+      ],
+      "nominal_lambda": 0.65,
+      "nominal_height_above_place_m": 0.18
+    },
+    "place": {
+      "nominal_object_size_xyz_m": [
+        0.12,
+        0.12,
+        0.12
+      ],
+      "edge_margin_m": 0.01,
+      "minimum_center_spacing_m": 0.14,
+      "grid_step_xy_m": [
+        0.025,
+        0.025
+      ],
+      "preferred_world_y_m": -0.05,
+      "samples_per_xy": 5,
+      "z_extra_range_m": [
+        0.0,
+        0.04
+      ],
+      "object_rotation_half_range_deg_xyz": [
+        5.0,
+        5.0,
+        30.0
+      ],
+      "release_wrist_height_delta_m": 0.01
+    },
+    "retreat": {
+      "samples": 128,
+      "upward_range_m": [
+        0.08,
+        0.2
+      ],
+      "nominal_upward_m": 0.12,
+      "xy_half_width_m": 0.05,
+      "rotation_half_range_deg_xyz": [
+        15.0,
+        15.0,
+        20.0
+      ]
+    },
+    "selection": {
+      "beam_width": 64,
+      "solutions_per_pose": 4,
+      "cover_solutions_per_candidate": 16,
+      "retreat_parent_trials": 8,
+      "joint_l2_weight": 1.0,
+      "joint_max_weight": 0.25,
+      "nominal_penalty_weight": 0.05,
+      "joint_margin_reward": 0.02,
+      "home_return_weight": 0.25
+    }
+  },
+  "home_q_deg": [
+    50.0,
+    -70.0,
+    0.0,
+    40.0,
+    35.0,
+    0.0,
+    25.0
+  ],
+  "stop_words": [
+    "q",
+    "quit",
+    "exit",
+    "结束",
+    "退出",
+    "抓取完成",
+    "完成"
+  ]
 }

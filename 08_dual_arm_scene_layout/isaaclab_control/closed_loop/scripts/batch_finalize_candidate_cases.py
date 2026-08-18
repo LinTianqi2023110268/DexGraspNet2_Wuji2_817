@@ -8,6 +8,7 @@ import os
 import runpy
 import sys
 import time
+import traceback
 from pathlib import Path
 
 
@@ -33,17 +34,41 @@ def main() -> None:
             case_root = Path(item["case_root"]).expanduser().resolve()
             os.environ["DGN2_CASE_ROOT"] = str(case_root)
             case_started = time.perf_counter()
-            sys.argv = [str(FINAL_WAYPOINTS)]
-            runpy.run_path(str(FINAL_WAYPOINTS), run_name="__main__")
-            sys.argv = [str(ARM_TARGETS), "--case-root", str(case_root)]
-            runpy.run_path(str(ARM_TARGETS), run_name="__main__")
-            results.append({
+            result = {
                 "case_id": item["case_id"],
                 "case_root": str(case_root),
                 "candidate_index": int(item["candidate_index"]),
-                "status": "PASS",
-                "wall_time_s": time.perf_counter() - case_started,
-            })
+                "target_rank": int(item["target_rank"]) if "target_rank" in item else None,
+            }
+            try:
+                sys.argv = [str(FINAL_WAYPOINTS)]
+                failure_stage = "final_waypoints"
+                runpy.run_path(str(FINAL_WAYPOINTS), run_name="__main__")
+                sys.argv = [str(ARM_TARGETS), "--case-root", str(case_root)]
+                failure_stage = "arm_targets"
+                runpy.run_path(str(ARM_TARGETS), run_name="__main__")
+            except Exception as exc:
+                result.update({
+                    "status": "REJECT",
+                    "failure_stage": failure_stage,
+                    "failure_type": type(exc).__name__,
+                    "failure_reason": str(exc),
+                    "traceback_tail": traceback.format_exc().splitlines()[-12:],
+                    "wall_time_s": time.perf_counter() - case_started,
+                })
+                print(json.dumps({
+                    "status": "REJECT",
+                    "case_id": result["case_id"],
+                    "candidate_index": result["candidate_index"],
+                    "target_rank": result["target_rank"],
+                    "failure_reason": result["failure_reason"],
+                }, ensure_ascii=False), flush=True)
+            else:
+                result.update({
+                    "status": "PASS",
+                    "wall_time_s": time.perf_counter() - case_started,
+                })
+            results.append(result)
     finally:
         sys.argv = old_argv
         if old_case_root is None:
@@ -54,6 +79,8 @@ def main() -> None:
     out = {
         "status": "PASS",
         "candidate_count": len(items),
+        "pass_count": sum(1 for row in results if row["status"] == "PASS"),
+        "reject_count": sum(1 for row in results if row["status"] == "REJECT"),
         "wall_time_s": time.perf_counter() - started,
         "results": results,
     }
@@ -62,6 +89,8 @@ def main() -> None:
     print(json.dumps({
         "status": out["status"],
         "candidate_count": out["candidate_count"],
+        "pass_count": out["pass_count"],
+        "reject_count": out["reject_count"],
         "wall_time_s": out["wall_time_s"],
         "output": str(args.output),
     }, ensure_ascii=False))
