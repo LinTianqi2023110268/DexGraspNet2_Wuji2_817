@@ -56,7 +56,7 @@
         0.16
       ],
       "nominal_distance_m": 0.1,
-      "lateral_half_width_m": 0.025,
+      "lateral_half_width_m": 0.008,
       "rotation_half_range_deg_xyz": [
         10.0,
         10.0,

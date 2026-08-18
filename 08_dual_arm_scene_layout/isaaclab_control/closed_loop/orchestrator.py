@@ -647,7 +647,16 @@ def main() -> int:
                     output_dir=execution_root,
                     target_segmentation_id=sim_target_id,
                 )
-                if execution.get("status") != "PASS":
+                execution_status = str(execution.get("status", ""))
+                if execution_status == "RECOVERED_FAIL":
+                    print("✗ 物理执行失败，但 runtime 已完成恢复；不提交 placement，进入下一轮。")
+                    print(f"  failure_stage   : {execution.get('failure_stage')}")
+                    print(f"  failure_type    : {execution.get('failure_type')}")
+                    print(f"  failure_reason  : {execution.get('failure_reason')}")
+                    print(f"  recovery_status : {execution.get('recovery_status')}")
+                    print(f"  report          : {execution.get('report')}")
+                    continue
+                if execution_status != "PASS":
                     print(f"✗ 物理执行失败：{execution.get('report')}")
                     return 3
                 commit_placement(registry, cycle=cycle, execution=execution, selected=selected)

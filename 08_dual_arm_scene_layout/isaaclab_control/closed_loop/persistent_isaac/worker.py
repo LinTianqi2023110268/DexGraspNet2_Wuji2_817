@@ -679,6 +679,8 @@ class PersistentScene:
         max_object_lift_mm = 0.0
         actual_arm_start = self.robot.data.joint_pos[:, self.arm_ids].clone()
         self.current_desired_arm = actual_arm_start.clone()
+        current_stage = "INIT"
+        verified_target_lift_mm: float | None = None
 
         def capture_replay(state: str, force: bool = False) -> None:
             nonlocal replay_next
@@ -731,7 +733,8 @@ class PersistentScene:
             return position_error, orientation_error
 
         def execute_segment(state: str, arm_goal: np.ndarray | None, hand_goal: np.ndarray | None, duration_s: float, target_matrix: np.ndarray | None) -> None:
-            nonlocal sim_time
+            nonlocal sim_time, current_stage
+            current_stage = state
             start_arm = self.command[:, self.arm_ids].clone()
             start_hand = self.command[:, hand_ids].clone()
             if arm_goal is None:
@@ -755,10 +758,11 @@ class PersistentScene:
                 monitor(state, i / count, target_matrix, i)
             print()
 
-        def refine_exact_stage(state: str, stage_name: str, desired_arm: np.ndarray) -> None:
-            nonlocal sim_time
+        def refine_exact_stage(state: str, stage_name: str, desired_arm: np.ndarray) -> tuple[bool, str | None]:
+            nonlocal sim_time, current_stage
+            current_stage = state
             if stage_name not in set(self.config.get("endpoint_refinement_stages", ["cover", "grasp", "squeeze"])):
-                return
+                return True, None
             target_matrix = flange_targets[index_of[stage_name]]
             desired = torch.as_tensor(desired_arm, device=self.robot.device, dtype=self.command.dtype).reshape(1, 7)
             settings = self.config["endpoint_refinement"]
@@ -784,12 +788,165 @@ class PersistentScene:
                     stable += 1
                     if stable >= stable_required:
                         print(f"\n[执行] ✓ {stage_name.upper()} 精确端点 {pos_err:.2f}mm/{rot_err:.2f}°")
-                        return
+                        return True, None
                 else:
                     stable = 0
             pos_err, rot_err = pose_errors(self.robot.data.body_pose_w[0, self.flange_id], target_matrix)
-            raise RuntimeError(
-                f"{stage_name} exact endpoint failed: {pos_err:.2f}mm/{rot_err:.2f}deg"
+            reason = f"{stage_name} exact endpoint failed: {pos_err:.2f}mm/{rot_err:.2f}deg"
+            return False, reason
+
+        def target_lift_mm_now() -> float:
+            object_position = target_object.data.root_pos_w[0]
+            return 1000.0 * float(object_position[2] - initial_object_position[2])
+
+        def write_recovered_report(
+            *,
+            failure_stage: str,
+            failure_type: str,
+            failure_reason: str,
+            recovery_status: str,
+            verify_lift_mm: float | None,
+        ) -> dict:
+            capture_replay("RECOVERY_END", force=True)
+            trace_path = output / "trace.csv"
+            with trace_path.open("w", newline="", encoding="utf-8") as stream:
+                writer = csv.DictWriter(stream, fieldnames=TRACE_FIELDS)
+                writer.writeheader()
+                writer.writerows(trace)
+
+            replay_path = output / "physical_replay_30fps.npz"
+            np.savez_compressed(
+                replay_path,
+                time_s=np.asarray(replay_time, dtype=np.float32),
+                state=np.asarray(replay_state),
+                joint_position_rad=np.stack(replay_joint),
+                object_pose_world_wxyz=np.stack(replay_objects),
+                metadata_json=np.asarray(json.dumps({
+                    "schema_version": 2,
+                    "persistent_session": True,
+                    "joint_names": list(self.robot.joint_names),
+                    "objects": [
+                        {"segmentation_id": int(row["segmentation_id"])}
+                        for row in self.object_records
+                    ],
+                    "candidate_index": source_candidate_index,
+                    "recovered_failure": True,
+                })),
+            )
+            self.execute_count += 1
+            snapshot_path = output / "scene_after_execution.json"
+            self.write_snapshot(snapshot_path)
+            report = {
+                "schema_version": 3,
+                "status": "RECOVERED_FAIL",
+                "persistent_session": True,
+                "candidate_index": source_candidate_index,
+                "target_segmentation_id": int(target_segmentation_id),
+                "failure_stage": str(failure_stage),
+                "failure_type": str(failure_type),
+                "failure_reason": str(failure_reason),
+                "recovery_attempted": True,
+                "recovery_status": str(recovery_status),
+                "current_target_lift_mm": float(target_lift_mm_now()),
+                "verify_lift_mm": None if verify_lift_mm is None else float(verify_lift_mm),
+                "max_object_lift_mm": float(max_object_lift_mm),
+                "action_simulation_time_s": float(sim_time),
+                "action_wall_time_s": float(time.perf_counter() - action_started),
+                "post_home_hold_s_inside_execute": 0.0,
+                "trace_csv": str(trace_path),
+                "physical_replay_30fps": str(replay_path),
+                "scene_after_execution": str(snapshot_path),
+            }
+            report_path = output / "report.json"
+            report_path.write_text(
+                json.dumps(report, ensure_ascii=False, indent=2) + "\n",
+                encoding="utf-8",
+            )
+            self.pause()
+            return {**report, "report": str(report_path)}
+
+        def recover_execution(
+            *,
+            failure_stage: str,
+            failure_type: str,
+            failure_reason: str,
+            retreat_to_pregrasp: bool,
+            verify_lift_mm: float | None = None,
+        ) -> dict:
+            nonlocal current_stage
+            print(f"\n[EXECUTION ERROR] {failure_stage}: {failure_reason}", flush=True)
+            print("[RECOVERY] 本轮停止后续动作，开始安全恢复。", flush=True)
+
+            try:
+                actual_arm = self.robot.data.joint_pos[:, self.arm_ids].clone()
+                self.command[:, self.arm_ids] = actual_arm
+                self.current_desired_arm = actual_arm.clone()
+
+                execute_segment(
+                    "RECOVERY_OPEN",
+                    None,
+                    hand_q5[hand_index["pregrasp"]],
+                    float(durations.get("release", 1.2)),
+                    None,
+                )
+                print("[RECOVERY] ✓ 手已张开", flush=True)
+
+                if retreat_to_pregrasp:
+                    execute_segment(
+                        "RECOVERY_PREGRASP",
+                        arm_q[index_of["pregrasp"]],
+                        None,
+                        float(durations.get("to_pregrasp", 2.5)),
+                        flange_targets[index_of["pregrasp"]],
+                    )
+                    print("[RECOVERY] ✓ 已撤回 PREGRASP", flush=True)
+
+                execute_segment(
+                    "RECOVERY_HOME",
+                    self.home_q,
+                    None,
+                    float(durations.get("return_home", 3.0)),
+                    None,
+                )
+
+                home_actual = self.robot.data.joint_pos[:, self.arm_ids]
+                home_target = torch.as_tensor(
+                    self.home_q, device=self.robot.device, dtype=self.command.dtype
+                ).reshape(1, 7)
+                home_error_deg = float(
+                    torch.max(torch.abs(torch.rad2deg(home_actual - home_target)))
+                )
+                home_tolerance_deg = float(
+                    self.config.get("recovery_home_joint_tolerance_deg", 8.0)
+                )
+                if home_error_deg > home_tolerance_deg:
+                    raise RuntimeError(
+                        f"HOME recovery joint error {home_error_deg:.2f}deg "
+                        f"> {home_tolerance_deg:.2f}deg"
+                    )
+
+                print(
+                    f"[RECOVERY] ✓ 已返回 HOME | max joint error={home_error_deg:.2f}°",
+                    flush=True,
+                )
+            except Exception as recovery_exc:
+                print(
+                    f"[RECOVERY ERROR] {type(recovery_exc).__name__}: {recovery_exc}",
+                    flush=True,
+                )
+                raise RuntimeError(
+                    f"recovery failed after {failure_type} at {failure_stage}: "
+                    f"{type(recovery_exc).__name__}: {recovery_exc}"
+                ) from recovery_exc
+
+            current_stage = "RECOVERED_HOME"
+            print("[RECOVERY] 本轮标记 RECOVERED_FAIL，Isaac 会话继续保留。", flush=True)
+            return write_recovered_report(
+                failure_stage=failure_stage,
+                failure_type=failure_type,
+                failure_reason=failure_reason,
+                recovery_status="HOME",
+                verify_lift_mm=verify_lift_mm,
             )
 
         capture_replay("ACTION_START", force=True)
@@ -797,9 +954,28 @@ class PersistentScene:
         execute_segment("FORM_PREGRASP", None, hand_q5[hand_index["pregrasp"]], durations["form_pregrasp"], None)
         execute_segment("PREGRASP", arm_q[index_of["pregrasp"]], None, durations["to_pregrasp"], flange_targets[index_of["pregrasp"]])
         execute_segment("COVER", arm_q[index_of["cover"]], hand_q5[hand_index["cover"]], durations["cover"], flange_targets[index_of["cover"]])
-        refine_exact_stage("COVER_REFINE", "cover", arm_q[index_of["cover"]])
+        endpoint_ok, endpoint_reason = refine_exact_stage(
+            "COVER_REFINE", "cover", arm_q[index_of["cover"]]
+        )
+        if not endpoint_ok:
+            return recover_execution(
+                failure_stage="COVER_REFINE",
+                failure_type="ENDPOINT_ERROR",
+                failure_reason=endpoint_reason or "COVER exact endpoint failed",
+                retreat_to_pregrasp=True,
+            )
+
         execute_segment("GRASP", arm_q[index_of["grasp"]], hand_q5[hand_index["grasp"]], durations["grasp"], flange_targets[index_of["grasp"]])
-        refine_exact_stage("GRASP_REFINE", "grasp", arm_q[index_of["grasp"]])
+        endpoint_ok, endpoint_reason = refine_exact_stage(
+            "GRASP_REFINE", "grasp", arm_q[index_of["grasp"]]
+        )
+        if not endpoint_ok:
+            return recover_execution(
+                failure_stage="GRASP_REFINE",
+                failure_type="ENDPOINT_ERROR",
+                failure_reason=endpoint_reason or "GRASP exact endpoint failed",
+                retreat_to_pregrasp=True,
+            )
 
         print("[执行] SQUEEZE：41点 Wuji2 稠密收紧轨迹", flush=True)
         squeeze_duration = float(durations["squeeze"])
@@ -827,13 +1003,44 @@ class PersistentScene:
                     (path_index - 1) * steps_each + local,
                 )
         print()
-        refine_exact_stage("SQUEEZE_REFINE", "squeeze", arm_q[index_of["squeeze"]])
+        endpoint_ok, endpoint_reason = refine_exact_stage(
+            "SQUEEZE_REFINE", "squeeze", arm_q[index_of["squeeze"]]
+        )
+        if not endpoint_ok:
+            return recover_execution(
+                failure_stage="SQUEEZE_REFINE",
+                failure_type="ENDPOINT_ERROR",
+                failure_reason=endpoint_reason or "SQUEEZE exact endpoint failed",
+                retreat_to_pregrasp=True,
+            )
         self.hold(float(durations.get("squeeze_hold", 0.4)), render=not bool(getattr(ARGS, "headless", False)))
         sim_time += float(durations.get("squeeze_hold", 0.4))
 
         execute_segment("LIFT", arm_q[index_of["lift"]], hand_q5[hand_index["squeeze"]], durations["lift"], flange_targets[index_of["lift"]])
         self.hold(float(durations.get("lift_hold", 0.4)), render=not bool(getattr(ARGS, "headless", False)))
         sim_time += float(durations.get("lift_hold", 0.4))
+
+        verified_target_lift_mm = target_lift_mm_now()
+        lift_threshold_mm = float(self.config.get("object_lift_pass_mm", 30.0))
+        if verified_target_lift_mm < lift_threshold_mm:
+            reason = (
+                f"target lift={verified_target_lift_mm:.1f}mm "
+                f"< {lift_threshold_mm:.1f}mm"
+            )
+            print(f"[VERIFY] ✗ EMPTY_GRASP | {reason}", flush=True)
+            return recover_execution(
+                failure_stage="VERIFY_LIFT",
+                failure_type="EMPTY_GRASP",
+                failure_reason=reason,
+                retreat_to_pregrasp=False,
+                verify_lift_mm=verified_target_lift_mm,
+            )
+
+        print(
+            f"[VERIFY] ✓ target follows lift | "
+            f"{verified_target_lift_mm:.1f}mm >= {lift_threshold_mm:.1f}mm",
+            flush=True,
+        )
         execute_segment("TRANSFER", arm_q[index_of["transfer"]], None, durations["transfer"], flange_targets[index_of["transfer"]])
         execute_segment("PLACE", arm_q[index_of["place"]], None, durations["place"], flange_targets[index_of["place"]])
         self.hold(float(durations.get("place_hold", 0.4)), render=not bool(getattr(ARGS, "headless", False)))
@@ -856,7 +1063,11 @@ class PersistentScene:
         zone_max = centre[:2] + 0.5 * size[:2]
         edge = float(self.config.get("placement_center_edge_margin_m", 0.01))
         final_in_green = bool(np.all(final_position[:2] >= zone_min + edge) and np.all(final_position[:2] <= zone_max - edge))
-        lift_pass = bool(max_object_lift_mm >= float(self.config.get("object_lift_pass_mm", 30.0)))
+        lift_threshold_mm = float(self.config.get("object_lift_pass_mm", 30.0))
+        lift_pass = bool(
+            verified_target_lift_mm is not None
+            and verified_target_lift_mm >= lift_threshold_mm
+        )
         passed = bool(lift_pass and final_in_green)
         wall_s = time.perf_counter() - action_started
 
@@ -892,6 +1103,8 @@ class PersistentScene:
             "candidate_index": source_candidate_index,
             "target_segmentation_id": int(target_segmentation_id),
             "max_object_lift_mm": float(max_object_lift_mm),
+            "verify_lift_mm": None if verified_target_lift_mm is None else float(verified_target_lift_mm),
+            "current_target_lift_mm": float(target_lift_mm_now()),
             "object_lift_pass": lift_pass,
             "final_object_position_world_m": final_position.tolist(),
             "final_object_center_inside_green_zone": final_in_green,
