@@ -5,7 +5,7 @@ V2 architecture
 ---------------
 * Isaac Lab/Sim starts once and keeps the same physical world for every capture
   and every grasp cycle.
-* cuRobo also stays alive once per session.
+* cuRobo starts once per planning cycle and is released before Isaac execution.
 * legacy approximate GRASP/PREGRASP coarse IK gates are configurable and OFF by
   default.
 * after LEAP->Wuji2, exact COVER is the hard grasp-root IK gate.
@@ -46,6 +46,7 @@ from planning.flexible_route_search import (  # noqa: E402
     plan_flexible_route,
     screen_exact_cover_batch,
 )
+from planning.candidate_rfs_v2_runtime import run_candidate_rfs_v2  # noqa: E402
 from all_candidate_gpu_prefilter import load_targets  # noqa: E402
 
 
@@ -412,6 +413,14 @@ def main() -> int:
                     f"    ✓ proposals={total_proposals} | 目标候选={len(candidates_plain)} "
                     f"| {time.perf_counter()-started:.1f}s"
                 )
+                rfs_runtime = run_candidate_rfs_v2(
+                    project_root=root,
+                    cycle_root=cycle_root,
+                    query=query,
+                    candidates=candidates_plain,
+                    settings=cfg.get("candidate_rfs_v2", {}),
+                )
+                rfs_priority_indices = list(rfs_runtime.ordered_indices)
 
                 # simulation-only binding after semantic selection
                 sim_binding = cycle_root / "sim_target.json"
@@ -497,6 +506,18 @@ def main() -> int:
                             print(
                                 f"[6] ✓ 旧粗 GRASP/PREGRASP IK：关闭 | {len(candidates)} 个目标候选直接进入真实 Wuji2"
                             )
+
+                        allowed_survivors = {int(index) for index in survivor_indices}
+                        survivor_indices = [
+                            int(index) for index in rfs_priority_indices
+                            if int(index) in allowed_survivors
+                        ]
+                        coarse_report["candidate_rfs_v2"] = rfs_runtime.to_jsonable()
+                        print(
+                            f"[RFS V2] production order applied | "
+                            f"ordered survivors={len(survivor_indices)} | "
+                            f"status={rfs_runtime.status}"
+                        )
 
                         max_to_test = int(cfg.get("max_candidates_to_test", 0))
                         if max_to_test > 0:

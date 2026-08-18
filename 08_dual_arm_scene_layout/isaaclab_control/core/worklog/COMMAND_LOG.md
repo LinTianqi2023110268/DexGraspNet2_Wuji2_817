@@ -836,6 +836,36 @@
 - Key output: rank0..684 counts: `EXACT_PICK_IK_FAIL=210`, `FULL_ROUTE_IK_FAIL=30`, `NOT_EVALUATED_OR_MISSING=445`; counts sum to `685`. First exact 5-stage pass is rank `14` candidate `1422`. Rank `622` candidate `6718` and rank `640` candidate `2597` both passed pick exact IK but failed full-route IK. Rank `685` candidate `5989` is the first full-route PASS in score order.
 - Conclusion: histogram artifacts are written under `core/worklog/raw/`. Default terminal output is now concise; detailed subprocess stdout/stderr is written to `<session>/debug.log`, and `--verbose` restores detailed output.
 
+## 2026-08-18 -- DualArmMount y=0.16 layout and virtual camera recalibration
+
+- Purpose: apply final workspace-scan layout decision by moving only `/World/Layout/DualArmMount` from `[0, 0.42, 0.8]` to `[0, 0.16, 0.8]`, preserving rotation/scale and recalibrating the virtual D435i camera to SourceZone.
+- Conda environment: `isaaclab22_sim50` with Isaac USD Python extension paths; no Isaac Sim app, DGN2, cuRobo, retarget, or closed-loop execution.
+- Working directory: `/home/lin/Projects/DexGraspNet2_Wuji2`
+- Commands:
+
+  ```bash
+  git status --short
+  mkdir -p _backup_before_mount_y016_20260818
+  cp 08_dual_arm_scene_layout/scenes/manual_layout_calibrated.usda _backup_before_mount_y016_20260818/
+  cp 08_dual_arm_scene_layout/scenes/manual_layout_calibrated_mass_fixed.usda _backup_before_mount_y016_20260818/
+  cp 08_dual_arm_scene_layout/config/manual_layout_calibrated.json _backup_before_mount_y016_20260818/
+
+  PYTHONPATH=/home/lin/isaacsim/extscache/omni.usd.libs-1.0.1+8131b85d.lx64.r.cp311 \
+  LD_LIBRARY_PATH=/home/lin/isaacsim/extscache/omni.usd.libs-1.0.1+8131b85d.lx64.r.cp311/bin:/home/lin/miniconda3/envs/isaaclab22_sim50/lib \
+  conda run -n isaaclab22_sim50 python /tmp/update_mount_y016_camera.py
+
+  python -m py_compile \
+    08_dual_arm_scene_layout/scripts/05_create_virtual_depth_camera_frustum.py \
+    08_dual_arm_scene_layout/scripts/06_preview_virtual_depth_camera.py \
+    08_dual_arm_scene_layout/scripts/07_capture_single_rgbd.py
+
+  git diff --check
+  ```
+
+- Exit code: `0`.
+- Key output: mount `[0.0, 0.16, 0.8]`; rotation `[0,0,-90]`; scale `[1,1,1]`; d435i/camera `[3.7e-09, 0.08499997, 0.96000004]`; target `[-0.42382277, -0.15291664, 0.46]`; HFOV `81.6881 deg`; VFOV `51.8666 deg`; focal `12.11945 mm`; coverage `PASS`.
+- Conclusion: both calibrated USD stages, layout JSON, markers/distances, and virtual camera metadata are synchronized. No production closed-loop, robot asset, URDF/USD vendor, table/source/placement, DGN2, retarget, cuRobo, or control logic was changed.
+
 
 ## 2026-08-17 16:18:00 +0800 - final worktree cleanup
 - Purpose: clean generated outputs/history in `/home/lin/Projects/DexGraspNet2_Wuji2`, preserve vendor submodule gitlinks, retain compact candidate5989 evidence.

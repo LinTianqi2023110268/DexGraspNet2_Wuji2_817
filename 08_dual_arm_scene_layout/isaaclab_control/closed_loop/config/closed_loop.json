@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "architecture": "persistent_isaac + persistent_curobo + flexible_task_set_ik",
+  "architecture": "persistent_isaac + per_cycle_curobo + candidate_rfs_v2_priority + flexible_task_set_ik",
   "persistent_isaac_config": "08_dual_arm_scene_layout/isaaclab_control/runtime/config/persistent_closed_loop.json",
   "grounded_sam_backend": [
     "/home/lin/miniconda3/bin/conda",
@@ -47,6 +47,17 @@
     "{overlay}"
   ],
   "block_unknown_space": false,
+  "candidate_rfs_v2": {
+    "enabled": true,
+    "mode": "priority_then_rescue",
+    "fallback_on_error": true,
+    "minimum_pass_candidates": 1,
+    "conda_exe": "/home/lin/miniconda3/bin/conda",
+    "conda_env": "curobo_v2",
+    "script": "08_dual_arm_scene_layout/isaaclab_control/closed_loop/rfs_prototype/04_candidate_centric_rfs_v2.py",
+    "bridge_npz": "08_dual_arm_scene_layout/isaaclab_control/closed_loop/rfs_prototype/calibration_production/bridge_calibration_bottle512.npz",
+    "output_subdir": "rfs_candidate_centric_v2_runtime"
+  },
   "coarse_ik_prefilter": {
     "grasp_enabled": false,
     "pregrasp_enabled": false,

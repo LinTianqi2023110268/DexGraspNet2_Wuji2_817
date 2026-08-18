@@ -139,3 +139,12 @@ Run `./run_closed_loop.sh --planning-only` from a GPU-visible terminal using `sc
 - Modified files: docs, .gitignore, worklog, calibration path references, verified indices/readmes.
 - Test results: pending static validation commands.
 - Environment: no expensive GPU/Isaac/network/training workloads run.
+
+## 2026-08-18 21:40:00 +0800 - DualArmMount y=0.16 final layout calibration
+- Current phase: final mechanical arm/table relative position calibration.
+- Completed: moved only `/World/Layout/DualArmMount` to `[0, 0.16, 0.8]` in both calibrated stages; preserved `RotateXYZ=[0,0,-90]` and `Scale=[1,1,1]`; regenerated `/World/Sensors/TopD435iVirtual/Camera` and `Frustum` from current `arm_base_link_d435i_2` anchor to SourceZone center; updated `config/manual_layout_calibrated.json`; refreshed RobotRoot distance markers.
+- Current conclusion: production persistent Isaac still loads `manual_layout_calibrated_mass_fixed.usda`; orchestrator/cuRobo still read `manual_layout_calibrated.json`; Stage and JSON are synchronized.
+- Current blockers: exact PhysX penetration was not run from this static edit pass; USD AABB robot/table overlap is not conclusive and should be checked visually/with Isaac static validation before long runs.
+- Modified files: `scenes/manual_layout_calibrated.usda`, `scenes/manual_layout_calibrated_mass_fixed.usda`, `config/manual_layout_calibrated.json`, plus generated output metadata under `08_dual_arm_scene_layout/outputs/`.
+- Test results: USD open and JSON sync PASS; camera coverage PASS; `05/06/07` py_compile PASS; `git diff --check` PASS.
+- Environment: `isaaclab22_sim50` Python with Isaac USD extension paths; no Isaac app, DGN2, RFS, cuRobo planning, retarget, grasp execution, or full closed-loop was run.

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "status": "table_and_dual_arm_layout_calibrated_camera_pending",
+  "status": "table_and_dual_arm_layout_calibrated_camera_ready",
   "created_utc": "2026-08-12T10:26:57.548006+00:00",
   "coordinate_contract": {
     "world_up": "+Z",
@@ -171,7 +171,7 @@
       "prim_path": "/World/Layout/DualArmMount",
       "position_world_m": [
         0.0,
-        0.42,
+        0.16,
         0.8
       ],
       "Gf_local_to_world_row_major": [
@@ -195,7 +195,7 @@
         ],
         [
           0.0,
-          0.42,
+          0.16,
           0.8,
           1.0
         ]
@@ -206,7 +206,7 @@
       "prim_path": "/World/Layout/DualArmMount/DualArm",
       "position_world_m": [
         0.0,
-        0.42,
+        0.16,
         0.8
       ],
       "Gf_local_to_world_row_major": [
@@ -230,7 +230,7 @@
         ],
         [
           0.0,
-          0.42,
+          0.16,
           0.8,
           1.0
         ]
@@ -276,18 +276,40 @@
     "r_thumb_mcp": 0.0
   },
   "measurements_m": {
-    "robot_to_table_m": 0.9035485598461215,
-    "robot_to_source_m": 0.7895943380227933,
+    "robot_to_table_m": 0.8158431221748457,
+    "robot_to_source_m": 0.6270108178238458,
     "source_to_placement_m": 0.8245547644673441
   },
   "camera": {
-    "status": "deliberately_not_created_in_this_stage",
-    "next_step": "add and calibrate top D435i after layout is accepted"
+    "status": "virtual_depth_camera_calibrated",
+    "camera_prim": "/World/Sensors/TopD435iVirtual/Camera",
+    "anchor_prim": "/World/Layout/DualArmMount/DualArm/arm_base_link_d435i_2",
+    "target_prim": "/World/Layout/TableAssembly/SourceZone",
+    "resolution_wh": [
+      1280,
+      720
+    ],
+    "camera_position_world_m": [
+      3.725290298461914e-09,
+      0.08499996900558474,
+      0.9600000381469727
+    ],
+    "target_position_world_m": [
+      -0.4238227717751965,
+      -0.15291664032601016,
+      0.46
+    ],
+    "horizontal_fov_deg": 81.68809390173672,
+    "vertical_fov_deg": 51.86657737631214,
+    "focal_length_mm": 12.119451995915757,
+    "coverage_pass": true,
+    "opencv_axes": "+x image-right, +y image-down, +z camera-forward"
   },
   "next_required_checks": [
     "visually confirm robot base and table do not penetrate",
     "confirm both arms can reach the source and placement zones",
     "freeze the accepted table and DualArmMount transforms",
     "add the top D435i optical frame and camera in the next stage"
-  ]
+  ],
+  "updated_utc": "2026-08-18T13:35:15.395232+00:00"
 }

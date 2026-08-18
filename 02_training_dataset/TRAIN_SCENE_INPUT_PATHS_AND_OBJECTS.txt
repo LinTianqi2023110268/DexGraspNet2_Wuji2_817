@@ -1,0 +1,855 @@
+DexGraspNet2_Wuji2 scene folder input paths and English target names
+
+Usage: when run_closed_loop.sh asks `Scene folder >`, paste one scene folder path below.
+Then when it asks `Target >`, type one of the English object names listed for that scene.
+
+====================================================================================================
+DATASET: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes
+====================================================================================================
+
+scene_0000
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0000
+Target names: knife, flashlight, clock, detergent, pillow, psp
+
+scene_0001
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0001
+Target names: canister, coin, dog, eraser, pillow, cassette
+
+scene_0002
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0002
+Target names: mouse, bird, bus, detergent, disc case, hammer
+
+scene_0003
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0003
+Target names: bottle, candle, detergent, dog, eraser, headphones
+
+scene_0004
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0004
+Target names: bottle, mouse, phonebooth, aaa battery, airplane, clock
+
+scene_0005
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0005
+Target names: fruit, flashlight, clock, dog, nintendo ds, cassette
+
+scene_0006
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0006
+Target names: fruit, ashtray, camera, detergent, milk carton, cassette
+
+scene_0007
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0007
+Target names: bottle, airplane, bear, food item, lock, pillow
+
+scene_0008
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0008
+Target names: remote, flashlight, bus, canister, dog, lock
+
+scene_0009
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0009
+Target names: aaa battery, ashtray, eraser, ipad, lock, milk carton
+
+scene_0010
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0010
+Target names: bottle, remote, bear, candle, food item, headphones
+
+scene_0011
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0011
+Target names: cup, bear, camera, canister, food item, battery
+
+scene_0012
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0012
+Target names: phonebooth, disc case, drinking utensil, food item, key, nintendo ds
+
+scene_0013
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0013
+Target names: remote, bowl, canister, milk carton, pen, plate
+
+scene_0014
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0014
+Target names: can opener, phonebooth, airplane, canister, media discs, battery
+
+scene_0015
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0015
+Target names: aaa battery, airplane, bear, key, microscope, pillow
+
+scene_0016
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0016
+Target names: notepad, candle, canister, controller, jar, cassette
+
+scene_0017
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0017
+Target names: bottle, mouse, mug, chocolate, hammer, lock
+
+scene_0018
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0018
+Target names: remote, flashlight, hammer, microscope, milk carton, power strip
+
+scene_0019
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0019
+Target names: bottle, microscope, milk carton, nintendo ds, power strip, battery
+
+scene_0020
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0020
+Target names: cup, flashlight, bear, camera, candle, pencil
+
+scene_0021
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0021
+Target names: bottle, calculator, candle, clock, marker, power strip
+
+scene_0022
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0022
+Target names: flashlight, clock, drinking utensil, lock, pan, power strip
+
+scene_0023
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0023
+Target names: fruit, calculator, candle, headphones, jar, pen
+
+scene_0024
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0024
+Target names: aaa battery, bus, canister, headphones, pen, pencil
+
+scene_0025
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0025
+Target names: knife, canister, clock, detergent, lock, milk carton
+
+scene_0026
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0026
+Target names: flashlight, notepad, drinking utensil, marker, milk carton, battery
+
+scene_0027
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0027
+Target names: bottle, cup, fruit, headphones, pen, pencil
+
+scene_0028
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0028
+Target names: can opener, ashtray, canister, disc case, lock, cassette
+
+scene_0029
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0029
+Target names: remote, phonebooth, blender, food item, power strip, cassette
+
+scene_0030
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0030
+Target names: knife, flashlight, ashtray, candle, clock, cassette
+
+scene_0031
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0031
+Target names: mouse, fruit, camera, chocolate, dog, palette
+
+scene_0032
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0032
+Target names: bottle, cup, book, bus, food item, palette
+
+scene_0033
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0033
+Target names: bear, bird, candle, marker, milk carton, pencil
+
+scene_0034
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0034
+Target names: cup, bus, canister, milk carton, nintendo ds, pen
+
+scene_0035
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0035
+Target names: mug, blender, calculator, hammer, milk carton, pencil
+
+scene_0036
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0036
+Target names: remote, mug, eraser, milk carton, pen, pencil
+
+scene_0037
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0037
+Target names: blender, food item, marker, milk carton, pencil, pillow
+
+scene_0038
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0038
+Target names: can opener, flashlight, ashtray, blender, disc case, pillow
+
+scene_0039
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0039
+Target names: can opener, clock, controller, eraser, pen, plate
+
+scene_0040
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0040
+Target names: fruit, aaa battery, lock, microscope, milk carton, cassette
+
+scene_0041
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0041
+Target names: bird, calculator, eraser, food item, nintendo ds, power strip
+
+scene_0042
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0042
+Target names: blender, cellphone, eraser, jar, palette, pen
+
+scene_0043
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0043
+Target names: mouse, remote, chocolate, controller, dog, jar
+
+scene_0044
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0044
+Target names: remote, cup, bear, controller, pencil, battery
+
+scene_0045
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0045
+Target names: mouse, airplane, book, lock, marker, palette
+
+scene_0046
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0046
+Target names: bottle, remote, eraser, key, palette, pen
+
+scene_0047
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0047
+Target names: mouse, phonebooth, coin, eraser, pen, pencil
+
+scene_0048
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0048
+Target names: bear, controller, food item, palette, pen, power strip
+
+scene_0049
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0049
+Target names: aaa battery, canister, detergent, eraser, hammer, microscope
+
+scene_0050
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0050
+Target names: knife, bird, clock, detergent, key, pencil
+
+scene_0051
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0051
+Target names: cup, aaa battery, bear, candle, canister, jar
+
+scene_0052
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0052
+Target names: bottle, remote, canister, dog, pan, pencil
+
+scene_0053
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0053
+Target names: bottle, mouse, remote, fruit, ashtray, controller
+
+scene_0054
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0054
+Target names: fruit, food item, marker, pen, pencil, power strip
+
+scene_0055
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0055
+Target names: bottle, clock, light bulb, pen, psp, battery
+
+scene_0056
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0056
+Target names: bottle, coin, dog, media discs, power strip, cassette
+
+scene_0057
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0057
+Target names: remote, ashtray, coin, controller, dog, marker
+
+scene_0058
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0058
+Target names: cup, aaa battery, cap, dog, power strip, cassette
+
+scene_0059
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0059
+Target names: flashlight, airplane, canister, chocolate, microscope, pen
+
+scene_0060
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0060
+Target names: controller, hammer, marker, milk carton, pen, pencil
+
+scene_0061
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0061
+Target names: bottle, ashtray, camera, detergent, lock, milk carton
+
+scene_0062
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0062
+Target names: can opener, mug, flashlight, bear, chocolate, key
+
+scene_0063
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0063
+Target names: bottle, knife, ashtray, bird, power strip, battery
+
+scene_0064
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0064
+Target names: remote, phonebooth, mug, clock, drinking utensil, power strip
+
+scene_0065
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0065
+Target names: bottle, aaa battery, clock, ipod, microscope, pencil
+
+scene_0066
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0066
+Target names: aaa battery, book, calculator, drinking utensil, eraser, key
+
+scene_0067
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0067
+Target names: canister, cellphone, food item, key, pencil, battery
+
+scene_0068
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0068
+Target names: knife, bear, candle, headphones, microscope, palette
+
+scene_0069
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0069
+Target names: mouse, remote, canister, clock, lock, pen
+
+scene_0070
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0070
+Target names: can opener, canister, chocolate, dog, key, battery
+
+scene_0071
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0071
+Target names: bottle, remote, fruit, flashlight, candle, pencil
+
+scene_0072
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0072
+Target names: remote, airplane, ashtray, bus, candle, pencil
+
+scene_0073
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0073
+Target names: bottle, fruit, airplane, drinking utensil, eraser, pencil
+
+scene_0074
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0074
+Target names: can opener, remote, aaa battery, airplane, milk carton, pen
+
+scene_0075
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0075
+Target names: cap, chocolate, food item, marker, microscope, battery
+
+scene_0076
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0076
+Target names: bottle, can opener, canister, controller, pencil, cassette
+
+scene_0077
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0077
+Target names: blender, camera, microscope, pan, pen, pencil
+
+scene_0078
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0078
+Target names: phonebooth, bird, camera, dog, pen, pencil
+
+scene_0079
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0079
+Target names: bottle, can opener, remote, bear, dog, marker
+
+scene_0080
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0080
+Target names: knife, remote, bird, camera, drinking utensil, pencil
+
+scene_0081
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0081
+Target names: bottle, can opener, remote, bus, calculator, food item
+
+scene_0082
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0082
+Target names: cup, detergent, dog, lock, palette, psp
+
+scene_0083
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0083
+Target names: mouse, phonebooth, flashlight, ipad, pen, power strip
+
+scene_0084
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0084
+Target names: mouse, fruit, flashlight, detergent, dog, pen
+
+scene_0085
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0085
+Target names: mouse, eraser, hammer, marker, pencil, power strip
+
+scene_0086
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0086
+Target names: can opener, remote, marker, microscope, power strip, psp
+
+scene_0087
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0087
+Target names: bird, clock, hammer, microscope, pencil, battery
+
+scene_0088
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0088
+Target names: bottle, remote, calculator, candle, cap, milk carton
+
+scene_0089
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0089
+Target names: fruit, cellphone, coin, eraser, key, cassette
+
+scene_0090
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0090
+Target names: blender, bus, detergent, pen, power strip, psp
+
+scene_0091
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0091
+Target names: bottle, bird, dog, eraser, lock, marker
+
+scene_0092
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0092
+Target names: jar, key, marker, nintendo ds, pen, power strip
+
+scene_0093
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0093
+Target names: bottle, food item, light bulb, microscope, nintendo ds, cassette
+
+scene_0094
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0094
+Target names: aaa battery, bird, food item, milk carton, pencil, pillow
+
+scene_0095
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0095
+Target names: mouse, fruit, bird, dog, food item, battery
+
+scene_0096
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0096
+Target names: ashtray, candle, ipad, milk carton, pen, psp
+
+scene_0097
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0097
+Target names: mouse, can opener, knife, remote, eraser, key
+
+scene_0098
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0098
+Target names: remote, bear, camera, controller, nintendo ds, power strip
+
+scene_0099
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_v1/scenes/scene_0099
+Target names: remote, airplane, bird, cellphone, detergent, food item
+====================================================================================================
+DATASET: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes
+====================================================================================================
+
+scene_0000
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0000
+Target names: knife, flashlight, clock, detergent, pillow, psp
+
+scene_0001
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0001
+Target names: canister, coin, dog, eraser, pillow, cassette
+
+scene_0002
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0002
+Target names: mouse, bird, bus, detergent, disc case, hammer
+
+scene_0003
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0003
+Target names: bottle, candle, detergent, dog, eraser, headphones
+
+scene_0004
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0004
+Target names: bottle, mouse, phonebooth, aaa battery, airplane, clock
+
+scene_0005
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0005
+Target names: fruit, flashlight, clock, dog, nintendo ds, cassette
+
+scene_0006
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0006
+Target names: fruit, ashtray, camera, detergent, milk carton, cassette
+
+scene_0007
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0007
+Target names: bottle, airplane, bear, food item, lock, pillow
+
+scene_0008
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0008
+Target names: remote, flashlight, bus, canister, dog, lock
+
+scene_0009
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0009
+Target names: aaa battery, ashtray, eraser, ipad, lock, milk carton
+
+scene_0010
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0010
+Target names: bottle, remote, bear, candle, food item, headphones
+
+scene_0011
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0011
+Target names: cup, bear, camera, canister, food item, battery
+
+scene_0012
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0012
+Target names: phonebooth, disc case, drinking utensil, food item, key, nintendo ds
+
+scene_0013
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0013
+Target names: remote, bowl, canister, milk carton, pen, plate
+
+scene_0014
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0014
+Target names: can opener, phonebooth, airplane, canister, media discs, battery
+
+scene_0015
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0015
+Target names: aaa battery, airplane, bear, key, microscope, pillow
+
+scene_0016
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0016
+Target names: notepad, candle, canister, controller, jar, cassette
+
+scene_0017
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0017
+Target names: bottle, mouse, mug, chocolate, hammer, lock
+
+scene_0018
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0018
+Target names: remote, flashlight, hammer, microscope, milk carton, power strip
+
+scene_0019
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0019
+Target names: bottle, microscope, milk carton, nintendo ds, power strip, battery
+
+scene_0020
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0020
+Target names: cup, flashlight, bear, camera, candle, pencil
+
+scene_0021
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0021
+Target names: bottle, calculator, candle, clock, marker, power strip
+
+scene_0022
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0022
+Target names: flashlight, clock, drinking utensil, lock, pan, power strip
+
+scene_0023
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0023
+Target names: fruit, calculator, candle, headphones, jar, pen
+
+scene_0024
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0024
+Target names: aaa battery, bus, canister, headphones, pen, pencil
+
+scene_0025
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0025
+Target names: knife, canister, clock, detergent, lock, milk carton
+
+scene_0026
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0026
+Target names: flashlight, notepad, drinking utensil, marker, milk carton, battery
+
+scene_0027
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0027
+Target names: bottle, cup, fruit, headphones, pen, pencil
+
+scene_0028
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0028
+Target names: can opener, ashtray, canister, disc case, lock, cassette
+
+scene_0029
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0029
+Target names: remote, phonebooth, blender, food item, power strip, cassette
+
+scene_0030
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0030
+Target names: knife, flashlight, ashtray, candle, clock, cassette
+
+scene_0031
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0031
+Target names: mouse, fruit, camera, chocolate, dog, palette
+
+scene_0032
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0032
+Target names: bottle, cup, book, bus, food item, palette
+
+scene_0033
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0033
+Target names: bear, bird, candle, marker, milk carton, pencil
+
+scene_0034
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0034
+Target names: cup, bus, canister, milk carton, nintendo ds, pen
+
+scene_0035
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0035
+Target names: mug, blender, calculator, hammer, milk carton, pencil
+
+scene_0036
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0036
+Target names: remote, mug, eraser, milk carton, pen, pencil
+
+scene_0037
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0037
+Target names: blender, food item, marker, milk carton, pencil, pillow
+
+scene_0038
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0038
+Target names: can opener, flashlight, ashtray, blender, disc case, pillow
+
+scene_0039
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0039
+Target names: can opener, clock, controller, eraser, pen, plate
+
+scene_0040
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0040
+Target names: fruit, aaa battery, lock, microscope, milk carton, cassette
+
+scene_0041
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0041
+Target names: bird, calculator, eraser, food item, nintendo ds, power strip
+
+scene_0042
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0042
+Target names: blender, cellphone, eraser, jar, palette, pen
+
+scene_0043
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0043
+Target names: mouse, remote, chocolate, controller, dog, jar
+
+scene_0044
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0044
+Target names: remote, cup, bear, controller, pencil, battery
+
+scene_0045
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0045
+Target names: mouse, airplane, book, lock, marker, palette
+
+scene_0046
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0046
+Target names: bottle, remote, eraser, key, palette, pen
+
+scene_0047
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0047
+Target names: mouse, phonebooth, coin, eraser, pen, pencil
+
+scene_0048
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0048
+Target names: bear, controller, food item, palette, pen, power strip
+
+scene_0049
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0049
+Target names: aaa battery, canister, detergent, eraser, hammer, microscope
+
+scene_0050
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0050
+Target names: knife, bird, clock, detergent, key, pencil
+
+scene_0051
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0051
+Target names: cup, aaa battery, bear, candle, canister, jar
+
+scene_0052
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0052
+Target names: bottle, remote, canister, dog, pan, pencil
+
+scene_0053
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0053
+Target names: bottle, mouse, remote, fruit, ashtray, controller
+
+scene_0054
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0054
+Target names: fruit, food item, marker, pen, pencil, power strip
+
+scene_0055
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0055
+Target names: bottle, clock, light bulb, pen, psp, battery
+
+scene_0056
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0056
+Target names: bottle, coin, dog, media discs, power strip, cassette
+
+scene_0057
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0057
+Target names: remote, ashtray, coin, controller, dog, marker
+
+scene_0058
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0058
+Target names: cup, aaa battery, cap, dog, power strip, cassette
+
+scene_0059
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0059
+Target names: flashlight, airplane, canister, chocolate, microscope, pen
+
+scene_0060
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0060
+Target names: controller, hammer, marker, milk carton, pen, pencil
+
+scene_0061
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0061
+Target names: bottle, ashtray, camera, detergent, lock, milk carton
+
+scene_0062
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0062
+Target names: can opener, mug, flashlight, bear, chocolate, key
+
+scene_0063
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0063
+Target names: bottle, knife, ashtray, bird, power strip, battery
+
+scene_0064
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0064
+Target names: remote, phonebooth, mug, clock, drinking utensil, power strip
+
+scene_0065
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0065
+Target names: bottle, aaa battery, clock, ipod, microscope, pencil
+
+scene_0066
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0066
+Target names: aaa battery, book, calculator, drinking utensil, eraser, key
+
+scene_0067
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0067
+Target names: canister, cellphone, food item, key, pencil, battery
+
+scene_0068
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0068
+Target names: knife, bear, candle, headphones, microscope, palette
+
+scene_0069
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0069
+Target names: mouse, remote, canister, clock, lock, pen
+
+scene_0070
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0070
+Target names: can opener, canister, chocolate, dog, key, battery
+
+scene_0071
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0071
+Target names: bottle, remote, fruit, flashlight, candle, pencil
+
+scene_0072
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0072
+Target names: remote, airplane, ashtray, bus, candle, pencil
+
+scene_0073
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0073
+Target names: bottle, fruit, airplane, drinking utensil, eraser, pencil
+
+scene_0074
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0074
+Target names: can opener, remote, aaa battery, airplane, milk carton, pen
+
+scene_0075
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0075
+Target names: cap, chocolate, food item, marker, microscope, battery
+
+scene_0076
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0076
+Target names: bottle, can opener, canister, controller, pencil, cassette
+
+scene_0077
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0077
+Target names: blender, camera, microscope, pan, pen, pencil
+
+scene_0078
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0078
+Target names: phonebooth, bird, camera, dog, pen, pencil
+
+scene_0079
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0079
+Target names: bottle, can opener, remote, bear, dog, marker
+
+scene_0080
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0080
+Target names: knife, remote, bird, camera, drinking utensil, pencil
+
+scene_0081
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0081
+Target names: bottle, can opener, remote, bus, calculator, food item
+
+scene_0082
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0082
+Target names: cup, detergent, dog, lock, palette, psp
+
+scene_0083
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0083
+Target names: mouse, phonebooth, flashlight, ipad, pen, power strip
+
+scene_0084
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0084
+Target names: mouse, fruit, flashlight, detergent, dog, pen
+
+scene_0085
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0085
+Target names: mouse, eraser, hammer, marker, pencil, power strip
+
+scene_0086
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0086
+Target names: can opener, remote, marker, microscope, power strip, psp
+
+scene_0087
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0087
+Target names: bird, clock, hammer, microscope, pencil, battery
+
+scene_0088
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0088
+Target names: bottle, remote, calculator, candle, cap, milk carton
+
+scene_0089
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0089
+Target names: fruit, cellphone, coin, eraser, key, cassette
+
+scene_0090
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0090
+Target names: blender, bus, detergent, pen, power strip, psp
+
+scene_0091
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0091
+Target names: bottle, bird, dog, eraser, lock, marker
+
+scene_0092
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0092
+Target names: jar, key, marker, nintendo ds, pen, power strip
+
+scene_0093
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0093
+Target names: bottle, food item, light bulb, microscope, nintendo ds, cassette
+
+scene_0094
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0094
+Target names: aaa battery, bird, food item, milk carton, pencil, pillow
+
+scene_0095
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0095
+Target names: mouse, fruit, bird, dog, food item, battery
+
+scene_0096
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0096
+Target names: ashtray, candle, ipad, milk carton, pen, psp
+
+scene_0097
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0097
+Target names: mouse, can opener, knife, remote, eraser, key
+
+scene_0098
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0098
+Target names: remote, bear, camera, controller, nintendo ds, power strip
+
+scene_0099
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_train60_100seminal_256view_force_adjusted_legacy_v1/scenes/scene_0099
+Target names: remote, airplane, bird, cellphone, detergent, food item
+====================================================================================================
+DATASET: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_test60_10upright_10view_v1/scenes
+====================================================================================================
+
+scene_0000
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_test60_10upright_10view_v1/scenes/scene_0000
+Target names: can opener, notepad, ashtray, dog, hammer, pen
+
+scene_0001
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_test60_10upright_10view_v1/scenes/scene_0001
+Target names: knife, blender, clock, microscope, pencil, battery
+
+scene_0002
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_test60_10upright_10view_v1/scenes/scene_0002
+Target names: bottle, airplane, ashtray, bear, food item, jar
+
+scene_0003
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_test60_10upright_10view_v1/scenes/scene_0003
+Target names: mug, flashlight, candle, canister, detergent, pillow
+
+scene_0004
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_test60_10upright_10view_v1/scenes/scene_0004
+Target names: bottle, cup, chocolate, palette, pencil, battery
+
+scene_0005
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_test60_10upright_10view_v1/scenes/scene_0005
+Target names: candle, detergent, microscope, pen, pencil, cassette
+
+scene_0006
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_test60_10upright_10view_v1/scenes/scene_0006
+Target names: can opener, bus, detergent, food item, nintendo ds, battery
+
+scene_0007
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_test60_10upright_10view_v1/scenes/scene_0007
+Target names: bottle, camera, milk carton, palette, cassette, battery
+
+scene_0008
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_test60_10upright_10view_v1/scenes/scene_0008
+Target names: flashlight, candle, detergent, headphones, lock, milk carton
+
+scene_0009
+Scene folder input: /home/lin/Projects/DexGraspNet2_Wuji2/02_training_dataset/data/scene_datasets/wuji2_test60_10upright_10view_v1/scenes/scene_0009
+Target names: can opener, bear, canister, coin, food item, cassette
+
