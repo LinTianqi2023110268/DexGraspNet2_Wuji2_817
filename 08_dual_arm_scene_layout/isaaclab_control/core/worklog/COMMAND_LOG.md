@@ -866,6 +866,26 @@
 - Key output: mount `[0.0, 0.16, 0.8]`; rotation `[0,0,-90]`; scale `[1,1,1]`; d435i/camera `[3.7e-09, 0.08499997, 0.96000004]`; target `[-0.42382277, -0.15291664, 0.46]`; HFOV `81.6881 deg`; VFOV `51.8666 deg`; focal `12.11945 mm`; coverage `PASS`.
 - Conclusion: both calibrated USD stages, layout JSON, markers/distances, and virtual camera metadata are synchronized. No production closed-loop, robot asset, URDF/USD vendor, table/source/placement, DGN2, retarget, cuRobo, or control logic was changed.
 
+## 2026-08-18 -- Static layout validation attempt from Codex channel
+
+- Purpose: run final static layout acceptance for new DualArmMount `[0,0.16,0.8]`: real sensor preview and HOME stability only.
+- Conda environment: intended `isaaclab22_sim50`.
+- Working directory: `/home/lin/Projects/DexGraspNet2_Wuji2`
+- Commands:
+
+  ```bash
+  pgrep -a -f '/kit/kit|isaac-sim\.sh|00_check_initial_stability\.py|persistent_isaac/worker.py' || true
+  nvidia-smi --query-gpu=memory.used,memory.free --format=csv,noheader,nounits || true
+
+  08_dual_arm_scene_layout/isaaclab_control/diagnostics/launchers/run_initial_stability.sh \
+    --config 08_dual_arm_scene_layout/isaaclab_control/diagnostics/config/initial_stability_grouped_pd_round1_mass_fixed.json \
+    --headless
+  ```
+
+- Exit code: not run to completion.
+- Key output: restricted Codex channel cannot communicate with NVIDIA driver; escalation to host GPU/Isaac execution was rejected by execution policy.
+- Conclusion: true Isaac/PhysX HOME stability and real rendered occlusion cannot be certified from this channel. Safe static USD/layout checks remain PASS; final physical/static validation must be run in the user's GPU-visible terminal.
+
 
 ## 2026-08-17 16:18:00 +0800 - final worktree cleanup
 - Purpose: clean generated outputs/history in `/home/lin/Projects/DexGraspNet2_Wuji2`, preserve vendor submodule gitlinks, retain compact candidate5989 evidence.
