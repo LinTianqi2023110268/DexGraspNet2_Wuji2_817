@@ -185,6 +185,84 @@ def _solution_pool_for_target(report: dict, target_index: int, *, collision_enab
     return _filter_unknown(rows[target_index], block_unknown=block_unknown)
 
 
+def _exact_cover_candidate_subfunnel(
+    report: dict,
+    target_index: int,
+    *,
+    collision_enabled: bool,
+    block_unknown: bool,
+    diagnostic_disable_cover_esdf: bool,
+    final_solution_count: int,
+) -> dict:
+    raw_counts = report.get("raw_success_per_target") or []
+    raw_count = int(raw_counts[target_index]) if target_index < len(raw_counts) else 0
+    strict_all = report.get("ik_accepted_solutions") or []
+    feasible_all = report.get("feasible_solutions") or []
+    strict_rows = list(strict_all[target_index]) if target_index < len(strict_all) else []
+    feasible_rows = list(feasible_all[target_index]) if target_index < len(feasible_all) else []
+    audited_rows = strict_rows if collision_enabled else []
+    scene_reject = 0
+    target_reject = 0
+    blocking_reject = 0
+    unknown_exposure = 0
+    for row in audited_rows:
+        scene_reject += int(int(row.get("scene_collision_sphere_count", 0)) > 0)
+        target_reject += int(int(row.get("target_collision_sphere_count", 0)) > 0)
+        blocking_reject += int(int(row.get("blocking_collision_sphere_count", 0)) > 0)
+        unknown_exposure += int(bool(row.get("unknown_space_exposure", False)))
+    return {
+        "raw_success_solution_count": raw_count,
+        "raw_success_target_pass": bool(raw_count > 0),
+        "strict_ik_accepted_solution_count": int(len(strict_rows)),
+        "strict_ik_target_pass": bool(len(strict_rows) > 0),
+        "cover_esdf_bypassed": bool(diagnostic_disable_cover_esdf),
+        "collision_audited_solution_count": int(len(audited_rows)),
+        "scene_collision_rejected_solution_count": int(scene_reject),
+        "target_collision_rejected_solution_count": int(target_reject),
+        "blocking_collision_rejected_solution_count": int(blocking_reject),
+        "unknown_exposure_solution_count": int(unknown_exposure),
+        "feasible_solution_count": int(len(feasible_rows)),
+        "block_unknown": bool(block_unknown),
+        "final_exact_cover_solution_count": int(final_solution_count),
+        "final_exact_cover_pass": bool(final_solution_count > 0),
+    }
+
+
+def summarize_exact_cover_subfunnel(rows: list[dict]) -> dict:
+    sub = [row.get("exact_cover_subfunnel", {}) for row in rows]
+    total = int(len(rows))
+    raw_targets = sum(1 for row in sub if row.get("raw_success_target_pass"))
+    strict_targets = sum(1 for row in sub if row.get("strict_ik_target_pass"))
+    feasible_targets = sum(1 for row in sub if int(row.get("feasible_solution_count", 0)) > 0)
+    final_targets = sum(1 for row in sub if row.get("final_exact_cover_pass"))
+    raw_solutions = sum(int(row.get("raw_success_solution_count", 0)) for row in sub)
+    strict_solutions = sum(int(row.get("strict_ik_accepted_solution_count", 0)) for row in sub)
+    audited_solutions = sum(int(row.get("collision_audited_solution_count", 0)) for row in sub)
+    scene_rejected = sum(int(row.get("scene_collision_rejected_solution_count", 0)) for row in sub)
+    target_rejected = sum(int(row.get("target_collision_rejected_solution_count", 0)) for row in sub)
+    blocking_rejected = sum(int(row.get("blocking_collision_rejected_solution_count", 0)) for row in sub)
+    unknown_exposure = sum(int(row.get("unknown_exposure_solution_count", 0)) for row in sub)
+    feasible_solutions = sum(int(row.get("feasible_solution_count", 0)) for row in sub)
+    cover_esdf_bypassed = any(bool(row.get("cover_esdf_bypassed", False)) for row in sub)
+    return {
+        "input_candidates": total,
+        "cover_esdf_bypassed": bool(cover_esdf_bypassed),
+        "raw_curobo_reachable_targets": int(raw_targets),
+        "strict_ik_targets": int(strict_targets),
+        "post_collision_targets": int(feasible_targets),
+        "final_exact_cover_pass_targets": int(final_targets),
+        "raw_success_solution_count": int(raw_solutions),
+        "strict_ik_accepted_solution_count": int(strict_solutions),
+        "collision_audited_solution_count": int(audited_solutions),
+        "scene_collision_rejected_solution_count": int(scene_rejected),
+        "target_collision_rejected_solution_count": int(target_rejected),
+        "blocking_collision_rejected_solution_count": int(blocking_rejected),
+        "unknown_exposure_solution_count": int(unknown_exposure),
+        "collision_rejected_solution_count": int(blocking_rejected),
+        "feasible_solution_count": int(feasible_solutions),
+    }
+
+
 def _cap_solutions(records: list[dict], q_reference: np.ndarray, limit: int) -> list[dict]:
     q_ref = np.asarray(q_reference, dtype=np.float64).reshape(7)
     ordered = sorted(
@@ -374,13 +452,14 @@ def screen_exact_cover_batch(
     no_planner_collision_check: bool,
     block_unknown: bool,
     solutions_per_candidate: int,
+    diagnostic_disable_cover_esdf: bool = False,
 ) -> list[dict]:
     """One batched hard gate: exact Wuji2 COVER pose only."""
     geometries = [_candidate_geometry(Path(root)) for root in case_roots]
     cover_world = np.stack([geometry["cover_flange_world"] for geometry in geometries])
     cover_base = np.stack([T_base_from_world @ pose for pose in cover_world])
     collision_context = None
-    if not no_planner_collision_check:
+    if not no_planner_collision_check and not diagnostic_disable_cover_esdf:
         states = [_named_state(geometry, measured, "cover") for geometry in geometries]
         collision_context = {
             "phases": ["cover"] * len(geometries),
@@ -405,12 +484,22 @@ def screen_exact_cover_batch(
             block_unknown=block_unknown,
         )
         records = _cap_solutions(records, q_current, solutions_per_candidate)
+        subfunnel = _exact_cover_candidate_subfunnel(
+            report,
+            index,
+            collision_enabled=collision_context is not None,
+            block_unknown=block_unknown,
+            diagnostic_disable_cover_esdf=bool(diagnostic_disable_cover_esdf),
+            final_solution_count=len(records),
+        )
         rows.append({
             "case_root": str(Path(case_root).resolve()),
             "candidate_index": geometry["source_candidate_index"],
             "official_score": geometry["official_score"],
             "pass": bool(records),
             "solution_count": len(records),
+            "diagnostic_cover_esdf_bypassed": bool(diagnostic_disable_cover_esdf),
+            "exact_cover_subfunnel": subfunnel,
             "cover_solutions": records,
         })
     return rows

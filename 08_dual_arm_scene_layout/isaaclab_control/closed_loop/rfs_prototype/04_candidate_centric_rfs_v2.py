@@ -831,6 +831,11 @@ def main() -> int:
     parser.add_argument("--moving-link-prefix", action="append", default=["arm_r_"], help="Can be repeated")
     parser.add_argument("--block-unknown", action="store_true")
     parser.add_argument("--check-self-collision", action="store_true")
+    parser.add_argument(
+        "--diagnostic-disable-observed-esdf",
+        action="store_true",
+        help="DIAGNOSTIC ONLY: bypass observed RGB-D/ESDF environment collision rejection for support states; IK and optional self collision remain active.",
+    )
     parser.add_argument("--edge-max-joint-delta-deg", type=float, default=38.0)
     parser.add_argument("--home-seed-max-joint-delta-deg", type=float, default=50.0)
     parser.add_argument("--edge-step-deg", type=float, default=10.0)
@@ -1043,7 +1048,10 @@ def main() -> int:
     support_base_T = np.asarray([T_base_world @ T for T in support_world_T], dtype=np.float64)
     print(f"    sampled arm-flange support poses={len(supports)} across {len(anchor_ranks)} candidate branches", flush=True)
 
-    print("[V2 6/9] cuRobo IK + non-target RGB-D ESDF screening for trajectory support states ...", flush=True)
+    if args.diagnostic_disable_observed_esdf:
+        print("[V2 6/9] DIAGNOSTIC: observed ESDF collision BYPASSED", flush=True)
+    else:
+        print("[V2 6/9] cuRobo IK + non-target RGB-D ESDF screening for trajectory support states ...", flush=True)
     corridor_cfg = IKConfig(
         device=args.device,
         num_seeds=args.corridor_ik_seeds,
@@ -1091,6 +1099,10 @@ def main() -> int:
         spheres = sphere_model.spheres_from_named_joints(named, T_world_base)
         if moving_mask is not None and len(moving_mask) == len(spheres):
             spheres = spheres[moving_mask]
+        if args.diagnostic_disable_observed_esdf:
+            result = (True, math.inf, 0)
+            collision_cache[key] = result
+            return result
         c = observed_map.check_spheres(spheres[:, :3], spheres[:, 3], "grasp", args.collision_margin_m)
         # Candidate-centric V2 uses the point cloud only as a NON-TARGET obstacle
         # field.  The SAM target is the destination and is deliberately excluded here;
@@ -1130,8 +1142,21 @@ def main() -> int:
                     if len(support_solutions[si]) >= max(1, int(args.solutions_per_support_pose)):
                         break
         if si % 500 == 0 or si + 1 == len(supports):
-            free_pose_count = sum(bool(x) for x in support_solutions[: si + 1])
-            print(f"    support collision screen {si+1:5d}/{len(supports)} | free poses={free_pose_count}", flush=True)
+            reachable_pose_count = int(np.count_nonzero(np.any(support_ik.accepted[: si + 1], axis=1)))
+            admitted_pose_count = sum(bool(x) for x in support_solutions[: si + 1])
+            if args.diagnostic_disable_observed_esdf:
+                print(
+                    f"    support IK screen {si+1:5d}/{len(supports)} | "
+                    f"support IK reachable={reachable_pose_count} | "
+                    f"support states admitted={admitted_pose_count}",
+                    flush=True,
+                )
+            else:
+                print(
+                    f"    support collision screen {si+1:5d}/{len(supports)} | "
+                    f"free poses={admitted_pose_count}",
+                    flush=True,
+                )
 
     print("[V2 7/9] extracting HOME-connected layered trajectory-space branches ...", flush=True)
     support_by_key: dict[tuple[int, str, int], list[int]] = {}
@@ -1461,6 +1486,7 @@ def main() -> int:
     candidate_overlay = output_dir / "candidate_filter_overlay.png"
 
     support_has_free = np.asarray([bool(x) for x in support_solutions], dtype=bool)
+    support_ik_reachable = np.any(support_ik.accepted, axis=1)
     support_solution_count = np.asarray([len(x) for x in support_solutions], dtype=np.int16)
     support_best_q = np.full((len(supports), len(RIGHT_ARM_NAMES)), np.nan, dtype=np.float64)
     support_clearance = np.full(len(supports), np.nan, dtype=np.float64)
@@ -1595,7 +1621,10 @@ def main() -> int:
             "approach_cross_section_points": args.approach_cross_section_points,
             "approach_corridor_radius_m": args.approach_corridor_radius_m,
             "support_pose_count": len(supports),
+            "diagnostic_observed_esdf_bypassed": bool(args.diagnostic_disable_observed_esdf),
+            "support_pose_ik_reachable_count": int(np.count_nonzero(support_ik_reachable)),
             "support_pose_with_collision_free_ik_count": int(np.count_nonzero(support_has_free)),
+            "support_pose_admitted_count": int(np.count_nonzero(support_has_free)),
             "home_connected_support_pose_count": int(np.count_nonzero(connected_support)),
             "graph_edge_count": len(graph_edges),
             "edge_collision_check_count": edge_check_count,
@@ -1605,6 +1634,7 @@ def main() -> int:
                 "block_unknown": bool(args.block_unknown),
                 "check_self_collision": bool(args.check_self_collision),
                 "target_layer_used_as_obstacle": False,
+                "observed_esdf_bypassed": bool(args.diagnostic_disable_observed_esdf),
                 "map_id": observed_map.map_id,
             },
             "candidate_membership": {
@@ -1683,6 +1713,9 @@ def main() -> int:
     print(f"PREGRASP direct coarse IK          : {int(np.count_nonzero(pre_direct))}")
     print(f"TARGET REACH REGION                : {int(np.count_nonzero(target_region_pass))}")
     print(f"trajectory anchors                 : {len(anchor_ranks)}")
+    print(f"support IK reachable              : {int(np.count_nonzero(support_ik_reachable))}/{len(supports)}")
+    if args.diagnostic_disable_observed_esdf:
+        print(f"support states admitted           : {int(np.count_nonzero(support_has_free))}/{len(supports)}")
     print(f"successful HOME->PRE->GRASP space  : {int(np.count_nonzero(branch_success))}/{len(anchor_ranks)} branches")
     print(f"FIRST FILTER PASS                  : {int(np.count_nonzero(overall_pass))}/{n_candidates}")
     print(f"reject target reach                : {int(np.count_nonzero(~target_region_pass))}")

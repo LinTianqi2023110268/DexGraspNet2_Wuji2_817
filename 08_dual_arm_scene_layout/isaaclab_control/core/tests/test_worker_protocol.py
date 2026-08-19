@@ -4,6 +4,9 @@ import unittest
 import numpy as np
 
 from core.bridge.worker_client import CuroboWorkerClient, _jsonable, _worker_subprocess_env
+from core.bridge.curobo_worker import (
+    selected_collision_records_for_independent_targets,
+)
 
 
 class WorkerProtocolTests(unittest.TestCase):
@@ -48,6 +51,49 @@ class WorkerProtocolTests(unittest.TestCase):
         self.assertNotIn("PYTHONPATH", env)
         self.assertNotIn("LD_LIBRARY_PATH", env)
         self.assertNotIn("ISAAC_PATH", env)
+
+    def test_independent_selected_collision_allows_null_targets(self):
+        class Pick:
+            def __init__(self, target_index, solution_index):
+                self.target_index = target_index
+                self.solution_index = solution_index
+
+        selected = [Pick(0, 1), None, Pick(2, 0)]
+        feasible = [
+            [
+                {
+                    "target_index": 0,
+                    "solution_index": 1,
+                    "self_collision_pass": True,
+                    "observed_scene_collision_pass": True,
+                }
+            ],
+            [],
+            [
+                {
+                    "target_index": 2,
+                    "solution_index": 0,
+                    "self_collision_pass": True,
+                    "observed_scene_collision_pass": True,
+                }
+            ],
+        ]
+        records = selected_collision_records_for_independent_targets(
+            selected, feasible
+        )
+        self.assertEqual(records[0]["target_index"], 0)
+        self.assertIsNone(records[1])
+        self.assertEqual(records[2]["target_index"], 2)
+
+    def test_independent_selected_collision_allows_empty_feasible_after_ik(self):
+        class Pick:
+            target_index = 0
+            solution_index = 3
+
+        records = selected_collision_records_for_independent_targets(
+            [Pick()], [[]]
+        )
+        self.assertEqual(records, [None])
 
 
 if __name__ == "__main__":

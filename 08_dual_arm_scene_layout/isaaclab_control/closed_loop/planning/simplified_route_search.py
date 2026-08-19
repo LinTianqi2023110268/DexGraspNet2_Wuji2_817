@@ -77,6 +77,12 @@ def _route_tuning(config: dict) -> dict:
     return tuning
 
 
+def _require(row: dict, key: str, *, context: str):
+    if key not in row:
+        raise KeyError(f"route_tuning.{context} missing required key: {key}")
+    return row[key]
+
+
 def _print_tuning_once(config: dict) -> None:
     global _PRINTED_TUNING
     if _PRINTED_TUNING:
@@ -103,15 +109,15 @@ def _print_tuning_once(config: dict) -> None:
     p = t["pick_path"]
     print(
         "  HOME->PRE   "
-        f"ESDF={'ON' if p.get('home_to_pregrasp_esdf_check', True) else 'OFF'} "
-        f"SELF={'ON' if p.get('home_to_pregrasp_self_collision_check', True) else 'OFF'} "
-        f"step={float(p.get('home_to_pregrasp_joint_step_deg', 3.0)):.1f} deg"
+        f"ESDF={'ON' if _require(p, 'home_to_pregrasp_esdf_check', context='pick_path') else 'OFF'} "
+        f"SELF={'ON' if _require(p, 'home_to_pregrasp_self_collision_check', context='pick_path') else 'OFF'} "
+        f"step={float(_require(p, 'home_to_pregrasp_joint_step_deg', context='pick_path')):.1f} deg"
     )
     print(
         "  PRE->COVER  "
-        f"ESDF={'ON' if p.get('pregrasp_to_cover_esdf_check', False) else 'OFF'} "
-        f"SELF={'ON' if p.get('pregrasp_to_cover_self_collision_check', True) else 'OFF'} "
-        f"step={float(p.get('pregrasp_to_cover_joint_step_deg', 5.0)):.1f} deg"
+        f"ESDF={'ON' if _require(p, 'pregrasp_to_cover_esdf_check', context='pick_path') else 'OFF'} "
+        f"SELF={'ON' if _require(p, 'pregrasp_to_cover_self_collision_check', context='pick_path') else 'OFF'} "
+        f"step={float(_require(p, 'pregrasp_to_cover_joint_step_deg', context='pick_path')):.1f} deg"
     )
     print("")
 
@@ -125,7 +131,7 @@ def _acceptance_payload(config: dict, stage: str) -> dict:
             float(row["ik_orientation_tolerance_deg"])
         ),
         "minimum_inner_limit_margin_rad": math.radians(
-            float(row.get("minimum_inner_limit_margin_deg", 3.0))
+            float(_require(row, "minimum_inner_limit_margin_deg", context=stage))
         ),
         "require_raw_success": False,
     }
@@ -233,10 +239,12 @@ def _select_pre_cover_pair(
     T_world_base: np.ndarray,
     config: dict,
     selection_cfg: dict,
+    diagnostic_disable_home_pre_esdf: bool = False,
+    diagnostic_disable_home_pre_self_collision: bool = False,
 ) -> tuple[BeamState | None, BeamState | None, dict]:
     """Select endpoint pair; there is no intermediate Cartesian IK."""
     tune = _route_tuning(config)["pick_path"]
-    pair_trials = max(1, int(tune.get("pair_trials", 128)))
+    pair_trials = max(1, int(_require(tune, "pair_trials", context="pick_path")))
 
     pairs = [
         (_pair_score(pre, cover, q_current, selection_cfg), pre, cover)
@@ -250,6 +258,12 @@ def _select_pre_cover_pair(
         "pair_trials_limit": int(pair_trials),
         "pairs_tested": 0,
         "home_pregrasp_fail": 0,
+        "home_pregrasp_tested": 0,
+        "home_pregrasp_pass": 0,
+        "home_pregrasp_self_collision_fail": 0,
+        "home_pregrasp_esdf_fail": 0,
+        "home_pregrasp_esdf_bypassed": bool(diagnostic_disable_home_pre_esdf),
+        "home_pregrasp_self_collision_bypassed": bool(diagnostic_disable_home_pre_self_collision),
         "pregrasp_cover_fail": 0,
     }
 
@@ -263,6 +277,9 @@ def _select_pre_cover_pair(
 
         pre_key = tuple(np.round(pre_node.q_rad, 4).tolist())
         if pre_key not in home_cache:
+            home_observed = bool(
+                _require(tune, "home_to_pregrasp_esdf_check", context="pick_path")
+            ) and not bool(diagnostic_disable_home_pre_esdf)
             home_cache[pre_key] = client.check_joint_path(
                 np.stack([q_current, pre_node.q_rad]),
                 measured,
@@ -271,19 +288,24 @@ def _select_pre_cover_pair(
                 phases=["pregrasp"],
                 margin_m=0.0,
                 path_max_joint_step_rad=math.radians(
-                    float(tune.get("home_to_pregrasp_joint_step_deg", 3.0))
+                    float(_require(tune, "home_to_pregrasp_joint_step_deg", context="pick_path"))
                 ),
-                check_observed_map=bool(
-                    tune.get("home_to_pregrasp_esdf_check", True)
-                ),
+                check_observed_map=home_observed,
                 check_self_collision=bool(
-                    tune.get("home_to_pregrasp_self_collision_check", True)
-                ),
+                    _require(tune, "home_to_pregrasp_self_collision_check", context="pick_path")
+                ) and not bool(diagnostic_disable_home_pre_self_collision),
             )
         home_report = home_cache[pre_key]
+        counters["home_pregrasp_tested"] += 1
         if not bool(home_report.get("path_pass")):
             counters["home_pregrasp_fail"] += 1
+            failure = home_report.get("path_first_failure") or {}
+            if bool(failure.get("self_collision_blocked", False)):
+                counters["home_pregrasp_self_collision_fail"] += 1
+            if int(failure.get("blocking_collision_sphere_count", 0)) > 0:
+                counters["home_pregrasp_esdf_fail"] += 1
             continue
+        counters["home_pregrasp_pass"] += 1
 
         cover_key = tuple(np.round(cover_node.q_rad, 4).tolist())
         approach_key = (pre_key, cover_key)
@@ -296,13 +318,13 @@ def _select_pre_cover_pair(
                 phases=["cover"],
                 margin_m=0.0,
                 path_max_joint_step_rad=math.radians(
-                    float(tune.get("pregrasp_to_cover_joint_step_deg", 5.0))
+                    float(_require(tune, "pregrasp_to_cover_joint_step_deg", context="pick_path"))
                 ),
                 check_observed_map=bool(
-                    tune.get("pregrasp_to_cover_esdf_check", False)
+                    _require(tune, "pregrasp_to_cover_esdf_check", context="pick_path")
                 ),
                 check_self_collision=bool(
-                    tune.get("pregrasp_to_cover_self_collision_check", True)
+                    _require(tune, "pregrasp_to_cover_self_collision_check", context="pick_path")
                 ),
             )
         approach_report = approach_cache[approach_key]
@@ -352,6 +374,22 @@ def _save_tuning_snapshot(report: dict, config: dict) -> dict:
     return report
 
 
+def _beam_diagnostics(
+    *,
+    stage: str,
+    parent_routes: list[BeamState],
+    candidate_nodes: list[IKNode],
+    retained_beam: list[BeamState],
+) -> dict:
+    return {
+        "stage": f"{stage}_beam",
+        "parent_route_count": int(len(parent_routes)),
+        "candidate_node_count": int(len(candidate_nodes)),
+        "possible_parent_node_pairs": int(len(parent_routes) * len(candidate_nodes)),
+        "retained_beam_count": int(len(retained_beam)),
+    }
+
+
 def plan_flexible_route(
     *,
     client,
@@ -364,6 +402,8 @@ def plan_flexible_route(
     config: dict,
     no_planner_collision_check: bool,
     block_unknown: bool,
+    diagnostic_disable_home_pre_esdf: bool = False,
+    diagnostic_disable_home_pre_self_collision: bool = False,
     output_npz: Path | None = None,
 ) -> dict:
     """Strict COVER + relaxed endpoints + simple joint-space pick path."""
@@ -371,7 +411,11 @@ def plan_flexible_route(
     _print_tuning_once(config)
 
     if not cover_solutions:
-        return {"status": "FAIL", "reason": "no exact COVER IK solution"}
+        return {
+            "status": "FAIL",
+            "failed_stage": "EXACT_COVER",
+            "reason": "no exact COVER IK solution",
+        }
 
     project_root = Path(project_root).resolve()
     case_root = Path(case_root).resolve()
@@ -426,6 +470,7 @@ def plan_flexible_route(
     if not pre_nodes:
         return {
             "status": "FAIL",
+            "failed_stage": "PREGRASP",
             "reason": "PREGRASP relaxed region has no IK",
             "stage_summaries": summaries,
         }
@@ -440,11 +485,20 @@ def plan_flexible_route(
         T_world_base=T_world_base,
         config=config,
         selection_cfg=selection_cfg,
+        diagnostic_disable_home_pre_esdf=bool(diagnostic_disable_home_pre_esdf),
+        diagnostic_disable_home_pre_self_collision=bool(diagnostic_disable_home_pre_self_collision),
     )
     summaries.append({"stage": "pick_path", **pick_summary})
     if pre_state is None or cover_state is None:
         return {
             "status": "FAIL",
+            "failed_stage": (
+                "HOME_TO_PRE"
+                if int(pick_summary.get("home_pregrasp_fail", 0)) > 0
+                else "PRE_TO_COVER"
+                if int(pick_summary.get("pregrasp_cover_fail", 0)) > 0
+                else "PICK_PATH"
+            ),
             "reason": "no PREGRASP/COVER pair passed simple joint-space path gates",
             "stage_summaries": summaries,
         }
@@ -490,9 +544,18 @@ def plan_flexible_route(
     lift_beam = _expand_beam(
         [cover_state], lift_nodes, beam_width=beam_width, selection_cfg=selection_cfg
     )
+    summaries.append(
+        _beam_diagnostics(
+            stage="lift",
+            parent_routes=[cover_state],
+            candidate_nodes=lift_nodes,
+            retained_beam=lift_beam,
+        )
+    )
     if not lift_beam:
         return {
             "status": "FAIL",
+            "failed_stage": "LIFT",
             "reason": "LIFT relaxed region has no IK",
             "stage_summaries": summaries,
         }
@@ -545,9 +608,18 @@ def plan_flexible_route(
         beam_width=beam_width,
         selection_cfg=selection_cfg,
     )
+    summaries.append(
+        _beam_diagnostics(
+            stage="transfer",
+            parent_routes=lift_beam,
+            candidate_nodes=transfer_nodes,
+            retained_beam=transfer_beam,
+        )
+    )
     if not transfer_beam:
         return {
             "status": "FAIL",
+            "failed_stage": "TRANSFER",
             "reason": "TRANSFER relaxed region has no IK",
             "stage_summaries": summaries,
         }
@@ -589,9 +661,18 @@ def plan_flexible_route(
     place_beam = _expand_beam(
         transfer_beam, place_nodes, beam_width=beam_width, selection_cfg=selection_cfg
     )
+    summaries.append(
+        _beam_diagnostics(
+            stage="place",
+            parent_routes=transfer_beam,
+            candidate_nodes=place_nodes,
+            retained_beam=place_beam,
+        )
+    )
     if not place_beam:
         return {
             "status": "FAIL",
+            "failed_stage": "PLACE",
             "reason": "PLACE relaxed region has no IK",
             "stage_summaries": summaries,
         }
@@ -607,11 +688,22 @@ def plan_flexible_route(
     best_final: BeamState | None = None
     best_final_cost = math.inf
     best_retreat_summary = None
+    retreat_diag = {
+        "stage": "retreat_beam",
+        "parent_route_count": 0,
+        "candidate_node_count": 0,
+        "possible_parent_node_pairs": 0,
+        "retained_beam_count": 0,
+        "complete_route_candidate_count": 0,
+        "parent_trials": 0,
+    }
     parent_trials = min(
         int(selection_cfg.get("retreat_parent_trials", 8)), len(place_beam)
     )
+    retreat_diag["parent_trials"] = int(parent_trials)
 
     for trial_index, place_parent in enumerate(place_beam[:parent_trials]):
+        retreat_diag["parent_route_count"] += 1
         place_wrist = place_parent.node.target_pose_world @ geometry["flange_from_wrist"]
         retreat_wrist = sample_retreat(
             place_wrist_world=place_wrist,
@@ -640,12 +732,16 @@ def plan_flexible_route(
         )
         if not retreat_nodes:
             continue
+        retreat_diag["candidate_node_count"] += int(len(retreat_nodes))
+        retreat_diag["possible_parent_node_pairs"] += int(len(retreat_nodes))
         retreat_beam = _expand_beam(
             [place_parent],
             retreat_nodes,
             beam_width=beam_width,
             selection_cfg=selection_cfg,
         )
+        retreat_diag["retained_beam_count"] += int(len(retreat_beam))
+        retreat_diag["complete_route_candidate_count"] += int(len(retreat_beam))
         for state in retreat_beam:
             total = float(state.cost) + float(
                 selection_cfg.get("home_return_weight", 0.25)
@@ -656,12 +752,15 @@ def plan_flexible_route(
                 best_retreat_summary = retreat_summary
 
     if best_final is None:
+        summaries.append(retreat_diag)
         return {
             "status": "FAIL",
+            "failed_stage": "RETREAT",
             "reason": "RETREAT relaxed region has no IK",
             "stage_summaries": summaries,
         }
     summaries.append(best_retreat_summary or {"stage": "retreat"})
+    summaries.append(retreat_diag)
 
     chain = _ancestry(best_final)
     by_stage = {

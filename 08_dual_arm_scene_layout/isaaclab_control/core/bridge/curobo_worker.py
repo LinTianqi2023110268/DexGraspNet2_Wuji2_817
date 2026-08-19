@@ -29,6 +29,52 @@ def jsonable(value):
     return value
 
 
+def selected_collision_records_for_independent_targets(
+    selected: list,
+    feasible_solutions: list[list[dict]],
+) -> list[dict | None]:
+    """Match selected independent-target IK solutions to collision records.
+
+    ``select_chain=False`` means each target is a separate candidate, not a
+    waypoint in one path.  A target may legitimately have no selected solution,
+    or may have IK accepted solutions but no collision-feasible solution.  Both
+    cases must be serialized as ``null`` instead of crashing or forcing a path
+    collision check across unrelated candidates.
+    """
+    records: list[dict | None] = []
+    for pick in selected:
+        if pick is None:
+            records.append(None)
+            continue
+        target_records = feasible_solutions[pick.target_index]
+        match = next(
+            (
+                row
+                for row in target_records
+                if int(row["solution_index"]) == int(pick.solution_index)
+            ),
+            None,
+        )
+        records.append(match)
+    return records
+
+
+def selected_collision_records_for_chain(
+    selected: list,
+    feasible_solutions: list[list[dict]],
+) -> list[dict] | None:
+    """Match a full waypoint chain to collision records.
+
+    Missing records mean the chain is not collision-feasible.
+    """
+    records = selected_collision_records_for_independent_targets(
+        selected, feasible_solutions
+    )
+    if any(row is None for row in records):
+        return None
+    return records
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--project-root", type=Path, required=True)
@@ -745,18 +791,31 @@ def main() -> int:
                     selected = [select_solution(result, i, q_ref) for i in range(result.batch_size)]
                 selected_collision = None
                 path_report = None
+                select_chain = bool(req.get("select_chain", True))
                 if selected is not None and collision_context is not None:
-                    selected_collision = []
-                    for pick in selected:
-                        match = next(
-                            x for x in feasible_solutions[pick.target_index]
-                            if x["solution_index"] == pick.solution_index
+                    if select_chain:
+                        selected_collision = selected_collision_records_for_chain(
+                            selected, feasible_solutions
                         )
-                        selected_collision.append(match)
-                    path_report = path_collision_check(selected, q_ref, collision_context)
+                        if selected_collision is not None:
+                            path_report = path_collision_check(
+                                selected, q_ref, collision_context
+                            )
+                    else:
+                        selected_collision = selected_collision_records_for_independent_targets(
+                            selected, feasible_solutions
+                        )
+                        # Independent Exact-COVER targets are separate
+                        # candidates, not one waypoint chain.
+                        path_report = None
                 self_collision_pass = (
                     None if selected_collision is None
-                    else bool(all(x["self_collision_pass"] for x in selected_collision))
+                    else bool(
+                        all(
+                            x is not None and x["self_collision_pass"]
+                            for x in selected_collision
+                        )
+                    )
                 )
                 emit({
                     "ok": True,
@@ -771,7 +830,17 @@ def main() -> int:
                     "selected_collision": selected_collision,
                     "ik_pass": bool(all(int(x) > 0 for x in ik_accepted_per_target)),
                     "observed_scene_collision_pass": (
-                        None if collision_context is None else selected is not None
+                        None if collision_context is None
+                        else (
+                            bool(
+                                all(
+                                    x is not None and x["observed_scene_collision_pass"]
+                                    for x in selected_collision
+                                )
+                            )
+                            if selected_collision is not None
+                            else False
+                        )
                     ),
                     "self_collision_pass": self_collision_pass,
                     "path_pass": None if path_report is None else path_report["path_pass"],
@@ -779,7 +848,10 @@ def main() -> int:
                     "path_first_failure": None if path_report is None else path_report["path_first_failure"],
                     "unknown_space_exposure": (
                         None if selected_collision is None
-                        else [bool(x["unknown_space_exposure"]) for x in selected_collision]
+                        else [
+                            None if x is None else bool(x["unknown_space_exposure"])
+                            for x in selected_collision
+                        ]
                     ),
                     "solve_time_s": result.solve_time_s,
                 })

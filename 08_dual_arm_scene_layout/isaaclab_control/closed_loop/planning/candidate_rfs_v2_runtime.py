@@ -137,6 +137,7 @@ def run_candidate_rfs_v2(
     query: str,
     candidates: list[dict],
     settings: dict,
+    diagnostic_disable_observed_esdf: bool = False,
 ) -> RfsV2ProductionResult:
     """Run standalone candidate-centric RFS V2 and return production candidate order.
 
@@ -234,6 +235,8 @@ def run_candidate_rfs_v2(
         "--output-dir",
         str(output_dir),
     ]
+    if diagnostic_disable_observed_esdf:
+        cmd.append("--diagnostic-disable-observed-esdf")
 
     print(
         f"[RFS V2] candidate-centric pre-retarget filter | "
