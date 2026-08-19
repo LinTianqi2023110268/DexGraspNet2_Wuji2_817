@@ -154,6 +154,8 @@ def main() -> None:
     np.savez_compressed(
         leap_job,
         waypoint_pose_world=waypoint_source.astype(np.float32),
+        waypoint_pose_frame=np.asarray("SourceZone"),
+        coordinate_convention=np.asarray("T_A_B maps coordinates from frame B into frame A"),
         waypoint_root_dofs=root_dofs[None],
         waypoint_joint_positions=np.asarray(waypoint_qpos, dtype=np.float32),
         waypoint_names=WAYPOINT_NAMES,

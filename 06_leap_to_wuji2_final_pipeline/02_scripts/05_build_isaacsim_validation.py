@@ -44,6 +44,7 @@ WUJI_URDF = (
     / "01_environment/vendor/wuji-description/hand2/hand2_beta1/body/urdf/right.urdf"
 )
 PINKY_POLICY = SHARED_ROOT / "config/pinky_ring_coupling.json"
+LAYOUT_JSON = PROJECT_ROOT / "08_dual_arm_scene_layout/config/manual_layout_calibrated.json"
 
 # 只影响PREGRASP和COVER的大拇指，不改变GRASP、SQUEEZE或LIFT。
 # 正值表示拇指指尖沿已确认内收法向的反方向额外张开多少米。
@@ -120,6 +121,21 @@ def scalar(data: dict[str, np.ndarray], key: str):
     return np.asarray(data[key]).item()
 
 
+def source_zone_transform_from_layout() -> np.ndarray:
+    """Return T_W_S without using SourceZone display scale.
+
+    The SourceZone prim is a visual marker with authored scale.  That scale is
+    not a rigid transform and must never be applied to retarget wrist/root
+    poses.  The current calibrated layout records SourceZone as an unrotated
+    rigid frame at ``position_world_m``.
+    """
+    layout = json.loads(LAYOUT_JSON.read_text(encoding="utf-8"))
+    source = layout["transforms"]["source_zone"]
+    transform = np.eye(4, dtype=np.float64)
+    transform[:3, 3] = np.asarray(source["position_world_m"], dtype=np.float64)
+    return transform
+
+
 def main() -> None:
     for path in (
         SOURCE,
@@ -129,6 +145,7 @@ def main() -> None:
         NATIVE_DIRECTION_CONFIG,
         WUJI_URDF,
         PINKY_POLICY,
+        LAYOUT_JSON,
     ):
         if not path.is_file():
             raise FileNotFoundError(path)
@@ -280,17 +297,26 @@ def main() -> None:
     wrist_from_palm = np.asarray(
         base["wuji2_semantic_palm_frame_in_r_wrist"], dtype=np.float64
     )
-    approach_axis = grasp_pose[:3, :3] @ wrist_from_palm[:3, 2]
-    approach_axis /= np.linalg.norm(approach_axis)
+    world_from_source = source_zone_transform_from_layout()
+    source_from_world = np.linalg.inv(world_from_source)
+    approach_axis_source = grasp_pose[:3, :3] @ wrist_from_palm[:3, 2]
+    approach_axis_source /= np.linalg.norm(approach_axis_source)
+    approach_axis_world = world_from_source[:3, :3] @ approach_axis_source
+    approach_axis_world /= np.linalg.norm(approach_axis_world)
     retreat_m = float(scalar(base, "official_dgn2_pregrasp_retreat_m"))
     lift_m = float(scalar(base, "post_squeeze_lift_distance_m"))
     gravity_direction = np.asarray([0.0, 0.0, -1.0])
-    approach_dot_gravity = float(np.dot(approach_axis, gravity_direction))
+    approach_dot_gravity = float(np.dot(approach_axis_world, gravity_direction))
     is_top = approach_dot_gravity > float(np.cos(np.pi / 3.0))
 
     stage_pose = np.repeat(grasp_pose[None, None], 5, axis=1)
-    stage_pose[0, pre_i, :3, 3] -= retreat_m * approach_axis
-    lift_axis = -approach_axis if is_top else np.asarray([0.0, 0.0, 1.0])
+    stage_pose[0, pre_i, :3, 3] -= retreat_m * approach_axis_source
+    lift_axis = (
+        -approach_axis_source
+        if is_top
+        else source_from_world[:3, :3] @ np.asarray([0.0, 0.0, 1.0], dtype=np.float64)
+    )
+    lift_axis /= np.linalg.norm(lift_axis)
     stage_pose[0, lift_i, :3, 3] += lift_m * lift_axis
     root_euler = matrix_to_euler_angles(
         torch.as_tensor(stage_pose[0, :, :3, :3]), "XYZ"
@@ -314,6 +340,8 @@ def main() -> None:
     output = {
         "waypoint_joint_positions": stage_q.astype(np.float32),
         "waypoint_pose_world": stage_pose.astype(np.float32),
+        "waypoint_pose_frame": np.asarray("SourceZone"),
+        "coordinate_convention": np.asarray("T_A_B maps coordinates from frame B into frame A"),
         "waypoint_root_dofs": root_dofs[None],
         "waypoint_names": np.asarray(stages),
         "waypoint_steps": np.asarray(base["waypoint_steps"], dtype=np.int64),
@@ -325,6 +353,7 @@ def main() -> None:
         "source_leap_waypoint_pose_world": np.asarray(
             leap["waypoint_pose_world"], dtype=np.float32
         ),
+        "source_leap_waypoint_pose_frame": np.asarray("SourceZone"),
         "source_leap_waypoint_joint_positions": np.asarray(
             leap["waypoint_joint_positions"], dtype=np.float32
         ),
@@ -342,6 +371,7 @@ def main() -> None:
             leap["target_segmentation_id"], dtype=np.int64
         ),
         "hand_root_pose_frame": np.asarray("official_r_wrist_four_tip_kabsch"),
+        "hand_root_transform_frame": np.asarray("SourceZone"),
         "four_real_tip_grasp_q20": dense[0].astype(np.float32),
         "four_real_tip_grasp_pose_world": grasp_pose.astype(np.float32),
         "four_real_tip_target_world_m": np.asarray(
@@ -420,7 +450,8 @@ def main() -> None:
             )
         ),
     }
-    output["wuji2_semantic_palm_approach_axis_world"] = approach_axis.astype(np.float32)
+    output["wuji2_semantic_palm_approach_axis_source"] = approach_axis_source.astype(np.float32)
+    output["wuji2_semantic_palm_approach_axis_world"] = approach_axis_world.astype(np.float32)
     output["post_squeeze_lift_policy"] = np.asarray(lift_policy)
     output["approach_axis_dot_gravity"] = np.asarray(approach_dot_gravity, np.float32)
     output["is_top_grasp"] = np.asarray(is_top)
@@ -435,6 +466,12 @@ def main() -> None:
     output["pregrasp_approach_policy"] = np.asarray(
         "wuji2_semantic_palm_positive_z_100mm"
     )
+    output["mediapipe_rotation_scope"] = np.asarray(
+        "Retargeter-local keypoint preprocessing only; never multiply into T_SourceZone_LEAP, T_SourceZone_r_wrist, T_world_r_wrist, or T_world_flange"
+    )
+    output["retarget_offset_scope"] = np.asarray(
+        "wrist_offset_cm and thumb_offset_cm are in retarget-local frame after MediaPipe normalization and mediapipe_rotation; not World, SourceZone, or LEAP-root frame"
+    )
 
     SIM_ROOT.mkdir(parents=True, exist_ok=True)
     np.savez_compressed(OUTPUT, **output)
@@ -445,6 +482,10 @@ def main() -> None:
         "base_scene_and_runtime_contract": str(BASE_JOB),
         "output": str(OUTPUT),
         "stages": stages,
+        "coordinate_convention": "T_A_B maps coordinates from frame B into frame A",
+        "waypoint_pose_world_actual_frame": "SourceZone",
+        "waypoint_pose_frame": "SourceZone",
+        "source_leap_waypoint_pose_frame": "SourceZone",
         "control_steps": [int(value) for value in base["waypoint_steps"].tolist()],
         "squeeze_dense_samples": int(len(dense)),
         "maximum_joint_step_rad": max_step,
@@ -477,7 +518,18 @@ def main() -> None:
         "pregrasp_thumb_extra_open_target_error_m": thumb_open_target_error_m,
         "pregrasp_thumb_ik_joint_delta_rad": thumb_joint_delta.tolist(),
         "pregrasp_thumb_ik_steps": int(native_direction["ik_steps"]),
-        "approach": "official 100 mm along calibrated Wuji2 semantic-palm +Z",
+        "approach": "official 100 mm along calibrated Wuji2 semantic-palm +Z, computed in SourceZone then mapped to layout world for world consumers",
+        "wuji2_semantic_palm_approach_axis_source": approach_axis_source.tolist(),
+        "wuji2_semantic_palm_approach_axis_world": approach_axis_world.tolist(),
+        "mediapipe_rotation_scope": (
+            "Retargeter-local keypoint preprocessing only; never multiply into "
+            "T_SourceZone_LEAP, T_SourceZone_r_wrist, T_world_r_wrist, or T_world_flange"
+        ),
+        "retarget_offset_scope": (
+            "wrist_offset_cm and thumb_offset_cm are in retarget-local frame after "
+            "MediaPipe normalization and mediapipe_rotation; not World, SourceZone, "
+            "or LEAP-root frame"
+        ),
         "gravity": "0 before/through SQUEEZE, then -9.81 m/s^2",
         "lift_policy": lift_policy,
         "runtime_usd": str(scalar(base, "simulation_runtime_usd")),

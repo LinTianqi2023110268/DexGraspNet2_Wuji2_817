@@ -135,6 +135,20 @@ def main() -> None:
     with np.load(waypoint_path, allow_pickle=False) as archive:
         waypoint_names = np.asarray(archive["waypoint_names"])
         source_from_wrist = np.asarray(archive["waypoint_pose_world"][0], dtype=np.float64)
+        waypoint_pose_frame = (
+            str(np.asarray(archive["waypoint_pose_frame"]).item())
+            if "waypoint_pose_frame" in archive.files
+            else "SourceZone"
+        )
+        coordinate_convention = (
+            str(np.asarray(archive["coordinate_convention"]).item())
+            if "coordinate_convention" in archive.files
+            else "T_A_B maps coordinates from frame B into frame A"
+        )
+    if waypoint_pose_frame != "SourceZone":
+        raise RuntimeError(
+            f"final_waypoints waypoint_pose_world must be SourceZone-local, got {waypoint_pose_frame}"
+        )
 
     world_from_wrist = world_from_source[None] @ source_from_wrist
     world_from_flange = world_from_wrist @ np.linalg.inv(flange_from_wrist)[None]
@@ -145,6 +159,9 @@ def main() -> None:
         waypoint_names=waypoint_names,
         world_from_source_zone=world_from_source,
         flange_from_wuji2_wrist=flange_from_wrist,
+        flange_from_wuji2_wrist_source=np.asarray("assembly_spec.mount_transform_parent_to_child"),
+        waypoint_pose_frame=np.asarray(waypoint_pose_frame),
+        coordinate_convention=np.asarray(coordinate_convention),
         source_zone_from_wuji2_wrist=source_from_wrist,
         world_from_wuji2_wrist=world_from_wrist,
         world_from_right_flange=world_from_flange,
@@ -168,6 +185,10 @@ def main() -> None:
         "assembly_spec": str(ASSEMBLY_SPEC),
         "layout_calibration": str(LAYOUT_JSON),
         "formula": "T_world_flange = T_world_SourceZone @ T_SourceZone_r_wrist @ inverse(T_flange_r_wrist)",
+        "coordinate_convention": coordinate_convention,
+        "waypoint_pose_world_actual_frame": waypoint_pose_frame,
+        "T_flange_r_wrist_source": "assembly_spec.mount_transform_parent_to_child",
+        "T_flange_r_wrist": flange_from_wrist.tolist(),
         "scene_placement": {
             "source_yaw_deg": args.source_yaw_deg,
             "source_offset_xy_m": [args.source_offset_x_m, args.source_offset_y_m],

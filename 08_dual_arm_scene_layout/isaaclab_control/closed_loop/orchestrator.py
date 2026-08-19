@@ -540,6 +540,9 @@ def print_route_diagnostics(item: dict, route: dict) -> None:
         f"home_pre_self={pick.get('home_pregrasp_self_collision_fail', 0)} "
         f"home_pre_esdf={pick.get('home_pregrasp_esdf_fail', 0)} "
         f"home_pre_pass={pick.get('home_pregrasp_pass', 0)} "
+        f"pre_cover_self={pick.get('pregrasp_cover_self_collision_fail', 0)} "
+        f"pre_cover_esdf={pick.get('pregrasp_cover_esdf_fail', 0)} "
+        f"pre_cover_pass={pick.get('pregrasp_cover_pass', 0)} "
         f"pre_cover_fail={pick.get('pregrasp_cover_fail', 0)} "
         f"status={pick.get('status', 'NA')}"
     )
@@ -614,6 +617,18 @@ def print_funnel_summary(funnel: dict) -> None:
             print("HOME->PRE observed ESDF is DISABLED for this diagnostic run.")
         if hp.get("self_collision_bypassed"):
             print("HOME->PRE self collision is DISABLED for this diagnostic run.")
+    pc = flex.get("pregrasp_cover_path", {})
+    if pc:
+        print("\nPRE->COVER path:")
+        print(f"tested pairs          {pc.get('tested_pairs', 0)}")
+        print(f"self-collision fail   {pc.get('self_collision_failures', 0)}")
+        print(f"ESDF fail             {pc.get('esdf_failures', 0)}")
+        print(f"PASS                  {pc.get('pass_count', 0)}")
+        if pc.get("observed_esdf_bypassed"):
+            print("PRE->COVER observed ESDF is DISABLED for this diagnostic run.")
+        if pc.get("self_collision_bypassed"):
+            print("PRE->COVER self collision is DISABLED for this diagnostic run.")
+    print_flexible_stage_survival(funnel)
     print("==================================================")
 
 
@@ -644,6 +659,138 @@ def accumulate_home_pre_stats(funnel: dict, route: dict) -> None:
             target.get("self_collision_bypassed", False)
             or row.get("home_pregrasp_self_collision_bypassed", False)
         )
+
+
+def accumulate_pre_cover_stats(funnel: dict, route: dict) -> None:
+    target = funnel.setdefault("flexible_route", {}).setdefault(
+        "pregrasp_cover_path",
+        {
+            "tested_pairs": 0,
+            "self_collision_failures": 0,
+            "esdf_failures": 0,
+            "pass_count": 0,
+            "observed_esdf_bypassed": False,
+            "self_collision_bypassed": False,
+        },
+    )
+    for row in route.get("stage_summaries") or []:
+        if not isinstance(row, dict) or row.get("stage") != "pick_path":
+            continue
+        target["tested_pairs"] += int(row.get("pregrasp_cover_tested", 0))
+        target["self_collision_failures"] += int(row.get("pregrasp_cover_self_collision_fail", 0))
+        target["esdf_failures"] += int(row.get("pregrasp_cover_esdf_fail", 0))
+        target["pass_count"] += int(row.get("pregrasp_cover_pass", 0))
+        target["observed_esdf_bypassed"] = bool(
+            target.get("observed_esdf_bypassed", False)
+            or row.get("pregrasp_cover_esdf_bypassed", False)
+        )
+        target["self_collision_bypassed"] = bool(
+            target.get("self_collision_bypassed", False)
+            or row.get("pregrasp_cover_self_collision_bypassed", False)
+        )
+
+
+def update_flexible_stage_aggregates(funnel: dict, route: dict) -> None:
+    flex = funnel.setdefault("flexible_route", {})
+    aggregate = flex.setdefault("stage_survival", {})
+    status = str(route.get("status"))
+    failed_stage = route_failure_stage(route) if status != "PASS" else None
+    summaries = route.get("stage_summaries") or []
+    by_stage = {str(row.get("stage")): row for row in summaries if isinstance(row, dict)}
+    stage_order = ("lift", "transfer", "place", "retreat")
+    blocked = False
+    for stage in stage_order:
+        row = by_stage.get(stage)
+        beam = by_stage.get(f"{stage}_beam")
+        bucket = aggregate.setdefault(
+            stage,
+            {
+                "attempted_candidate_count": 0,
+                "not_attempted_blocked_count": 0,
+                "endpoint_target_count": 0,
+                "raw_success_target_count": 0,
+                "reachable_target_count": 0,
+                "accepted_solution_count": 0,
+                "candidate_node_count": 0,
+                "parent_route_count": 0,
+                "possible_parent_node_pairs": 0,
+                "retained_beam_count": 0,
+                "stage_pass_candidate_count": 0,
+                "stage_fail_candidate_count": 0,
+                "complete_route_candidate_count": 0,
+                "full_route_pass_count": 0,
+            },
+        )
+        if blocked or row is None:
+            bucket["not_attempted_blocked_count"] += 1
+            blocked = True
+            continue
+        bucket["attempted_candidate_count"] += 1
+        bucket["endpoint_target_count"] += int(row.get("target_count", 0))
+        bucket["raw_success_target_count"] += int(row.get("raw_success_target_count", 0))
+        bucket["reachable_target_count"] += int(row.get("reachable_target_count", 0))
+        bucket["accepted_solution_count"] += int(row.get("accepted_solution_count", row.get("solution_count", 0)))
+        bucket["candidate_node_count"] += int(row.get("node_count", 0))
+        if beam is not None:
+            bucket["parent_route_count"] += int(beam.get("parent_route_count", 0))
+            bucket["possible_parent_node_pairs"] += int(beam.get("possible_parent_node_pairs", 0))
+            bucket["retained_beam_count"] += int(beam.get("retained_beam_count", 0))
+            bucket["complete_route_candidate_count"] += int(beam.get("complete_route_candidate_count", 0))
+        stage_failed = failed_stage == stage.upper()
+        if stage_failed:
+            bucket["stage_fail_candidate_count"] += 1
+            blocked = True
+        elif row is not None and beam is not None and int(beam.get("retained_beam_count", 0)) > 0:
+            bucket["stage_pass_candidate_count"] += 1
+    if status == "PASS":
+        aggregate.setdefault("retreat", {})["full_route_pass_count"] = int(
+            aggregate.setdefault("retreat", {}).get("full_route_pass_count", 0)
+        ) + 1
+
+
+def print_flexible_stage_survival(funnel: dict) -> None:
+    flex = funnel.get("flexible_route", {})
+    stage_stats = flex.get("stage_survival", {})
+    pc = flex.get("pregrasp_cover_path", {})
+    route_reports = flex.get("candidate_reports", [])
+    attempted = len(route_reports)
+    pre_cover_pass_candidates = sum(
+        1
+        for report in route_reports
+        for row in report.get("stage_summaries", [])
+        if isinstance(row, dict) and row.get("stage") == "pick_path" and row.get("status") == "PASS"
+    )
+    print("\n===== FLEXIBLE ROUTE STAGE SURVIVAL =====")
+    print("\nPRE->COVER")
+    print(f"attempted candidates     {attempted}")
+    print(f"tested pairs             {pc.get('tested_pairs', 0)}")
+    print(f"PASS                     {pre_cover_pass_candidates}")
+    print(f"FAIL                     {max(0, attempted - pre_cover_pass_candidates)}")
+    for stage in ("lift", "transfer", "place", "retreat"):
+        row = stage_stats.get(stage, {})
+        label = stage.upper()
+        print(f"\n{label}")
+        if int(row.get("attempted_candidate_count", 0)) == 0 and int(row.get("not_attempted_blocked_count", 0)) > 0:
+            print("NOT ATTEMPTED - BLOCKED BY UPSTREAM STAGE")
+            continue
+        print(f"attempted candidates     {row.get('attempted_candidate_count', 0)}")
+        print(
+            "endpoint reachable       "
+            f"{row.get('reachable_target_count', 0)} / {row.get('endpoint_target_count', 0)}"
+        )
+        print(f"raw success targets      {row.get('raw_success_target_count', 0)}")
+        print(f"accepted solutions       {row.get('accepted_solution_count', 0)}")
+        print(f"IK nodes                 {row.get('candidate_node_count', 0)}")
+        print(f"parent routes            {row.get('parent_route_count', 0)}")
+        print(f"possible parent-node     {row.get('possible_parent_node_pairs', 0)}")
+        print(f"beam retained            {row.get('retained_beam_count', 0)}")
+        if stage == "retreat":
+            print(f"complete routes          {row.get('complete_route_candidate_count', 0)}")
+        print(f"candidate PASS           {row.get('stage_pass_candidate_count', 0)}")
+        print(f"candidate FAIL           {row.get('stage_fail_candidate_count', 0)}")
+    print("\nFULL ROUTE")
+    print(f"PASS candidates          {flex.get('full_route_pass_count', 0)}")
+    print(f"FAIL candidates          {flex.get('full_route_fail_count', 0)}")
 
 
 def print_exact_cover_subfunnel(summary: dict) -> None:
@@ -851,6 +998,24 @@ def main() -> int:
         action="store_true",
         help="DIAGNOSTIC ONLY: disable self-collision filtering for HOME->PREGRASP only.",
     )
+    parser.add_argument(
+        "--diagnostic-disable-pre-cover-esdf",
+        action="store_true",
+        help="DIAGNOSTIC ONLY: disable observed RGB-D/ROI ESDF collision filtering for PREGRASP->COVER only.",
+    )
+    parser.add_argument(
+        "--diagnostic-disable-pre-cover-self-collision",
+        action="store_true",
+        help="DIAGNOSTIC ONLY: disable self-collision filtering for PREGRASP->COVER only.",
+    )
+    parser.add_argument(
+        "--experimental-bypass-planner-collision",
+        action="store_true",
+        help=(
+            "EXPERIMENTAL ONLY: with --sim-execute, bypass selected planner collision "
+            "gates that are known to over-reject while keeping Isaac/PhysX execution enabled."
+        ),
+    )
     parser.add_argument("--isaac-headless", action="store_true")
     parser.add_argument("--verbose", action="store_true")
     args = parser.parse_args()
@@ -864,38 +1029,86 @@ def main() -> int:
         or args.diagnostic_disable_cover_esdf
         or args.diagnostic_disable_home_pre_esdf
         or args.diagnostic_disable_home_pre_self_collision
+        or args.diagnostic_disable_pre_cover_esdf
+        or args.diagnostic_disable_pre_cover_self_collision
     ) and not args.diagnostic_full_first_batch:
         raise RuntimeError(
             "--diagnostic-disable-rfs-esdf, --diagnostic-disable-cover-esdf, "
             "--diagnostic-disable-home-pre-esdf, and "
-            "--diagnostic-disable-home-pre-self-collision "
+            "--diagnostic-disable-home-pre-self-collision, "
+            "--diagnostic-disable-pre-cover-esdf, and "
+            "--diagnostic-disable-pre-cover-self-collision "
             "are allowed only with --diagnostic-full-first-batch"
         )
+    if args.experimental_bypass_planner_collision and not args.sim_execute:
+        raise RuntimeError("--experimental-bypass-planner-collision requires --sim-execute")
+    rfs_esdf_bypassed = bool(
+        args.diagnostic_disable_rfs_esdf or args.experimental_bypass_planner_collision
+    )
+    cover_esdf_bypassed = bool(
+        args.diagnostic_disable_cover_esdf or args.experimental_bypass_planner_collision
+    )
+    home_pre_esdf_bypassed = bool(
+        args.diagnostic_disable_home_pre_esdf or args.experimental_bypass_planner_collision
+    )
+    home_pre_self_bypassed = bool(
+        args.diagnostic_disable_home_pre_self_collision
+        or args.experimental_bypass_planner_collision
+    )
+    pre_cover_esdf_bypassed = bool(
+        args.diagnostic_disable_pre_cover_esdf or args.experimental_bypass_planner_collision
+    )
+    pre_cover_self_bypassed = bool(
+        args.diagnostic_disable_pre_cover_self_collision
+        or args.experimental_bypass_planner_collision
+    )
+    if args.experimental_bypass_planner_collision:
+        print("\n==================================================")
+        print("EXPERIMENTAL COLLISION BYPASS EXECUTION")
+        print("WARNING:")
+        print("planner collision gates are disabled.")
+        print("This mode is for baseline feasibility test only.")
+        print("Isaac physical execution ENABLED.")
+        print("==================================================")
     if (
         args.diagnostic_disable_rfs_esdf
         or args.diagnostic_disable_cover_esdf
         or args.diagnostic_disable_home_pre_esdf
         or args.diagnostic_disable_home_pre_self_collision
+        or args.diagnostic_disable_pre_cover_esdf
+        or args.diagnostic_disable_pre_cover_self_collision
     ):
         print("\n==================================================")
-        print("DIAGNOSTIC COLLISION BYPASS ACTIVE")
+        print("DIAGNOSTIC PLANNER COLLISION BYPASS")
         print(
-            "RFS observed ESDF       : "
-            f"{'DISABLED' if args.diagnostic_disable_rfs_esdf else 'ENABLED'}"
+            "RFS observed ESDF            "
+            f"{'DISABLED' if rfs_esdf_bypassed else 'ENABLED'}"
         )
         print(
-            "Exact COVER observed ESDF: "
-            f"{'DISABLED' if args.diagnostic_disable_cover_esdf else 'ENABLED'}"
+            "Exact COVER ESDF             "
+            f"{'DISABLED' if cover_esdf_bypassed else 'ENABLED'}"
         )
         print(
-            "HOME->PRE observed ESDF  : "
-            f"{'DISABLED' if args.diagnostic_disable_home_pre_esdf else 'ENABLED'}"
+            "HOME->PRE observed ESDF      "
+            f"{'DISABLED' if home_pre_esdf_bypassed else 'ENABLED'}"
         )
         print(
-            "HOME->PRE self collision : "
-            f"{'DISABLED' if args.diagnostic_disable_home_pre_self_collision else 'ENABLED'}"
+            "HOME->PRE self collision     "
+            f"{'DISABLED' if home_pre_self_bypassed else 'ENABLED'}"
         )
-        print("Physical execution      : DISABLED")
+        print(
+            "PRE->COVER observed ESDF     "
+            f"{'DISABLED' if pre_cover_esdf_bypassed else 'ENABLED'}"
+        )
+        print(
+            "PRE->COVER self collision    "
+            f"{'DISABLED' if pre_cover_self_bypassed else 'ENABLED'}"
+        )
+        print("")
+        print("LIFT/TRANSFER/PLACE/RETREAT:")
+        print("planner collision gate       NONE (existing architecture)")
+        print("")
+        print("Isaac physical execution     DISABLED")
         print("==================================================")
     if args.diagnostic_ignore_static_gate:
         print("⚠ --diagnostic-ignore-static-gate 在V2中仅为旧命令兼容参数，不再参与筛选。")
@@ -918,12 +1131,15 @@ def main() -> int:
         "source_scene_folder": str(scene_folder),
         "sim_execute": bool(args.sim_execute),
         "planner_collision_checks_disabled": bool(args.no_planner_collision_check),
+        "experimental_collision_bypass": bool(args.experimental_bypass_planner_collision),
         "diagnostic_full_first_batch": bool(args.diagnostic_full_first_batch),
         "diagnostic_collision_bypass": {
-            "rfs_observed_esdf": bool(args.diagnostic_disable_rfs_esdf),
-            "exact_cover_observed_esdf": bool(args.diagnostic_disable_cover_esdf),
-            "home_pre_observed_esdf": bool(args.diagnostic_disable_home_pre_esdf),
-            "home_pre_self_collision": bool(args.diagnostic_disable_home_pre_self_collision),
+            "rfs_observed_esdf": bool(rfs_esdf_bypassed),
+            "exact_cover_observed_esdf": bool(cover_esdf_bypassed),
+            "home_pre_observed_esdf": bool(home_pre_esdf_bypassed),
+            "home_pre_self_collision": bool(home_pre_self_bypassed),
+            "pre_cover_observed_esdf": bool(pre_cover_esdf_bypassed),
+            "pre_cover_self_collision": bool(pre_cover_self_bypassed),
         },
         "coarse_ik_prefilter": cfg["coarse_ik_prefilter"],
         "flexible_ik": cfg["flexible_ik"],
@@ -1053,12 +1269,15 @@ def main() -> int:
                 funnel = {
                     "schema_version": 1,
                     "query": query,
+                    "experimental_collision_bypass": bool(args.experimental_bypass_planner_collision),
                     "diagnostic_full_first_batch": bool(args.diagnostic_full_first_batch),
                     "diagnostic_collision_bypass": {
-                        "rfs_observed_esdf": bool(args.diagnostic_disable_rfs_esdf),
-                        "exact_cover_observed_esdf": bool(args.diagnostic_disable_cover_esdf),
-                        "home_pre_observed_esdf": bool(args.diagnostic_disable_home_pre_esdf),
-                        "home_pre_self_collision": bool(args.diagnostic_disable_home_pre_self_collision),
+                        "rfs_observed_esdf": bool(rfs_esdf_bypassed),
+                        "exact_cover_observed_esdf": bool(cover_esdf_bypassed),
+                        "home_pre_observed_esdf": bool(home_pre_esdf_bypassed),
+                        "home_pre_self_collision": bool(home_pre_self_bypassed),
+                        "pre_cover_observed_esdf": bool(pre_cover_esdf_bypassed),
+                        "pre_cover_self_collision": bool(pre_cover_self_bypassed),
                     },
                     "dgn2": {
                         "total_proposals": int(total_proposals),
@@ -1096,7 +1315,7 @@ def main() -> int:
                     query=query,
                     candidates=candidates_plain,
                     settings=cfg.get("candidate_rfs_v2", {}),
-                    diagnostic_disable_observed_esdf=bool(args.diagnostic_disable_rfs_esdf),
+                    diagnostic_disable_observed_esdf=bool(rfs_esdf_bypassed),
                 )
                 rfs_priority_indices = list(rfs_runtime.ordered_indices)
                 rfs_stats = rfs_funnel_stats(rfs_runtime)
@@ -1380,7 +1599,7 @@ def main() -> int:
                                 no_planner_collision_check=bool(args.no_planner_collision_check),
                                 block_unknown=bool(cfg.get("block_unknown_space", False)),
                                 solutions_per_candidate=int(cfg["flexible_ik"]["selection"]["cover_solutions_per_candidate"]),
-                                diagnostic_disable_cover_esdf=bool(args.diagnostic_disable_cover_esdf),
+                                diagnostic_disable_cover_esdf=bool(cover_esdf_bypassed),
                             )
                             passed_cover = [row for row in cover_rows if row["pass"]]
                             exact_subfunnel = summarize_exact_cover_subfunnel(cover_rows)
@@ -1427,11 +1646,15 @@ def main() -> int:
                                     config=cfg,
                                     no_planner_collision_check=bool(args.no_planner_collision_check),
                                     block_unknown=bool(cfg.get("block_unknown_space", False)),
-                                    diagnostic_disable_home_pre_esdf=bool(args.diagnostic_disable_home_pre_esdf),
-                                    diagnostic_disable_home_pre_self_collision=bool(args.diagnostic_disable_home_pre_self_collision),
+                                    diagnostic_disable_home_pre_esdf=bool(home_pre_esdf_bypassed),
+                                    diagnostic_disable_home_pre_self_collision=bool(home_pre_self_bypassed),
+                                    diagnostic_disable_pre_cover_esdf=bool(pre_cover_esdf_bypassed),
+                                    diagnostic_disable_pre_cover_self_collision=bool(pre_cover_self_bypassed),
                                 )
                                 route["diagnostic_wall_s"] = float(time.perf_counter() - route_started)
                                 accumulate_home_pre_stats(funnel, route)
+                                accumulate_pre_cover_stats(funnel, route)
+                                update_flexible_stage_aggregates(funnel, route)
                                 route_report = {
                                     "target_rank": int(item["target_rank"]),
                                     "candidate_index": int(item["candidate_index"]),
@@ -1443,7 +1666,6 @@ def main() -> int:
                                     "stage_summaries": route.get("stage_summaries", []),
                                 }
                                 funnel["flexible_route"]["candidate_reports"].append(route_report)
-                                print_route_diagnostics(item, route)
                                 if route.get("status") == "PASS":
                                     full_route_pass_count += 1
                                     batch_funnel["full_route_pass"] += 1
@@ -1458,6 +1680,7 @@ def main() -> int:
                                         f"    ✓ Flexible Route PASS | rank={selected['target_rank']} "
                                         f"candidate={selected['candidate_index']} | {time.perf_counter()-route_started:.2f}s"
                                     )
+                                    print_route_diagnostics(item, route)
                                     _print_route_summary(route)
                                     if not args.diagnostic_full_first_batch:
                                         break
@@ -1522,6 +1745,7 @@ def main() -> int:
                         "map": map_report,
                         "selected": selected,
                         "planning_funnel": str(cycle_root / "planning_funnel.json"),
+                        "experimental_collision_bypass": bool(args.experimental_bypass_planner_collision),
                         "diagnostic_full_first_batch": bool(args.diagnostic_full_first_batch),
                         "planning_wall_s": time.perf_counter() - cycle_started,
                     }

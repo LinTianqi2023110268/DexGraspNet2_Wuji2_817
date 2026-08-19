@@ -47,12 +47,17 @@ retarget:
     ring: {d1: 8.0, d2: 15.0}
     pinky: {d1: 2.0, d2: 4.0}
   mediapipe_rotation:
+    # Retargeter-local MediaPipe keypoint preprocessing only.
+    # Do not multiply this rotation into T_SourceZone_LEAP, T_SourceZone_r_wrist,
+    # T_world_r_wrist, or T_world_flange.
     x: 0.0
     y: 180.0
     z: -90.0
   # Official Retargeter offset for the three non-thumb source fingers.  This
   # compensates the measured Wuji2-vs-LEAP fingertip residual while keeping
   # the hand root and all solver equations unchanged.
+  # Frame scope: MediaPipe-normalized retarget-local frame after
+  # mediapipe_rotation; not World, SourceZone, LEAP-root, Wuji2 wrist, or flange.
   wrist_offset_cm: [-0.24, -2.8, 0.8]
   thumb_offset_cm: [0.13, 1.2, 1.7]
 

@@ -241,6 +241,8 @@ def _select_pre_cover_pair(
     selection_cfg: dict,
     diagnostic_disable_home_pre_esdf: bool = False,
     diagnostic_disable_home_pre_self_collision: bool = False,
+    diagnostic_disable_pre_cover_esdf: bool = False,
+    diagnostic_disable_pre_cover_self_collision: bool = False,
 ) -> tuple[BeamState | None, BeamState | None, dict]:
     """Select endpoint pair; there is no intermediate Cartesian IK."""
     tune = _route_tuning(config)["pick_path"]
@@ -265,6 +267,12 @@ def _select_pre_cover_pair(
         "home_pregrasp_esdf_bypassed": bool(diagnostic_disable_home_pre_esdf),
         "home_pregrasp_self_collision_bypassed": bool(diagnostic_disable_home_pre_self_collision),
         "pregrasp_cover_fail": 0,
+        "pregrasp_cover_tested": 0,
+        "pregrasp_cover_pass": 0,
+        "pregrasp_cover_self_collision_fail": 0,
+        "pregrasp_cover_esdf_fail": 0,
+        "pregrasp_cover_esdf_bypassed": bool(diagnostic_disable_pre_cover_esdf),
+        "pregrasp_cover_self_collision_bypassed": bool(diagnostic_disable_pre_cover_self_collision),
     }
 
     pre_named = _named_state(geometry, measured, "pregrasp")
@@ -310,6 +318,12 @@ def _select_pre_cover_pair(
         cover_key = tuple(np.round(cover_node.q_rad, 4).tolist())
         approach_key = (pre_key, cover_key)
         if approach_key not in approach_cache:
+            approach_observed = bool(
+                _require(tune, "pregrasp_to_cover_esdf_check", context="pick_path")
+            ) and not bool(diagnostic_disable_pre_cover_esdf)
+            approach_self = bool(
+                _require(tune, "pregrasp_to_cover_self_collision_check", context="pick_path")
+            ) and not bool(diagnostic_disable_pre_cover_self_collision)
             approach_cache[approach_key] = client.check_joint_path(
                 np.stack([pre_node.q_rad, cover_node.q_rad]),
                 measured,
@@ -320,17 +334,20 @@ def _select_pre_cover_pair(
                 path_max_joint_step_rad=math.radians(
                     float(_require(tune, "pregrasp_to_cover_joint_step_deg", context="pick_path"))
                 ),
-                check_observed_map=bool(
-                    _require(tune, "pregrasp_to_cover_esdf_check", context="pick_path")
-                ),
-                check_self_collision=bool(
-                    _require(tune, "pregrasp_to_cover_self_collision_check", context="pick_path")
-                ),
+                check_observed_map=approach_observed,
+                check_self_collision=approach_self,
             )
         approach_report = approach_cache[approach_key]
+        counters["pregrasp_cover_tested"] += 1
         if not bool(approach_report.get("path_pass")):
             counters["pregrasp_cover_fail"] += 1
+            failure = approach_report.get("path_first_failure") or {}
+            if bool(failure.get("self_collision_blocked", False)):
+                counters["pregrasp_cover_self_collision_fail"] += 1
+            if int(failure.get("blocking_collision_sphere_count", 0)) > 0:
+                counters["pregrasp_cover_esdf_fail"] += 1
             continue
+        counters["pregrasp_cover_pass"] += 1
 
         home_state = _home_parent(q_current)
         pre_state = BeamState(
@@ -404,6 +421,8 @@ def plan_flexible_route(
     block_unknown: bool,
     diagnostic_disable_home_pre_esdf: bool = False,
     diagnostic_disable_home_pre_self_collision: bool = False,
+    diagnostic_disable_pre_cover_esdf: bool = False,
+    diagnostic_disable_pre_cover_self_collision: bool = False,
     output_npz: Path | None = None,
 ) -> dict:
     """Strict COVER + relaxed endpoints + simple joint-space pick path."""
@@ -487,6 +506,8 @@ def plan_flexible_route(
         selection_cfg=selection_cfg,
         diagnostic_disable_home_pre_esdf=bool(diagnostic_disable_home_pre_esdf),
         diagnostic_disable_home_pre_self_collision=bool(diagnostic_disable_home_pre_self_collision),
+        diagnostic_disable_pre_cover_esdf=bool(diagnostic_disable_pre_cover_esdf),
+        diagnostic_disable_pre_cover_self_collision=bool(diagnostic_disable_pre_cover_self_collision),
     )
     summaries.append({"stage": "pick_path", **pick_summary})
     if pre_state is None or cover_state is None:

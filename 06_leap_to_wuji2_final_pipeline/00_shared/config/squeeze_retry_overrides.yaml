@@ -2,7 +2,7 @@
 # The optimizer remains the official wuji-retargeting analytical optimizer
 # with the already-audited four-finger correspondence adapter.
 retarget:
-  scaling: 0.87
+  scaling: 0.84
   w_pos: 3.0
   w_dir: 12.0
   w_full_hand: 0.15
@@ -10,4 +10,3 @@ retarget:
   wrist_offset_cm: [0.0, 0.0, 0.0]
   thumb_offset_cm: [0.0, 0.0, 0.0]
   apply_filter_at_static_endpoint: false
-

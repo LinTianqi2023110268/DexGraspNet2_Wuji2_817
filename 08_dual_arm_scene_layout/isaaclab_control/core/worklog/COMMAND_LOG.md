@@ -914,6 +914,45 @@
 - Key output: DINO now runs on fixed ROI `[170,0,970,700]` and writes full-image bbox coordinates; ESDF map input uses `depth_m_workspace_roi.npy` with full 720x1280 shape and unchanged K/T; persistent capture hides SourceZone/PlacementZone/Frustum/Markers only while capturing; cuRobo worker lifecycle moved to candidate batch scope; each batch writes `flexible_route_failures.jsonl`; RFS 0-PASS is reported as `NO_TARGET_REACH` or `NO_TRAJECTORY_SPACE`, not fallback.
 - Conclusion: non-core plumbing is ready for user/GPU-side validation. Stage-specific IK tolerances, simplified joint-space route semantics, and RFS support-pose algorithm replacement are intentionally left for the next ChatGPT-provided core patch.
 
+## 2026-08-19 -- PlacementZone 5 cm X-edge gap static layout update
+
+- Purpose: move only the authored PlacementZone X coordinate so the SourceZone/PlacementZone nearest X-edge gap is exactly `0.05 m`.
+- Conda environment: base for static checks; `isaaclab22_sim50` for CPU-only unittest.
+- Working directory: `/home/lin/Projects/DexGraspNet2_Wuji2`
+- Commands:
+
+  ```bash
+  pwd
+  git status --short
+  grep -RIn --exclude='*.log' --exclude-dir='.git' --exclude-dir='__pycache__' --exclude-dir='outputs' -E '0\.40069047181642775|0\.400690|PlacementZone|placement_zone|PLACEMENT_ZONE|PLACEMENT_CENTER' .
+  python 08_dual_arm_scene_layout/scripts/check_placement_zone_gap.py
+  python -m py_compile 08_dual_arm_scene_layout/scripts/01_create_manual_layout.py 08_dual_arm_scene_layout/scripts/check_placement_zone_gap.py
+  conda run -n isaaclab22_sim50 python -m unittest -v 08_dual_arm_scene_layout.isaaclab_control.closed_loop.tests.test_flexible_planning 08_dual_arm_scene_layout.isaaclab_control.closed_loop.tests.test_closed_loop_logic
+  git diff --check
+  git grep -n --untracked -E '0\.40069047181642775|0\.400690' -- . ':(exclude)08_dual_arm_scene_layout/isaaclab_control/outputs/**' ':(exclude)**/*.log' ':(exclude)**/__pycache__/**' ':(exclude)DexGraspNet2_Wuji2_flexible_persistent_update/**' ':(exclude)_backup_before_mount_y016_20260818/**'
+  ```
+
+- Exit code: `0` for invariant script, py_compile, `isaaclab22_sim50` unittest, and `git diff --check`; final old-coordinate `git grep` returned `1` with no matches.
+- Key output: formal gap `0.049999999999999989 m`; draft gap `0.049999999999999989 m`; old formal PlacementZone X no longer appears in active source/config/scene outside excluded historical/overlay/backup paths.
+- Conclusion: formal JSON and both production USD stages are synchronized at PlacementZone center X `0.27617723418526796`; planner/runtime consumers remain dynamic readers.
+
+## 2026-08-19 -- Experimental planner collision bypass execution flag
+
+- Purpose: add `--experimental-bypass-planner-collision` for real Isaac simulation execution while bypassing the planner collision gates already isolated by diagnostics.
+- Conda environment: base for py_compile/diff; `isaaclab22_sim50` for CPU-only unittest.
+- Working directory: `/home/lin/Projects/DexGraspNet2_Wuji2`
+- Commands:
+
+  ```bash
+  python -m py_compile 08_dual_arm_scene_layout/isaaclab_control/closed_loop/orchestrator.py
+  conda run -n isaaclab22_sim50 python -m unittest -v 08_dual_arm_scene_layout.isaaclab_control.closed_loop.tests.test_flexible_planning 08_dual_arm_scene_layout.isaaclab_control.closed_loop.tests.test_closed_loop_logic
+  git diff --check
+  ```
+
+- Exit code: `0` for all commands.
+- Key output: existing `--diagnostic-disable-*` flags remain restricted to `--diagnostic-full-first-batch`; new experimental flag requires `--sim-execute` and sets effective bypass for RFS observed ESDF, Exact COVER observed ESDF, HOME->PRE observed ESDF/self-collision, and PRE->COVER observed ESDF/self-collision.
+- Conclusion: experimental execution entry is wired without changing route parameters, IK tolerances, sampling, scene layout, camera, DGN2, retarget, Wuji2 control, or Isaac execution code.
+
 
 ## 2026-08-17 16:18:00 +0800 - final worktree cleanup
 - Purpose: clean generated outputs/history in `/home/lin/Projects/DexGraspNet2_Wuji2`, preserve vendor submodule gitlinks, retain compact candidate5989 evidence.

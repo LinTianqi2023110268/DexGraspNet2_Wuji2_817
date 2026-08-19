@@ -58,6 +58,7 @@ import torch  # noqa: E402
 import isaacsim.core.utils.stage as stage_utils  # noqa: E402
 import isaaclab.sim as sim_utils  # noqa: E402
 from isaaclab.assets import Articulation, ArticulationCfg, RigidObject, RigidObjectCfg  # noqa: E402
+from isaaclab.sensors import ContactSensor, ContactSensorCfg  # noqa: E402
 from isaaclab.sensors.camera import Camera, CameraCfg  # noqa: E402
 from isaaclab.sim import SimulationContext  # noqa: E402
 from isaacsim.core.utils.stage import add_reference_to_stage, get_current_stage  # noqa: E402
@@ -91,9 +92,75 @@ ROUTE_STAGES = [
 TRACE_FIELDS = [
     "time_s", "state", "progress", "flange_error_mm", "flange_error_deg",
     "target_object_x_m", "target_object_y_m", "target_object_z_m",
+    "target_object_qw", "target_object_qx", "target_object_qy", "target_object_qz",
+    "target_object_vx_m_s", "target_object_vy_m_s", "target_object_vz_m_s",
+    "target_object_wx_rad_s", "target_object_wy_rad_s", "target_object_wz_rad_s",
     "object_lift_mm", "max_arm_qdot_rad_s", "max_arm_joint_goal_error_deg",
     "max_wuji2_joint_target_error_deg",
+    "target_contact_finger_count", "target_contact_force_max_n",
+    "target_contact_force_sum_n",
+    "target_contact_normal_force_estimated_n",
+    "target_contact_friction_force_estimated_n",
+    "thumb_target_force_n", "index_target_force_n", "middle_target_force_n",
+    "ring_target_force_n", "pinky_target_force_n", "palm_target_force_n",
 ]
+CONTACT_GROUPS = ("thumb", "index", "middle", "ring", "pinky", "palm")
+
+
+def contact_group_for_body(body_name: str) -> str | None:
+    if body_name.startswith("r_thumb"):
+        return "thumb"
+    if body_name.startswith("r_index_finger"):
+        return "index"
+    if body_name.startswith("r_middle_finger"):
+        return "middle"
+    if body_name.startswith("r_ring_finger"):
+        return "ring"
+    if body_name.startswith("r_pinky"):
+        return "pinky"
+    if body_name in {"r_wrist", "r_base_link"}:
+        return "palm"
+    return None
+
+
+def create_target_contact_sensors(
+    stage: Usd.Stage,
+    robot_root: str,
+    target_rigid_path: str,
+) -> dict[str, tuple[str, ContactSensor]]:
+    """Create grouped Wuji2 contact sensors filtered to the selected target object.
+
+    Isaac Lab's ContactSensor reports force vectors but not per-contact PhysX
+    normals.  Downstream diagnostics therefore report total force exactly and
+    normal/friction as explicitly-labelled estimates.
+    """
+
+    sensors: dict[str, tuple[str, ContactSensor]] = {}
+    grouped_paths = {group: [] for group in CONTACT_GROUPS}
+    for prim in stage.Traverse():
+        body_path = str(prim.GetPath())
+        if not body_path.startswith(robot_root + "/") or not prim.HasAPI(UsdPhysics.RigidBodyAPI):
+            continue
+        group = contact_group_for_body(prim.GetName())
+        if group is None:
+            continue
+        grouped_paths[group].append(body_path)
+        sim_utils.activate_contact_sensors(body_path, threshold=0.0, stage=stage)
+        sensors[f"{group}:{prim.GetName()}"] = (group, ContactSensor(ContactSensorCfg(
+            prim_path=body_path,
+            update_period=0.0,
+            history_length=0,
+            track_pose=True,
+            track_air_time=False,
+            filter_prim_paths_expr=[target_rigid_path],
+        )))
+    missing = [group for group, paths in grouped_paths.items() if not paths]
+    if missing:
+        raise RuntimeError(f"Missing Wuji2 contact body groups: {missing}")
+    print(f"[CONTACT AUDIT] whole Wuji2 hand -> {target_rigid_path}", flush=True)
+    for group, paths in grouped_paths.items():
+        print(f"  {group}: {[Path(path).name for path in paths]}", flush=True)
+    return sensors
 
 
 def emit(payload: dict) -> None:
@@ -802,6 +869,15 @@ class PersistentScene:
         if int(target_segmentation_id) not in self.objects_by_seg:
             raise KeyError(f"target segmentation id {target_segmentation_id} is absent from persistent scene")
         target_object = self.objects_by_seg[int(target_segmentation_id)]
+        target_record = next(
+            record for record in self.object_records
+            if int(record["segmentation_id"]) == int(target_segmentation_id)
+        )
+        contact_sensors = create_target_contact_sensors(
+            self.stage,
+            ROBOT_PRIM,
+            str(target_record["rigid_path"]),
+        )
         with np.load(plan_npz, allow_pickle=False) as z:
             stage_names = [str(x) for x in z["waypoint_names"].tolist()]
             arm_q = np.asarray(z["arm_q_rad"], dtype=np.float64)
@@ -844,6 +920,116 @@ class PersistentScene:
         current_stage = "INIT"
         verified_target_lift_mm: float | None = None
 
+        def update_contact_sensors() -> None:
+            for _, sensor in contact_sensors.values():
+                sensor.update(self.dt, force_recompute=True)
+
+        def contact_snapshot() -> dict:
+            update_contact_sensors()
+            object_position = target_object.data.root_pos_w[0]
+            group_force_vectors = {
+                group: torch.zeros(3, device=self.robot.device, dtype=self.command.dtype)
+                for group in CONTACT_GROUPS
+            }
+            group_force_norms = {group: 0.0 for group in CONTACT_GROUPS}
+            normal_estimated = 0.0
+            friction_estimated = 0.0
+            force_sum = torch.zeros(3, device=self.robot.device, dtype=self.command.dtype)
+            for group, sensor in contact_sensors.values():
+                target_matrix = sensor.data.force_matrix_w
+                if target_matrix.numel() == 0:
+                    continue
+                vectors = target_matrix.reshape(-1, 3)
+                norms = torch.linalg.vector_norm(vectors, dim=-1)
+                if norms.numel() == 0:
+                    continue
+                max_index = int(torch.argmax(norms).item())
+                vector = vectors[max_index]
+                norm = float(norms[max_index])
+                if norm <= group_force_norms[group]:
+                    continue
+                group_force_norms[group] = norm
+                group_force_vectors[group] = vector
+            for vector in group_force_vectors.values():
+                force_sum = force_sum + vector
+            total_force_norm = float(torch.linalg.vector_norm(force_sum))
+            max_force = max(group_force_norms.values(), default=0.0)
+            finger_count = sum(group_force_norms[group] > 1.0e-3 for group in CONTACT_GROUPS[:-1])
+            # Estimate normal/tangential components using a radial axis from the
+            # target-object COM to each hand body.  ContactSensor does not expose
+            # PhysX contact normals, so these are diagnostics, not gate values.
+            for group, sensor in contact_sensors.values():
+                vector = group_force_vectors[group]
+                norm = float(torch.linalg.vector_norm(vector))
+                if norm <= 1.0e-9:
+                    continue
+                try:
+                    sensor_pos = sensor.data.pos_w[0]
+                    axis = sensor_pos - object_position
+                    axis_norm = float(torch.linalg.vector_norm(axis))
+                    if axis_norm <= 1.0e-9:
+                        continue
+                    axis = axis / axis_norm
+                    normal_component = torch.dot(vector, axis) * axis
+                    friction_component = vector - normal_component
+                    normal_estimated += abs(float(torch.dot(vector, axis)))
+                    friction_estimated += float(torch.linalg.vector_norm(friction_component))
+                except Exception:
+                    continue
+            return {
+                "finger_count": int(finger_count),
+                "max_force_n": float(max_force),
+                "sum_force_n": float(total_force_norm),
+                "normal_force_estimated_n": float(normal_estimated),
+                "friction_force_estimated_n": float(friction_estimated),
+                "group_force_norms": group_force_norms,
+                "sum_force_vector_world_n": force_sum.detach().cpu().tolist(),
+            }
+
+        def object_state_snapshot() -> dict:
+            return {
+                "position_world_m": target_object.data.root_pos_w[0].detach().cpu().tolist(),
+                "quaternion_world_wxyz": target_object.data.root_quat_w[0].detach().cpu().tolist(),
+                "linear_velocity_world_m_s": target_object.data.root_lin_vel_w[0].detach().cpu().tolist(),
+                "angular_velocity_world_rad_s": target_object.data.root_ang_vel_w[0].detach().cpu().tolist(),
+                "lift_mm": float(target_lift_mm_now()),
+            }
+
+        def print_grasp_contact_audit(stage_label: str) -> None:
+            obj = object_state_snapshot()
+            contact = contact_snapshot()
+            print(f"\n[GRASP CONTACT AUDIT] {stage_label}", flush=True)
+            print(
+                "  object pose: "
+                f"p={np.round(obj['position_world_m'], 6).tolist()} "
+                f"q_wxyz={np.round(obj['quaternion_world_wxyz'], 6).tolist()}",
+                flush=True,
+            )
+            print(
+                "  object velocity: "
+                f"v={np.round(obj['linear_velocity_world_m_s'], 6).tolist()} m/s "
+                f"w={np.round(obj['angular_velocity_world_rad_s'], 6).tolist()} rad/s",
+                flush=True,
+            )
+            print(
+                "  contact: "
+                f"fingers={contact['finger_count']}/5 "
+                f"max={contact['max_force_n']:.3f} N "
+                f"sum={contact['sum_force_n']:.3f} N "
+                f"normal_est={contact['normal_force_estimated_n']:.3f} N "
+                f"friction_est={contact['friction_force_estimated_n']:.3f} N",
+                flush=True,
+            )
+            print(
+                "  per group force N: "
+                + ", ".join(
+                    f"{group}={contact['group_force_norms'][group]:.3f}"
+                    for group in CONTACT_GROUPS
+                ),
+                flush=True,
+            )
+            print(f"  object z delta: {obj['lift_mm']:.3f} mm", flush=True)
+
         def capture_replay(state: str, force: bool = False) -> None:
             nonlocal replay_next
             if not force and sim_time + 0.5 * self.dt < replay_next:
@@ -863,8 +1049,12 @@ class PersistentScene:
                 self.robot.data.body_pose_w[0, self.flange_id], target_matrix
             )
             object_position = target_object.data.root_pos_w[0]
+            object_quat = target_object.data.root_quat_w[0]
+            object_lin_vel = target_object.data.root_lin_vel_w[0]
+            object_ang_vel = target_object.data.root_ang_vel_w[0]
             object_lift = 1000.0 * float(object_position[2] - initial_object_position[2])
             max_object_lift_mm = max(max_object_lift_mm, object_lift)
+            contact = contact_snapshot()
             row = {
                 "time_s": float(sim_time),
                 "state": state,
@@ -874,6 +1064,16 @@ class PersistentScene:
                 "target_object_x_m": float(object_position[0]),
                 "target_object_y_m": float(object_position[1]),
                 "target_object_z_m": float(object_position[2]),
+                "target_object_qw": float(object_quat[0]),
+                "target_object_qx": float(object_quat[1]),
+                "target_object_qy": float(object_quat[2]),
+                "target_object_qz": float(object_quat[3]),
+                "target_object_vx_m_s": float(object_lin_vel[0]),
+                "target_object_vy_m_s": float(object_lin_vel[1]),
+                "target_object_vz_m_s": float(object_lin_vel[2]),
+                "target_object_wx_rad_s": float(object_ang_vel[0]),
+                "target_object_wy_rad_s": float(object_ang_vel[1]),
+                "target_object_wz_rad_s": float(object_ang_vel[2]),
                 "object_lift_mm": float(object_lift),
                 "max_arm_qdot_rad_s": float(torch.max(torch.abs(self.robot.data.joint_vel[:, self.arm_ids]))),
                 "max_arm_joint_goal_error_deg": float(torch.max(torch.abs(torch.rad2deg(
@@ -882,6 +1082,12 @@ class PersistentScene:
                 "max_wuji2_joint_target_error_deg": float(torch.max(torch.abs(torch.rad2deg(
                     self.command[:, hand_ids] - self.robot.data.joint_pos[:, hand_ids]
                 )))),
+                "target_contact_finger_count": contact["finger_count"],
+                "target_contact_force_max_n": contact["max_force_n"],
+                "target_contact_force_sum_n": contact["sum_force_n"],
+                "target_contact_normal_force_estimated_n": contact["normal_force_estimated_n"],
+                "target_contact_friction_force_estimated_n": contact["friction_force_estimated_n"],
+                **{f"{group}_target_force_n": contact["group_force_norms"][group] for group in CONTACT_GROUPS},
             }
             trace.append(row)
             capture_replay(state)
@@ -889,7 +1095,8 @@ class PersistentScene:
                 print(
                     f"\r[执行] {state:<14} {100.0*progress:5.1f}% | "
                     f"末端={position_error:5.1f}mm/{orientation_error:4.1f}° | "
-                    f"抬升={object_lift:6.1f}mm",
+                    f"抬升={object_lift:6.1f}mm | "
+                    f"接触={contact['finger_count']}/5 max={contact['max_force_n']:6.2f}N",
                     end="", flush=True,
                 )
             return position_error, orientation_error
@@ -1138,6 +1345,7 @@ class PersistentScene:
                 failure_reason=endpoint_reason or "GRASP exact endpoint failed",
                 retreat_to_pregrasp=True,
             )
+        print_grasp_contact_audit("GRASP_END")
 
         print("[执行] SQUEEZE：41点 Wuji2 稠密收紧轨迹", flush=True)
         squeeze_duration = float(durations["squeeze"])
@@ -1188,10 +1396,12 @@ class PersistentScene:
                 hold_index,
             )
         print()
+        print_grasp_contact_audit("SQUEEZE_HOLD_END")
 
         execute_segment("LIFT", arm_q[index_of["lift"]], hand_q5[hand_index["squeeze"]], durations["lift"], flange_targets[index_of["lift"]])
         self.hold(float(durations.get("lift_hold", 0.4)), render=not bool(getattr(ARGS, "headless", False)))
         sim_time += float(durations.get("lift_hold", 0.4))
+        print_grasp_contact_audit("LIFT_END")
 
         verified_target_lift_mm = target_lift_mm_now()
         lift_threshold_mm = float(self.config.get("object_lift_pass_mm", 30.0))

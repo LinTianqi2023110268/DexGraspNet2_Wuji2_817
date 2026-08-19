@@ -139,9 +139,11 @@ def main() -> None:
     with np.errstate(invalid="ignore"):
         flat_world = flat_camera @ world_from_camera[:3, :3].T + world_from_camera[:3, 3]
 
-    # SourceZone transform is recorded by the audited Isaac Sim import script.
-    # Gf stores matrices in row-vector layout; transpose gives the conventional
-    # column-vector transform used by NumPy below.
+    # SourceZone transform is recorded by the persistent Isaac capture path.
+    # Do not use the visual SourceZone marker matrix as a rigid transform: that
+    # prim is display geometry and includes scale (0.5, 0.3, 0.001).  Without a
+    # settled manifest from persistent_isaac.worker.rigid_world_transform we
+    # cannot prove the frame, so fail loudly instead of silently using scale.
     capture_manifest = json.loads(capture_manifest_path.read_text(encoding="utf-8"))
     settled_manifest_path = capture_manifest.get("settled_scene_manifest")
     if settled_manifest_path and Path(settled_manifest_path).is_file():
@@ -152,14 +154,11 @@ def main() -> None:
             table.get("size_xy_m", table["size_m"][:2]), dtype=np.float64
         )
     else:
-        if not IMPORT_REPORT.is_file():
-            raise FileNotFoundError(IMPORT_REPORT)
-        import_report = json.loads(IMPORT_REPORT.read_text(encoding="utf-8"))
-        source_gf = np.asarray(
-            import_report["source_zone_rigid_Gf_local_to_world_row_major"], dtype=np.float64
+        raise RuntimeError(
+            "capture_manifest.json must contain a valid settled_scene_manifest "
+            "with world_from_source_zone; refusing to derive T_world_source from "
+            "SourceZone display geometry scale"
         )
-        world_from_source = source_gf.T
-        source_size = np.asarray(import_report["source_zone_size_m"][:2], dtype=np.float64)
     source_from_world = np.linalg.inv(world_from_source)
     with np.errstate(invalid="ignore"):
         flat_source = flat_world @ source_from_world[:3, :3].T + source_from_world[:3, 3]

@@ -80,7 +80,7 @@ def Xform "World"
                 double size = 1
                 float3 xformOp:rotateXYZ = (0, 0, 0)
                 float3 xformOp:scale = (1, 0.3, 0.001)
-                double3 xformOp:translate = (0.25, 0, 0.0005)
+                double3 xformOp:translate = (0.30, 0, 0.0005)
                 uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ", "xformOp:scale"]
             }
         }
@@ -938,6 +938,7 @@ def Xform "World"
     }
 }
 
+
 def Xform "Environment"
 {
     quatd xformOp:orient = (1, 0, 0, 0)
@@ -1020,4 +1021,3 @@ def "Render" (
         }
     }
 }
-

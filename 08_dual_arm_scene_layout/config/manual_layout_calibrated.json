@@ -135,7 +135,7 @@
     "placement_zone": {
       "prim_path": "/World/Layout/TableAssembly/PlacementZone",
       "position_world_m": [
-        0.40069047181642775,
+        0.27617723418526796,
         -0.1446419350251421,
         0.46
       ],
@@ -159,7 +159,7 @@
           0.0
         ],
         [
-          0.40069047181642775,
+          0.27617723418526796,
           -0.1446419350251421,
           0.46,
           1.0
@@ -278,7 +278,7 @@
   "measurements_m": {
     "robot_to_table_m": 0.8158431221748457,
     "robot_to_source_m": 0.6270108178238458,
-    "source_to_placement_m": 0.8245547644673441
+    "source_to_placement_m": 0.7000489119286356
   },
   "camera": {
     "status": "virtual_depth_camera_calibrated",

@@ -80,7 +80,7 @@ def Xform "World"
                 double size = 1
                 float3 xformOp:rotateXYZ = (0, 0, 0)
                 float3 xformOp:scale = (0.8, 0.3, 0.001)
-                double3 xformOp:translate = (0.40069047181642775, -0.1446419350251421, 0.46)
+                double3 xformOp:translate = (0.27617723418526796, -0.1446419350251421, 0.46)
                 uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ", "xformOp:scale"]
             }
         }
@@ -887,7 +887,7 @@ def Xform "World"
             double radius = 0.012
             float3 xformOp:rotateXYZ = (0, 0, 0)
             float3 xformOp:scale = (1, 1, 1)
-            double3 xformOp:translate = (0.40069047181642775, -0.1446419350251421, 0.46)
+            double3 xformOp:translate = (0.27617723418526796, -0.1446419350251421, 0.46)
             uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ", "xformOp:scale"]
         }
 
@@ -905,7 +905,7 @@ def Xform "World"
         {
             custom double dgn2:robot_to_source_m = 0.6270108178238458
             custom double dgn2:robot_to_table_m = 0.8158431221748457
-            custom double dgn2:source_to_placement_m = 0.8245547644673441
+            custom double dgn2:source_to_placement_m = 0.7000489119286356
             custom string dgn2:units = "meters"
 
             def BasisCurves "RobotToTable"
@@ -931,7 +931,7 @@ def Xform "World"
             def BasisCurves "SourceToPlacement"
             {
                 int[] curveVertexCounts = [2]
-                point3f[] points = [(-0.42382276, -0.15291664, 0.46), (0.40069047, -0.14464194, 0.46)]
+                point3f[] points = [(-0.42382276, -0.15291664, 0.46), (0.27617723, -0.14464194, 0.46)]
                 color3f[] primvars:displayColor = [(0.95, 0.75, 0.05)]
                 uniform token type = "linear"
                 token visibility = "invisible"
@@ -1042,6 +1042,7 @@ def Xform "World"
     }
 }
 
+
 def Xform "Environment"
 {
     quatd xformOp:orient = (1, 0, 0, 0)
@@ -1124,4 +1125,3 @@ def "Render" (
         }
     }
 }
-

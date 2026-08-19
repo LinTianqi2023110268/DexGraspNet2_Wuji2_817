@@ -127,7 +127,13 @@ def _candidate_geometry(case_root: Path) -> dict:
         hand_names = [str(x) for x in z["finger_joint_names"].tolist()]
         hand_stage_names = [str(x) for x in z["waypoint_names"].tolist()]
         hand_q = np.asarray(z["waypoint_joint_positions"][0], dtype=np.float64)
-        approach_axis = np.asarray(z["wuji2_semantic_palm_approach_axis_world"], dtype=np.float64)
+        if "wuji2_semantic_palm_approach_axis_source" in z.files:
+            approach_axis = (
+                world_from_source[:3, :3]
+                @ np.asarray(z["wuji2_semantic_palm_approach_axis_source"], dtype=np.float64)
+            )
+        else:
+            approach_axis = np.asarray(z["wuji2_semantic_palm_approach_axis_world"], dtype=np.float64)
         is_top = bool(np.asarray(z["is_top_grasp"]).item())
     hand_index = {name: i for i, name in enumerate(hand_stage_names)}
 

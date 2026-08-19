@@ -157,3 +157,21 @@ Run `./run_closed_loop.sh --planning-only` from a GPU-visible terminal using `sc
 - Modified files: `closed_loop/orchestrator.py`, `closed_loop/scripts/grounded_sam_backend.py`, `closed_loop/persistent_isaac/worker.py`, `closed_loop/planning/candidate_rfs_v2_runtime.py`, worklogs.
 - Test results: py_compile PASS; `isaaclab22_sim50` closed-loop CPU unit tests PASS 9/9; `git diff --check` PASS.
 - Environment: no full closed-loop, Isaac app, DGN2, RFS backend, cuRobo GPU worker, retarget, or physical execution was run.
+
+## 2026-08-19 - PlacementZone 5 cm X-edge gap layout update
+- Current phase: static layout parameter update only.
+- Completed: moved only formal `PlacementZone` X from `0.40069047181642775` to `0.27617723418526796` in `manual_layout_calibrated.json`, `manual_layout_calibrated.usda`, and `manual_layout_calibrated_mass_fixed.usda`; synchronized PlacementZoneCenter marker and SourceToPlacement measurement; changed draft generator to derive the placement center from `ZONE_EDGE_GAP_M=0.05`; synchronized `manual_layout_draft.usda` to X `0.30`.
+- Current conclusion: SourceZone right edge and PlacementZone left edge gap is `0.049999999999999989 m`, satisfying the required `<1e-9` invariant. SourceZone, Table, DualArmMount, Camera, zone sizes, robot joint pose, and planning tuning were not changed.
+- Current blockers: none for this static layout update.
+- Modified files: `08_dual_arm_scene_layout/config/manual_layout_calibrated.json`, `08_dual_arm_scene_layout/scenes/manual_layout_calibrated.usda`, `08_dual_arm_scene_layout/scenes/manual_layout_calibrated_mass_fixed.usda`, `08_dual_arm_scene_layout/scenes/manual_layout_draft.usda`, `08_dual_arm_scene_layout/scripts/01_create_manual_layout.py`, `08_dual_arm_scene_layout/scripts/check_placement_zone_gap.py`, worklog files.
+- Test results: invariant script PASS; modified Python py_compile PASS; `isaaclab22_sim50` closed-loop CPU unit tests PASS 9/9; `git diff --check` PASS; old formal X grep over active paths returned no matches.
+- Environment: no Isaac Sim, DGN2, RFS, cuRobo, retarget, full closed-loop, or physical simulation was run.
+
+## 2026-08-19 - Experimental planner collision bypass execution flag
+- Current phase: diagnostic/experimental execution plumbing only.
+- Completed: added `--experimental-bypass-planner-collision` to `closed_loop/orchestrator.py`; it is allowed only with `--sim-execute` and does not change existing `--diagnostic-disable-*` semantics.
+- Current conclusion: in experimental execution mode, RFS observed ESDF, Exact COVER observed ESDF, HOME->PRE observed ESDF/self-collision, and PRE->COVER observed ESDF/self-collision are bypassed through the existing per-gate plumbing while Isaac/PhysX execution remains enabled.
+- Current blockers: not runtime-validated in this channel by request.
+- Modified files: `closed_loop/orchestrator.py`, worklog files.
+- Test results: orchestrator py_compile PASS; `isaaclab22_sim50` closed-loop CPU unit tests PASS 9/9; `git diff --check` PASS.
+- Environment: no Isaac Sim, DGN2, RFS, cuRobo, retarget, full closed-loop, or physical simulation was run.
