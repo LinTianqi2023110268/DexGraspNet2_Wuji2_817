@@ -47,6 +47,7 @@ def main() -> int:
         RIGHT_ARM_NAMES,
     )
     from core.ik import CuroboGpuIK, select_waypoint_chain, select_solution
+    from core.ik.stage_acceptance import StageAcceptancePolicy, acceptance_mask_from_result
     from core.perception_collision import (
         RGBDFrame, CuroboRGBDMapper, CuroboRobotSphereModel,
     )
@@ -72,6 +73,21 @@ def main() -> int:
         / "08_dual_arm_scene_layout/isaaclab_control/core/generated/dual_arm_right_wuji2_curobo.yml"
     )
 
+    def apply_acceptance_policy(result, payload: dict | None) -> dict:
+        if payload is None:
+            return {
+                "mode": "solver_default_strict",
+                "position_tolerance_m": float(ik.config.position_tolerance_m),
+                "orientation_tolerance_rad": float(ik.config.orientation_tolerance_rad),
+                "minimum_inner_limit_margin_rad": float(
+                    ik.config.minimum_inner_limit_margin_rad
+                ),
+                "require_raw_success": True,
+            }
+        policy = StageAcceptancePolicy.from_payload(payload)
+        result.accepted = acceptance_mask_from_result(result, policy)
+        return {"mode": "stage_override", **policy.to_jsonable()}
+
     def get_robot_sphere_model():
         nonlocal robot_sphere_model
         if robot_sphere_model is None:
@@ -85,6 +101,7 @@ def main() -> int:
         return {
             "target_index": i,
             "solution_index": k,
+            "raw_success": bool(result.raw_success[i, k]),
             "q_rad": result.q_rad[i, k].tolist(),
             "position_error_m": float(result.position_error_m[i, k]),
             "orientation_error_rad": float(result.orientation_error_rad[i, k]),
@@ -614,6 +631,7 @@ def main() -> int:
         if max_step <= 0.0:
             raise ValueError("path_max_joint_step_rad must be positive")
         check_observed = bool(req.get("check_observed_map", False))
+        check_self = bool(req.get("check_self_collision", False))
         if check_observed and observed_map is None:
             raise RuntimeError("build_map must be called before observed path checking")
         T_world_base = req.get("T_world_base")
@@ -658,8 +676,12 @@ def main() -> int:
                     )
                     blocking_count = int(np.count_nonzero(collision["blocking_collision"]))
                     unknown_count = int(np.count_nonzero(collision["unknown"]))
-                if blocking_count != 0:
+                self_blocked = bool(
+                    check_self and not bool(self_collision["self_collision_pass"])
+                )
+                if self_blocked or blocking_count != 0:
                     failure = {
+                        "self_collision_blocked": self_blocked,
                         "sample_index": sample_index,
                         "alpha": alpha,
                         "blocking_collision_sphere_count": blocking_count,
@@ -679,6 +701,7 @@ def main() -> int:
             "path_segments": segments,
             "path_first_failure": first_failure,
             "check_observed_map": check_observed,
+            "check_self_collision": check_self,
         }
 
     if not args.stdio:
@@ -701,6 +724,9 @@ def main() -> int:
                 targets = np.asarray(req["targets"], dtype=np.float64)
                 q_ref = np.asarray(req.get("q_reference_rad", np.deg2rad(DEFAULT_INITIAL_RIGHT_ARM_DEG)), dtype=np.float64)
                 result = ik.solve(targets)
+                acceptance_policy = apply_acceptance_policy(
+                    result, req.get("acceptance_policy")
+                )
                 ik_accepted_per_target = result.accepted.sum(axis=1).tolist()
                 collision_context = req.get("collision_context")
                 if collision_context is None:
@@ -735,6 +761,7 @@ def main() -> int:
                 emit({
                     "ok": True,
                     "op": "solve_ik",
+                    "acceptance_policy": acceptance_policy,
                     "accepted_per_target": result.accepted.sum(axis=1).tolist(),
                     "ik_accepted_per_target": ik_accepted_per_target,
                     "raw_success_per_target": result.raw_success.sum(axis=1).tolist(),
@@ -770,6 +797,9 @@ def main() -> int:
                     dtype=np.float64,
                 )
                 result = ik.solve(targets)
+                acceptance_policy = apply_acceptance_policy(
+                    result, req.get("acceptance_policy")
+                )
                 ik_accepted_per_target = result.accepted.sum(axis=1).tolist()
                 collision_context = req.get("collision_context")
                 if collision_context is None:
@@ -839,6 +869,7 @@ def main() -> int:
                 emit({
                     "ok": True,
                     "op": "solve_ik_groups",
+                    "acceptance_policy": acceptance_policy,
                     "group_count": len(groups),
                     "pose_count": int(len(targets)),
                     "group_sizes": group_sizes,

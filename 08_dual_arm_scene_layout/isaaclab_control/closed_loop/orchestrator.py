@@ -5,7 +5,7 @@ V2 architecture
 ---------------
 * Isaac Lab/Sim starts once and keeps the same physical world for every capture
   and every grasp cycle.
-* cuRobo starts once per planning cycle and is released before Isaac execution.
+* cuRobo starts once per candidate batch and is released before Isaac execution.
 * legacy approximate GRASP/PREGRASP coarse IK gates are configurable and OFF by
   default.
 * after LEAP->Wuji2, exact COVER is the hard grasp-root IK gate.
@@ -42,16 +42,15 @@ sys.path.insert(0, str(SCRIPTS))
 from core.bridge import CuroboWorkerClient  # noqa: E402
 from core.config import WorkerConfig  # noqa: E402
 from persistent_isaac import PersistentIsaacClient  # noqa: E402
-from planning.flexible_route_search import (  # noqa: E402
-    plan_flexible_route,
-    screen_exact_cover_batch,
-)
+from planning.flexible_route_search import screen_exact_cover_batch  # noqa: E402
+from planning.simplified_route_search import plan_flexible_route  # noqa: E402
 from planning.candidate_rfs_v2_runtime import run_candidate_rfs_v2  # noqa: E402
 from all_candidate_gpu_prefilter import load_targets  # noqa: E402
 
 
 VERBOSE = False
 DEBUG_LOG: Path | None = None
+WORKSPACE_ROI_XYXY = (170, 0, 970, 700)
 
 
 def load_json(path: Path) -> dict:
@@ -71,6 +70,55 @@ def debug_write(text: str) -> None:
         stream.write(str(text))
         if text and not str(text).endswith("\n"):
             stream.write("\n")
+
+
+def gpu_memory_snapshot() -> str:
+    try:
+        completed = subprocess.run(
+            [
+                "nvidia-smi",
+                "--query-gpu=memory.used,memory.free",
+                "--format=csv,noheader,nounits",
+            ],
+            text=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            check=False,
+            timeout=5.0,
+        )
+    except Exception as exc:
+        return f"unavailable ({type(exc).__name__}: {exc})"
+    if completed.returncode != 0:
+        reason = (completed.stderr or completed.stdout or "").strip()
+        return f"unavailable ({reason})"
+    rows = [line.strip() for line in completed.stdout.splitlines() if line.strip()]
+    return "; ".join(f"gpu{index}: used/free MiB={row}" for index, row in enumerate(rows)) or "unavailable"
+
+
+def prepare_roi_depth_for_esdf(capture_root: Path) -> tuple[Path, Path]:
+    """Keep full K/T/depth shape, but invalidate depth outside the workspace ROI."""
+    depth_path = Path(capture_root) / "depth_m.npy"
+    depth = np.load(depth_path).astype(np.float32, copy=True)
+    height, width = depth.shape
+    x1, y1, x2, y2 = WORKSPACE_ROI_XYXY
+    if not (0 <= x1 < x2 <= width and 0 <= y1 < y2 <= height):
+        raise ValueError(f"Invalid workspace ROI {WORKSPACE_ROI_XYXY} for depth shape {(height, width)}")
+    roi_depth = np.zeros_like(depth, dtype=np.float32)
+    roi_depth[y1:y2, x1:x2] = depth[y1:y2, x1:x2]
+    out = Path(capture_root) / "depth_m_workspace_roi.npy"
+    np.save(out, roi_depth)
+    metadata = {
+        "schema_version": 1,
+        "purpose": "planner ESDF workspace ROI; DGN2 40k input still uses full depth_m.npy",
+        "roi_xyxy_pixels": [x1, y1, x2, y2],
+        "full_depth_shape_hw": [height, width],
+        "invalidated_outside_roi": True,
+        "intrinsics_unchanged": True,
+        "T_world_camera_unchanged": True,
+    }
+    meta_path = Path(capture_root) / "depth_workspace_roi_metadata.json"
+    meta_path.write_text(json.dumps(metadata, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    return out, meta_path
 
 
 def safe_slug(text: str) -> str:
@@ -435,163 +483,188 @@ def main() -> int:
                 q_current, measured = load_robot_state(robot_state_path)
 
                 try:
-                    print("[5] cuRobo 按轮启动（规划完成后释放 GPU）")
-                    with CuroboWorkerClient(
-                        root,
-                        worker_config=worker_cfg,
-                        seeds=int(cfg.get("gpu_ik_seeds", 48)),
-                        batch_size=int(cfg.get("gpu_ik_batch_size", 512)),
-                    ) as curobo:
+                    home_gate_cfg = cfg.get("home_pregrasp_collision_gate", {})
+                    home_gate_enabled = bool(home_gate_cfg.get("enabled", True))
+                    need_observed_map = home_gate_enabled or not args.no_planner_collision_check
+                    if need_observed_map:
+                        roi_depth_path, roi_depth_meta = prepare_roi_depth_for_esdf(capture_root)
+                        map_report = {
+                            "status": "PER_BATCH",
+                            "depth_path": str(roi_depth_path),
+                            "roi_metadata": str(roi_depth_meta),
+                            "home_pregrasp_collision_gate": home_gate_enabled,
+                            "full_planner_collision_check": not bool(args.no_planner_collision_check),
+                            "batch_maps": [],
+                        }
                         print(
-                            f"    ✓ cuRobo 已连接 | seeds={int(cfg.get('gpu_ik_seeds', 48))} "
-                            f"| GPU batch={int(cfg.get('gpu_ik_batch_size', 512))}"
+                            "[5] ✓ ROI ESDF输入已准备 | "
+                            f"ROI={list(WORKSPACE_ROI_XYXY)} | depth shape/K/T保持不变"
+                        )
+                    else:
+                        map_report = {
+                            "status": "SKIPPED",
+                            "reason": "all planner collision checks disabled",
+                        }
+                        print("[5] ✓ 规划器碰撞检查：全部关闭（Isaac/PhysX仍开启）")
+
+                    # Optional legacy approximate prefilter; OFF by default.
+                    coarse_cfg = cfg["coarse_ik_prefilter"]
+                    if bool(coarse_cfg.get("grasp_enabled")) or bool(coarse_cfg.get("pregrasp_enabled")):
+                        raise RuntimeError(
+                            "legacy coarse_ik_prefilter requires a cycle-wide cuRobo worker and is disabled "
+                            "for the final per-batch worker architecture"
+                        )
+                    else:
+                        candidates = candidates_plain
+                        survivor_indices = list(range(len(candidates)))
+                        coarse_report = {
+                            "enabled": False,
+                            "grasp_enabled": False,
+                            "pregrasp_enabled": False,
+                            "survivors": len(survivor_indices),
+                        }
+                        print(
+                            f"[6] ✓ 旧粗 GRASP/PREGRASP IK：关闭 | {len(candidates)} 个目标候选直接进入真实 Wuji2"
                         )
 
-                        home_gate_cfg = cfg.get("home_pregrasp_collision_gate", {})
-                        home_gate_enabled = bool(home_gate_cfg.get("enabled", True))
-                        need_observed_map = home_gate_enabled or not args.no_planner_collision_check
-                        if need_observed_map:
-                            started = time.perf_counter()
-                            map_report = curobo.build_map(
-                                capture_root / "depth_m.npy",
-                                capture_root / "intrinsics.npy",
-                                capture_root / "T_world_camera.npy",
-                                gs_root / "mask.npy",
+                    allowed_survivors = {int(index) for index in survivor_indices}
+                    survivor_indices = [
+                        int(index) for index in rfs_priority_indices
+                        if int(index) in allowed_survivors
+                    ]
+                    coarse_report["candidate_rfs_v2"] = rfs_runtime.to_jsonable()
+                    print(
+                        f"[RFS V2] production order applied | "
+                        f"ordered survivors={len(survivor_indices)} | "
+                        f"status={rfs_runtime.status}"
+                    )
+
+                    max_to_test = int(cfg.get("max_candidates_to_test", 0))
+                    if max_to_test > 0:
+                        survivor_indices = survivor_indices[:max_to_test]
+                    retarget_chunk_size = int(cfg.get("retarget_chunk_size", 64))
+                    total_batches = math.ceil(len(survivor_indices) / retarget_chunk_size)
+                    selected = None
+                    tested_cover = 0
+                    retargeted = 0
+
+                    print("[7] Wuji2 重定向 + 精确 COVER + Flexible IK 搜索")
+                    for chunk_index, start in enumerate(range(0, len(survivor_indices), retarget_chunk_size), start=1):
+                        local_indices = survivor_indices[start:start + retarget_chunk_size]
+                        chunk_items = []
+                        for local_index in local_indices:
+                            item = candidates[local_index]
+                            rank = int(item["target_rank"])
+                            idx = int(item["candidate_index"])
+                            case_id = f"{cfg.get('candidate_case_prefix','closedloop')}_r{rank:04d}_cand{idx:04d}"
+                            case_root = scratch_root / f"rank_{rank:04d}" / case_id
+                            chunk_items.append({
+                                "local_target_index": int(local_index),
+                                "target_rank": rank,
+                                "candidate_index": idx,
+                                "official_score": float(item.get("score", item.get("official_score", float('nan')))),
+                                "case_id": case_id,
+                                "case_root": str(case_root),
+                            })
+                        if not chunk_items:
+                            continue
+                        chunk_dir = scratch_root / f"batch_{chunk_index:03d}"
+                        chunk_dir.mkdir(parents=True, exist_ok=True)
+                        items_json = chunk_dir / "items.json"
+                        items_json.write_text(json.dumps(chunk_items, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+                        batch_started = time.perf_counter()
+                        run("batch build candidate cases", [
+                            network_py, SCRIPTS / "batch_build_candidate_cases.py",
+                            "--project-root", root,
+                            "--prediction", prediction,
+                            "--network-input", dgn_root / "network_input.npz",
+                            "--capture-root", capture_root,
+                            "--settled-manifest", settled,
+                            "--sim-target-segmentation-id", str(sim_target_id),
+                            "--items-json", items_json,
+                            "--output", chunk_dir / "batch_build_report.json",
+                        ], cwd=root, capture_json=True)
+                        run("batch LEAP->Wuji2 retarget", [
+                            retarget_py, SCRIPTS / "batch_retarget_cases.py",
+                            "--items-json", items_json,
+                            "--output", chunk_dir / "batch_retarget_report.json",
+                        ], cwd=root, capture_json=True)
+                        finalize_report = run("batch finalize Wuji2 + arm targets", [
+                            network_py, SCRIPTS / "batch_finalize_candidate_cases.py",
+                            "--items-json", items_json,
+                            "--output", chunk_dir / "batch_finalize_report.json",
+                        ], cwd=root, capture_json=True)
+                        retargeted += len(chunk_items)
+                        finalize_results = json.loads(
+                            (chunk_dir / "batch_finalize_report.json").read_text(encoding="utf-8")
+                        ).get("results", [])
+                        failures_jsonl = chunk_dir / "flexible_route_failures.jsonl"
+                        item_by_case = {
+                            str(Path(item["case_root"]).resolve()): item
+                            for item in chunk_items
+                        }
+                        with failures_jsonl.open("a", encoding="utf-8") as stream:
+                            for row in finalize_results:
+                                if row.get("status") == "PASS":
+                                    continue
+                                item = item_by_case.get(str(Path(row.get("case_root", "")).resolve()))
+                                stream.write(json.dumps({
+                                    "target_rank": None if item is None else int(item["target_rank"]),
+                                    "candidate_index": None if item is None else int(item["candidate_index"]),
+                                    "failure_stage": "FINALIZE",
+                                    "failure_reason": row.get("reason", row.get("error", "finalize failed")),
+                                    "stage_summaries": row,
+                                }, ensure_ascii=False) + "\n")
+                        finalized_case_roots = {
+                            str(Path(row["case_root"]).resolve())
+                            for row in finalize_results
+                            if row.get("status") == "PASS"
+                        }
+                        finalized_items = [
+                            item for item in chunk_items
+                            if str(Path(item["case_root"]).resolve()) in finalized_case_roots
+                        ]
+                        finalize_reject_count = int(finalize_report.get("reject_count", len(chunk_items) - len(finalized_items)))
+                        if not finalized_items:
+                            print(
+                                f"    Batch {chunk_index:02d}/{total_batches:02d} ✓ 重定向={len(chunk_items)} | "
+                                f"finalize PASS=0 REJECT={finalize_reject_count} | "
+                                f"{time.perf_counter()-batch_started:.1f}s"
                             )
-                            map_report["home_pregrasp_collision_gate"] = home_gate_enabled
-                            map_report["full_planner_collision_check"] = not bool(
-                                args.no_planner_collision_check
-                            )
-                            if args.no_planner_collision_check:
+                            continue
+
+                        print(
+                            f"    [cuRobo Batch {chunk_index:02d}/{total_batches:02d}] start | "
+                            f"GPU {gpu_memory_snapshot()}"
+                        )
+                        with CuroboWorkerClient(
+                            root,
+                            worker_config=worker_cfg,
+                            seeds=int(cfg.get("gpu_ik_seeds", 48)),
+                            batch_size=int(cfg.get("gpu_ik_batch_size", 512)),
+                        ) as curobo:
+                            if need_observed_map:
+                                map_started = time.perf_counter()
+                                batch_map = curobo.build_map(
+                                    roi_depth_path,
+                                    capture_root / "intrinsics.npy",
+                                    capture_root / "T_world_camera.npy",
+                                    gs_root / "mask.npy",
+                                )
+                                batch_map.update({
+                                    "batch_index": int(chunk_index),
+                                    "workspace_roi_xyxy": list(WORKSPACE_ROI_XYXY),
+                                    "home_pregrasp_collision_gate": home_gate_enabled,
+                                    "full_planner_collision_check": not bool(args.no_planner_collision_check),
+                                    "build_wall_s": time.perf_counter() - map_started,
+                                })
+                                map_report["batch_maps"].append(batch_map)
                                 print(
-                                    f"[5] ✓ HOME→PREGRASP RGB-D/ESDF安全地图完成 | "
-                                    f"{time.perf_counter()-started:.2f}s "
-                                    f"| 近场/其余规划器碰撞检查仍关闭"
+                                    f"      map ROI build {batch_map['build_wall_s']:.2f}s | "
+                                    f"GPU {gpu_memory_snapshot()}"
                                 )
                             else:
-                                print(
-                                    f"[5] ✓ RGB-D ESDF地图完成 | "
-                                    f"{time.perf_counter()-started:.2f}s "
-                                    f"| HOME→PREGRASP门禁 + 全路径碰撞检查"
-                                )
-                        else:
-                            map_report = {
-                                "status": "SKIPPED",
-                                "reason": "all planner collision checks disabled",
-                            }
-                            print("[5] ✓ 规划器碰撞检查：全部关闭（Isaac/PhysX仍开启）")
-
-                        # Optional legacy approximate prefilter; OFF by default.
-                        coarse_cfg = cfg["coarse_ik_prefilter"]
-                        if bool(coarse_cfg.get("grasp_enabled")) or bool(coarse_cfg.get("pregrasp_enabled")):
-                            candidates, survivor_indices, coarse_report = legacy_coarse_prefilter(
-                                client=curobo,
-                                project_root=root,
-                                prediction=prediction,
-                                q_current=q_current,
-                                cfg=cfg,
-                            )
-                            print(
-                                f"[6] 旧粗筛已启用 | target={len(candidates)} -> survivors={len(survivor_indices)}"
-                            )
-                        else:
-                            candidates = candidates_plain
-                            survivor_indices = list(range(len(candidates)))
-                            coarse_report = {
-                                "enabled": False,
-                                "grasp_enabled": False,
-                                "pregrasp_enabled": False,
-                                "survivors": len(survivor_indices),
-                            }
-                            print(
-                                f"[6] ✓ 旧粗 GRASP/PREGRASP IK：关闭 | {len(candidates)} 个目标候选直接进入真实 Wuji2"
-                            )
-
-                        allowed_survivors = {int(index) for index in survivor_indices}
-                        survivor_indices = [
-                            int(index) for index in rfs_priority_indices
-                            if int(index) in allowed_survivors
-                        ]
-                        coarse_report["candidate_rfs_v2"] = rfs_runtime.to_jsonable()
-                        print(
-                            f"[RFS V2] production order applied | "
-                            f"ordered survivors={len(survivor_indices)} | "
-                            f"status={rfs_runtime.status}"
-                        )
-
-                        max_to_test = int(cfg.get("max_candidates_to_test", 0))
-                        if max_to_test > 0:
-                            survivor_indices = survivor_indices[:max_to_test]
-                        retarget_chunk_size = int(cfg.get("retarget_chunk_size", 64))
-                        total_batches = math.ceil(len(survivor_indices) / retarget_chunk_size)
-                        selected = None
-                        tested_cover = 0
-                        retargeted = 0
-
-                        print("[7] Wuji2 重定向 + 精确 COVER + Flexible IK 搜索")
-                        for chunk_index, start in enumerate(range(0, len(survivor_indices), retarget_chunk_size), start=1):
-                            local_indices = survivor_indices[start:start + retarget_chunk_size]
-                            chunk_items = []
-                            for local_index in local_indices:
-                                item = candidates[local_index]
-                                rank = int(item["target_rank"])
-                                idx = int(item["candidate_index"])
-                                case_id = f"{cfg.get('candidate_case_prefix','closedloop')}_r{rank:04d}_cand{idx:04d}"
-                                case_root = scratch_root / f"rank_{rank:04d}" / case_id
-                                chunk_items.append({
-                                    "local_target_index": int(local_index),
-                                    "target_rank": rank,
-                                    "candidate_index": idx,
-                                    "official_score": float(item.get("score", item.get("official_score", float('nan')))),
-                                    "case_id": case_id,
-                                    "case_root": str(case_root),
-                                })
-                            if not chunk_items:
-                                continue
-                            chunk_dir = scratch_root / f"batch_{chunk_index:03d}"
-                            chunk_dir.mkdir(parents=True, exist_ok=True)
-                            items_json = chunk_dir / "items.json"
-                            items_json.write_text(json.dumps(chunk_items, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-                            batch_started = time.perf_counter()
-                            run("batch build candidate cases", [
-                                network_py, SCRIPTS / "batch_build_candidate_cases.py",
-                                "--project-root", root,
-                                "--prediction", prediction,
-                                "--network-input", dgn_root / "network_input.npz",
-                                "--capture-root", capture_root,
-                                "--settled-manifest", settled,
-                                "--sim-target-segmentation-id", str(sim_target_id),
-                                "--items-json", items_json,
-                                "--output", chunk_dir / "batch_build_report.json",
-                            ], cwd=root, capture_json=True)
-                            run("batch LEAP->Wuji2 retarget", [
-                                retarget_py, SCRIPTS / "batch_retarget_cases.py",
-                                "--items-json", items_json,
-                                "--output", chunk_dir / "batch_retarget_report.json",
-                            ], cwd=root, capture_json=True)
-                            finalize_report = run("batch finalize Wuji2 + arm targets", [
-                                network_py, SCRIPTS / "batch_finalize_candidate_cases.py",
-                                "--items-json", items_json,
-                                "--output", chunk_dir / "batch_finalize_report.json",
-                            ], cwd=root, capture_json=True)
-                            retargeted += len(chunk_items)
-                            finalized_case_roots = {
-                                str(Path(row["case_root"]).resolve())
-                                for row in json.loads((chunk_dir / "batch_finalize_report.json").read_text(encoding="utf-8")).get("results", [])
-                                if row.get("status") == "PASS"
-                            }
-                            finalized_items = [
-                                item for item in chunk_items
-                                if str(Path(item["case_root"]).resolve()) in finalized_case_roots
-                            ]
-                            finalize_reject_count = int(finalize_report.get("reject_count", len(chunk_items) - len(finalized_items)))
-                            if not finalized_items:
-                                print(
-                                    f"    Batch {chunk_index:02d}/{total_batches:02d} ✓ 重定向={len(chunk_items)} | "
-                                    f"finalize PASS=0 REJECT={finalize_reject_count} | "
-                                    f"{time.perf_counter()-batch_started:.1f}s"
-                                )
-                                continue
+                                print(f"      map skipped | GPU {gpu_memory_snapshot()}")
 
                             cover_rows = screen_exact_cover_batch(
                                 client=curobo,
@@ -606,6 +679,19 @@ def main() -> int:
                             )
                             passed_cover = [row for row in cover_rows if row["pass"]]
                             tested_cover += len(cover_rows)
+                            cover_by_case = {str(Path(row["case_root"]).resolve()): row for row in cover_rows}
+                            for item in finalized_items:
+                                row = cover_by_case.get(str(Path(item["case_root"]).resolve()))
+                                if row is not None and row.get("pass"):
+                                    continue
+                                with failures_jsonl.open("a", encoding="utf-8") as stream:
+                                    stream.write(json.dumps({
+                                        "target_rank": int(item["target_rank"]),
+                                        "candidate_index": int(item["candidate_index"]),
+                                        "failure_stage": "EXACT_COVER",
+                                        "failure_reason": None if row is None else row.get("reason", "Exact COVER failed"),
+                                        "stage_summaries": None if row is None else row,
+                                    }, ensure_ascii=False) + "\n")
                             print(
                                 f"    Batch {chunk_index:02d}/{total_batches:02d} ✓ 重定向={len(chunk_items)} | "
                                 f"finalize PASS={len(finalized_items)} REJECT={finalize_reject_count} | "
@@ -643,30 +729,42 @@ def main() -> int:
                                     )
                                     _print_route_summary(route)
                                     break
+                                with failures_jsonl.open("a", encoding="utf-8") as stream:
+                                    stream.write(json.dumps({
+                                        "target_rank": int(item["target_rank"]),
+                                        "candidate_index": int(item["candidate_index"]),
+                                        "failure_stage": route.get("failed_stage", "FLEXIBLE_ROUTE"),
+                                        "failure_reason": route.get("reason"),
+                                        "stage_summaries": route.get("stage_summaries"),
+                                    }, ensure_ascii=False) + "\n")
                                 if VERBOSE:
                                     print(
                                         f"    ✗ route rank={item['target_rank']} cand={item['candidate_index']}: "
                                         f"{route.get('reason')}"
                                     )
-                            if selected is not None:
-                                break
+                        print(
+                            f"    [cuRobo Batch {chunk_index:02d}/{total_batches:02d}] closed | "
+                            f"GPU {gpu_memory_snapshot()}"
+                        )
+                        if selected is not None:
+                            break
 
-                        planning_result = {
-                            "schema_version": 2,
-                            "status": "PASS" if selected is not None else "FAIL",
-                            "architecture": cfg.get("architecture"),
-                            "query": query,
-                            "total_proposals": total_proposals,
-                            "target_candidates": len(candidates),
-                            "retargeted_candidate_count": retargeted,
-                            "exact_cover_tested": tested_cover,
-                            "coarse_prefilter": coarse_report,
-                            "map": map_report,
-                            "selected": selected,
-                            "planning_wall_s": time.perf_counter() - cycle_started,
-                        }
-                        planning_path = cycle_root / "planning_result.json"
-                        planning_path.write_text(json.dumps(planning_result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+                    planning_result = {
+                        "schema_version": 2,
+                        "status": "PASS" if selected is not None else "FAIL",
+                        "architecture": cfg.get("architecture"),
+                        "query": query,
+                        "total_proposals": total_proposals,
+                        "target_candidates": len(candidates),
+                        "retargeted_candidate_count": retargeted,
+                        "exact_cover_tested": tested_cover,
+                        "coarse_prefilter": coarse_report,
+                        "map": map_report,
+                        "selected": selected,
+                        "planning_wall_s": time.perf_counter() - cycle_started,
+                    }
+                    planning_path = cycle_root / "planning_result.json"
+                    planning_path.write_text(json.dumps(planning_result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
                 except KeyboardInterrupt:
                     planning_result = {
                         "schema_version": 2,

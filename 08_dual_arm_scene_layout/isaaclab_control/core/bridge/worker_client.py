@@ -149,6 +149,7 @@ class CuroboWorkerClient:
         q_reference_rad,
         select_chain: bool = True,
         collision_context: dict | None = None,
+        acceptance_policy: dict | None = None,
     ) -> dict:
         payload = {
             "op": "solve_ik",
@@ -158,6 +159,8 @@ class CuroboWorkerClient:
         }
         if collision_context is not None:
             payload["collision_context"] = collision_context
+        if acceptance_policy is not None:
+            payload["acceptance_policy"] = acceptance_policy
         return self.request(payload)
 
     def solve_ik_groups(
@@ -167,6 +170,7 @@ class CuroboWorkerClient:
         group_sizes,
         select_chain: bool = True,
         collision_context: dict | None = None,
+        acceptance_policy: dict | None = None,
     ) -> dict:
         """Solve multiple ordered waypoint groups in one worker/GPU request.
 
@@ -184,6 +188,8 @@ class CuroboWorkerClient:
         }
         if collision_context is not None:
             payload["collision_context"] = collision_context
+        if acceptance_policy is not None:
+            payload["acceptance_policy"] = acceptance_policy
         return self.request(payload)
 
     def check_self_collision(self, joint_positions_by_name: dict) -> dict:
@@ -203,6 +209,7 @@ class CuroboWorkerClient:
         margin_m: float = 0.0,
         path_max_joint_step_rad=None,
         check_observed_map: bool = False,
+        check_self_collision: bool = False,
     ) -> dict:
         payload = {
             "op": "check_joint_path",
@@ -213,6 +220,7 @@ class CuroboWorkerClient:
             "phases": phases,
             "margin_m": float(margin_m),
             "check_observed_map": bool(check_observed_map),
+            "check_self_collision": bool(check_self_collision),
         }
         if path_max_joint_step_rad is not None:
             payload["path_max_joint_step_rad"] = float(path_max_joint_step_rad)

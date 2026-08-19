@@ -19,6 +19,7 @@ from pathlib import Path
 LOCAL_GROUNDED_SAM_ROOT = Path("/home/lin/Projects/分类抓取开源项/03_检测加分割_GroundedSAM")
 LOCAL_BACKEND = LOCAL_GROUNDED_SAM_ROOT / "scripts/grounded_sam_to_pointcloud.py"
 DINO_RESULT_JSON = "dino_result.json"
+WORKSPACE_ROI_XYXY = (170, 0, 970, 700)
 
 
 DINO_SUBPROCESS_CODE = r"""
@@ -35,6 +36,7 @@ rgb_path = Path(sys.argv[2])
 query = sys.argv[3]
 output_path = Path(sys.argv[4])
 device_request = sys.argv[5]
+roi_x1, roi_y1, roi_x2, roi_y2 = [int(value) for value in sys.argv[6:10]]
 
 spec = importlib.util.spec_from_file_location("local_grounded_sam_backend", backend_path)
 backend = importlib.util.module_from_spec(spec)
@@ -46,10 +48,16 @@ prompt = backend.normalize_query(query)
 print(f"[DINO] query: {query!r} -> prompt: {prompt!r}", flush=True)
 print(f"[DINO] loading GroundingDINO on {device}", flush=True)
 rgb = np.asarray(Image.open(rgb_path).convert("RGB"))
+height, width = rgb.shape[:2]
+if not (0 <= roi_x1 < roi_x2 <= width and 0 <= roi_y1 < roi_y2 <= height):
+    raise ValueError(f"Invalid DINO ROI {(roi_x1, roi_y1, roi_x2, roi_y2)} for image {(width, height)}")
+rgb_roi = rgb[roi_y1:roi_y2, roi_x1:roi_x2].copy()
+output_path.parent.mkdir(parents=True, exist_ok=True)
+Image.fromarray(rgb_roi).save(output_path.parent / "dino_roi_input.png")
 dino, load_report = backend.load_dino(backend.DEFAULT_DINO_CONFIG, backend.DEFAULT_DINO_WEIGHT, device)
 boxes, scores, phrases = backend.detect(
     dino,
-    rgb,
+    rgb_roi,
     prompt,
     box_threshold=0.25,
     text_threshold=0.20,
@@ -58,14 +66,26 @@ boxes, scores, phrases = backend.detect(
 # backend.detect already returns CPU numpy arrays; force a detached CPU-only
 # serialization boundary before this CUDA process exits.
 boxes = np.asarray(boxes, dtype=np.float32)
+boxes[:, [0, 2]] += float(roi_x1)
+boxes[:, [1, 3]] += float(roi_y1)
 scores = np.asarray(scores, dtype=np.float32)
 selected = backend.choose_detection(boxes, scores)
+roi_metadata = {
+    "schema_version": 1,
+    "roi_xyxy_pixels": [roi_x1, roi_y1, roi_x2, roi_y2],
+    "roi_width_height": [roi_x2 - roi_x1, roi_y2 - roi_y1],
+    "full_image_width_height": [width, height],
+    "dino_input": "rgb[0:700,170:970]",
+    "bbox_contract": "DINO runs on ROI; boxes_xyxy_pixels are converted back to full-image coordinates before SAM",
+}
+(output_path.parent / "dino_roi_metadata.json").write_text(json.dumps(roi_metadata, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 output = {
     "schema_version": 1,
     "query_original": query,
     "query_groundingdino": prompt,
     "device": device,
     "thresholds": {"box": 0.25, "text": 0.20},
+    "workspace_roi": roi_metadata,
     "boxes_xyxy_pixels": boxes.tolist(),
     "scores": scores.tolist(),
     "phrases": [str(value) for value in phrases],
@@ -309,6 +329,7 @@ def run_backend(image_path: Path, text_query: str, output_root: Path) -> None:
         text_query,
         str(dino_result),
         "auto",
+        *[str(value) for value in WORKSPACE_ROI_XYXY],
     ]
     _log_vram("before DINO")
     completed = subprocess.run(dino_command, cwd=LOCAL_GROUNDED_SAM_ROOT, env=env, text=True)

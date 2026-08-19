@@ -886,6 +886,34 @@
 - Key output: restricted Codex channel cannot communicate with NVIDIA driver; escalation to host GPU/Isaac execution was rejected by execution policy.
 - Conclusion: true Isaac/PhysX HOME stability and real rendered occlusion cannot be certified from this channel. Safe static USD/layout checks remain PASS; final physical/static validation must be run in the user's GPU-visible terminal.
 
+## 2026-08-19 -- Simplified planning plumbing: ROI, per-batch cuRobo, concise failure logs
+
+- Purpose: implement non-core plumbing for the simplified mechanical-arm planning direction without changing IK thresholds, retarget math, DGN2, HOME, camera, robot layout, or RFS core algorithm.
+- Conda environment: `isaaclab22_sim50` for CPU unit tests; no Isaac app, DGN2, cuRobo GPU, retarget, RFS backend, or full closed-loop execution.
+- Working directory: `/home/lin/Projects/DexGraspNet2_Wuji2`
+- Commands:
+
+  ```bash
+  python -m py_compile \
+    08_dual_arm_scene_layout/isaaclab_control/closed_loop/orchestrator.py \
+    08_dual_arm_scene_layout/isaaclab_control/closed_loop/scripts/grounded_sam_backend.py \
+    08_dual_arm_scene_layout/isaaclab_control/closed_loop/persistent_isaac/worker.py \
+    08_dual_arm_scene_layout/isaaclab_control/closed_loop/planning/candidate_rfs_v2_runtime.py
+
+  PYTHONPATH=08_dual_arm_scene_layout/isaaclab_control/closed_loop \
+  python -m unittest -v \
+    08_dual_arm_scene_layout/isaaclab_control/closed_loop/tests/test_flexible_planning.py \
+    08_dual_arm_scene_layout/isaaclab_control/closed_loop/tests/test_closed_loop_logic.py
+
+  conda run -n isaaclab22_sim50 bash -lc 'PYTHONPATH=08_dual_arm_scene_layout/isaaclab_control/closed_loop python -m unittest -v 08_dual_arm_scene_layout/isaaclab_control/closed_loop/tests/test_flexible_planning.py 08_dual_arm_scene_layout/isaaclab_control/closed_loop/tests/test_closed_loop_logic.py'
+
+  git diff --check
+  ```
+
+- Exit code: `0` for py_compile, `0` for `isaaclab22_sim50` unittest, `0` for `git diff --check`. The base-Python unittest attempt failed only because base Python 3.14 has no NumPy.
+- Key output: DINO now runs on fixed ROI `[170,0,970,700]` and writes full-image bbox coordinates; ESDF map input uses `depth_m_workspace_roi.npy` with full 720x1280 shape and unchanged K/T; persistent capture hides SourceZone/PlacementZone/Frustum/Markers only while capturing; cuRobo worker lifecycle moved to candidate batch scope; each batch writes `flexible_route_failures.jsonl`; RFS 0-PASS is reported as `NO_TARGET_REACH` or `NO_TRAJECTORY_SPACE`, not fallback.
+- Conclusion: non-core plumbing is ready for user/GPU-side validation. Stage-specific IK tolerances, simplified joint-space route semantics, and RFS support-pose algorithm replacement are intentionally left for the next ChatGPT-provided core patch.
+
 
 ## 2026-08-17 16:18:00 +0800 - final worktree cleanup
 - Purpose: clean generated outputs/history in `/home/lin/Projects/DexGraspNet2_Wuji2`, preserve vendor submodule gitlinks, retain compact candidate5989 evidence.

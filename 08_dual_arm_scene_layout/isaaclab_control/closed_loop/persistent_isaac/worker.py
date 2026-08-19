@@ -77,6 +77,12 @@ CAMERA_PRIM = "/World/Sensors/TopD435iVirtual/Camera"
 TASK_ROOT = "/World/Layout/TableAssembly/TestScene0000"
 SOURCE_ZONE_PRIM = "/World/Layout/TableAssembly/SourceZone"
 TABLE_PRIM = "/World/Layout/TableAssembly/Table"
+CAPTURE_HIDE_PRIMS = (
+    "/World/Layout/TableAssembly/SourceZone",
+    "/World/Layout/TableAssembly/PlacementZone",
+    "/World/Sensors/TopD435iVirtual/Frustum",
+    "/World/Markers",
+)
 RIGHT_ARM_NAMES = [f"arm_r_joint_{index}" for index in range(1, 8)]
 ROUTE_STAGES = [
     "pregrasp", "cover", "grasp", "squeeze", "lift",
@@ -616,6 +622,27 @@ class PersistentScene:
         for _ in range(count):
             self.step(render=render)
 
+    def _set_capture_debug_visibility(self, *, visible: bool, previous: dict[str, object] | None = None) -> dict[str, object]:
+        """Hide visual debug helpers only while writing production RGB-D frames."""
+        saved: dict[str, object] = {}
+        for path in CAPTURE_HIDE_PRIMS:
+            prim = self.stage.GetPrimAtPath(path)
+            if not prim.IsValid() or not prim.IsA(UsdGeom.Imageable):
+                continue
+            imageable = UsdGeom.Imageable(prim)
+            attr = imageable.GetVisibilityAttr()
+            if previous is None:
+                saved[path] = attr.Get() if attr.IsValid() else None
+            old_value = None if previous is None else previous.get(path)
+            if visible:
+                if old_value:
+                    attr.Set(old_value)
+                else:
+                    imageable.MakeVisible()
+            else:
+                imageable.MakeInvisible()
+        return saved
+
     def _current_scene_manifest(self) -> dict:
         rows = []
         for wrapper, record in zip(self.objects, self.object_records):
@@ -693,26 +720,30 @@ class PersistentScene:
         # 12 steps.  No hidden +0.1 s settle is added.
         hold_steps = max(1, round(requested_hold / self.dt))
         render_start = max(0, hold_steps - camera_warmup_frames)
-        for step_index in range(hold_steps):
-            render = step_index >= render_start
-            self.step(render=render)
-            if render:
-                self.camera.update(dt=self.dt, force_recompute=True)
+        visibility_before_capture = self._set_capture_debug_visibility(visible=False)
+        try:
+            for step_index in range(hold_steps):
+                render = step_index >= render_start
+                self.step(render=render)
+                if render:
+                    self.camera.update(dt=self.dt, force_recompute=True)
 
-        # Freeze immediately at the image/state instant.  Planning can now take
-        # arbitrarily long without q_current or the objects drifting.
-        self.pause()
-        self.capture_count += 1
-        physics_audit_path = self._write_object_physics_audit(output)
+            # Freeze immediately at the image/state instant.  Planning can now take
+            # arbitrarily long without q_current or the objects drifting.
+            self.pause()
+            self.capture_count += 1
+            physics_audit_path = self._write_object_physics_audit(output)
 
-        intrinsic, world_from_camera, camera_model = camera_calibration(
-            self.stage, self.camera_width, self.camera_height
-        )
-        rgb = self.camera.data.output["rgb"][0].detach().cpu().numpy()[..., :3].astype(np.uint8)
-        depth = np.squeeze(
-            self.camera.data.output["distance_to_image_plane"][0].detach().cpu().numpy().astype(np.float32)
-        )
-        preview, depth_stats = depth_preview(depth)
+            intrinsic, world_from_camera, camera_model = camera_calibration(
+                self.stage, self.camera_width, self.camera_height
+            )
+            rgb = self.camera.data.output["rgb"][0].detach().cpu().numpy()[..., :3].astype(np.uint8)
+            depth = np.squeeze(
+                self.camera.data.output["distance_to_image_plane"][0].detach().cpu().numpy().astype(np.float32)
+            )
+            preview, depth_stats = depth_preview(depth)
+        finally:
+            self._set_capture_debug_visibility(visible=True, previous=visibility_before_capture)
 
         # State is serialized AFTER the final camera/physics step and AFTER the
         # timeline is paused, keeping all downstream coordinate contracts aligned.

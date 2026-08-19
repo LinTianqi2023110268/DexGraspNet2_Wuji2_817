@@ -148,3 +148,12 @@ Run `./run_closed_loop.sh --planning-only` from a GPU-visible terminal using `sc
 - Modified files: `scenes/manual_layout_calibrated.usda`, `scenes/manual_layout_calibrated_mass_fixed.usda`, `config/manual_layout_calibrated.json`, plus generated output metadata under `08_dual_arm_scene_layout/outputs/`.
 - Test results: USD open and JSON sync PASS; camera coverage PASS; `05/06/07` py_compile PASS; `git diff --check` PASS.
 - Environment: `isaaclab22_sim50` Python with Isaac USD extension paths; no Isaac app, DGN2, RFS, cuRobo planning, retarget, grasp execution, or full closed-loop was run.
+
+## 2026-08-19 - Simplified planning plumbing pass
+- Current phase: prepare production code for simplified endpoint/joint-space planning without touching core IK/RFS mathematics.
+- Completed: GroundingDINO fixed workspace ROI crop; ESDF ROI depth invalidation outside `[170,0,970,700]`; persistent capture debug-prim hide/restore; per-64-candidate cuRobo worker lifecycle; per-batch GPU memory print hooks; `flexible_route_failures.jsonl`; RFS normal zero-pass status separation.
+- Current conclusion: Exact COVER core remains unchanged; `CuroboGpuIK` still computes accepted with global config thresholds and exposes raw success/residual/margin for every returned seed. Stage-specific tolerance support still needs the planned core patch.
+- Current blockers: `flexible_route_search.py` still contains existing broad task-space route sampling and final observed-map path check semantics; RFS core still contains 5120 support-pose/layer-graph algorithm. Both are intentionally not rewritten here.
+- Modified files: `closed_loop/orchestrator.py`, `closed_loop/scripts/grounded_sam_backend.py`, `closed_loop/persistent_isaac/worker.py`, `closed_loop/planning/candidate_rfs_v2_runtime.py`, worklogs.
+- Test results: py_compile PASS; `isaaclab22_sim50` closed-loop CPU unit tests PASS 9/9; `git diff --check` PASS.
+- Environment: no full closed-loop, Isaac app, DGN2, RFS backend, cuRobo GPU worker, retarget, or physical execution was run.

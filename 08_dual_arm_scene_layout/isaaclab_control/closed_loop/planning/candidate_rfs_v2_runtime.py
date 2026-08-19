@@ -292,11 +292,6 @@ def run_candidate_rfs_v2(
     try:
         payload = json.loads(filter_path.read_text(encoding="utf-8"))
         ordered, passed, rejected = _validate_and_order(candidates, payload, mode)
-        if len(passed) < minimum_pass:
-            raise RuntimeError(
-                f"RFS V2 returned only {len(passed)} PASS candidates; "
-                f"minimum_pass_candidates={minimum_pass}"
-            )
     except Exception as exc:
         reason = f"{type(exc).__name__}: {exc}"
         if fallback_on_error:
@@ -317,6 +312,19 @@ def run_candidate_rfs_v2(
             )
         raise
 
+    status = "PASS"
+    if len(passed) < minimum_pass:
+        reject_target = int(payload.get("reject_target_reach_count", 0))
+        reject_trajectory = int(payload.get("reject_trajectory_space_count", 0))
+        if reject_target > 0 and reject_target >= reject_trajectory:
+            status = "NO_TARGET_REACH"
+        else:
+            status = "NO_TRAJECTORY_SPACE"
+        print(
+            f"[RFS V2] {status}: PASS={len(passed)}/{len(candidates)} | "
+            "this is a normal filter result, not infrastructure fallback."
+        )
+
     print(
         f"[RFS V2] PASS={len(passed)}/{len(candidates)} | "
         f"REJECT={len(rejected)} | fast tier first | wall={wall:.1f}s"
@@ -328,7 +336,7 @@ def run_candidate_rfs_v2(
         )
 
     return RfsV2ProductionResult(
-        status="PASS",
+        status=status,
         ordered_indices=ordered,
         pass_indices=passed,
         reject_indices=rejected,
