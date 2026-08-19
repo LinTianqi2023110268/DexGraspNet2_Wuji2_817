@@ -953,6 +953,211 @@
 - Key output: existing `--diagnostic-disable-*` flags remain restricted to `--diagnostic-full-first-batch`; new experimental flag requires `--sim-execute` and sets effective bypass for RFS observed ESDF, Exact COVER observed ESDF, HOME->PRE observed ESDF/self-collision, and PRE->COVER observed ESDF/self-collision.
 - Conclusion: experimental execution entry is wired without changing route parameters, IK tolerances, sampling, scene layout, camera, DGN2, retarget, Wuji2 control, or Isaac execution code.
 
+## 2026-08-19 -- Standalone cuRobo RobotSegmenter capture adapter
+
+- Purpose: adapt cuRobo V2 `RobotSegmenter` as a standalone capture-depth cleaner that writes robot-filtered planning depth without changing baseline planning/execution.
+- Conda environment: `curobo_v2` for RobotSegmenter import/run; base for py_compile and diff check.
+- Working directory: `/home/lin/Projects/DexGraspNet2_Wuji2`
+- Commands:
+
+  ```bash
+  conda run -n curobo_v2 python -c "from curobo.perception import RobotSegmenter; from curobo.types import CameraObservation, JointState, Pose; print('RobotSegmenter import PASS')"
+  python -m py_compile 08_dual_arm_scene_layout/isaaclab_control/perception/robot_segmentation/curobo_robot_segmenter.py 08_dual_arm_scene_layout/isaaclab_control/perception/robot_segmentation/run_robot_segmenter_capture.py
+  conda run -n curobo_v2 python 08_dual_arm_scene_layout/isaaclab_control/perception/robot_segmentation/run_robot_segmenter_capture.py --help
+  conda run -n curobo_v2 python 08_dual_arm_scene_layout/isaaclab_control/perception/robot_segmentation/run_robot_segmenter_capture.py --capture-dir 08_dual_arm_scene_layout/isaaclab_control/outputs/closed_loop_sessions/20260819_174407/cycle_001/capture
+  git diff --check
+  ```
+
+- Exit code: import/py_compile/help/run/diff-check all `0` after adapter dtype fix.
+- Key output: output dir `.../cycle_001/capture/planning`; active joints `35`; depth shape `[720,1280]`; robot mask pixels `225800`; robot mask fraction of valid depth `0.44399612240764663`.
+- Conclusion: standalone RobotSegmenter adapter works on an existing capture and writes `robot_mask.npy/png`, `filtered_depth.npy`, `filtered_depth_preview.png`, and `robot_segmentation_report.json`; it is not connected to the baseline planner.
+
+## 2026-08-19 22:10 +08:00 -- Route B current-to-PREGRASP MotionPlanner adapter
+
+- Purpose: add an independent Route B backend for cuRobo V2 MotionPlanner phase 1 while preserving Route A.
+- Conda environment: `curobo_v2` for cuRobo imports and standalone smoke test.
+- Working directory: `/home/lin/Projects/DexGraspNet2_Wuji2`
+- Commands:
+
+  ```bash
+  conda run -n curobo_v2 python -c "from curobo.motion_planner import MotionPlanner, MotionPlannerCfg; from curobo.perception import Mapper, MapperCfg; print('MotionPlanner/Mapper import PASS')"
+  conda run -n curobo_v2 python -m py_compile 08_dual_arm_scene_layout/isaaclab_control/curobo_motion_planning_routeB/routeB_adapter.py 08_dual_arm_scene_layout/isaaclab_control/curobo_motion_planning_routeB/test_current_to_pregrasp.py 08_dual_arm_scene_layout/isaaclab_control/curobo_motion_planning_routeB/tests/test_import.py
+  PYTHONPATH=08_dual_arm_scene_layout/isaaclab_control conda run -n curobo_v2 python -m unittest -v 08_dual_arm_scene_layout/isaaclab_control/curobo_motion_planning_routeB/tests/test_import.py
+  conda run -n curobo_v2 python 08_dual_arm_scene_layout/isaaclab_control/curobo_motion_planning_routeB/test_current_to_pregrasp.py --capture-dir 08_dual_arm_scene_layout/isaaclab_control/outputs/closed_loop_sessions/20260819_174407/cycle_001/capture --route-plan 08_dual_arm_scene_layout/isaaclab_control/outputs/closed_loop_sessions/20260819_174407/cycle_001/scratch/final_planning/rank_0001/closedloop_r0001_cand0676/07_arm_execution/flexible_route_plan.npz
+  git diff --check
+  ```
+
+- Exit code: import/py_compile/unittest/diff-check `0`; standalone MotionPlanner smoke exited `2`.
+- Key output: Route B built RobotSegmenter-filtered ESDF and invoked `MotionPlanner.plan_cspace`; cuRobo returned `Start or End state in collision`; report/trajectory placeholders written to `.../cycle_001/capture/curobo_test_result/`.
+- Conclusion: Route B phase-1 import/path/API wiring is in place. The first blocker is a real MotionPlanner endpoint collision verdict against the filtered ESDF, not a missing import or Isaac dependency.
+
+## 2026-08-19 22:32 +08:00 -- Route B endpoint collision audit
+
+- Purpose: isolate why Route B `current -> PREGRASP` reports `Start or End state in collision`.
+- Conda environment: `curobo_v2`.
+- Working directory: `/home/lin/Projects/DexGraspNet2_Wuji2`
+- Commands:
+
+  ```bash
+  conda run -n curobo_v2 python -m py_compile 08_dual_arm_scene_layout/isaaclab_control/curobo_motion_planning_routeB/test_collision_audit.py
+  conda run -n curobo_v2 python 08_dual_arm_scene_layout/isaaclab_control/curobo_motion_planning_routeB/test_collision_audit.py --capture-dir 08_dual_arm_scene_layout/isaaclab_control/outputs/closed_loop_sessions/20260819_174407/cycle_001/capture --route-plan 08_dual_arm_scene_layout/isaaclab_control/outputs/closed_loop_sessions/20260819_174407/cycle_001/scratch/final_planning/rank_0001/closedloop_r0001_cand0676/07_arm_execution/flexible_route_plan.npz
+  conda run -n curobo_v2 python -m py_compile 08_dual_arm_scene_layout/isaaclab_control/curobo_motion_planning_routeB/routeB_adapter.py 08_dual_arm_scene_layout/isaaclab_control/curobo_motion_planning_routeB/test_current_to_pregrasp.py 08_dual_arm_scene_layout/isaaclab_control/curobo_motion_planning_routeB/test_collision_audit.py 08_dual_arm_scene_layout/isaaclab_control/curobo_motion_planning_routeB/tests/test_import.py
+  PYTHONPATH=08_dual_arm_scene_layout/isaaclab_control conda run -n curobo_v2 python -m unittest -v 08_dual_arm_scene_layout/isaaclab_control/curobo_motion_planning_routeB/tests/test_import.py
+  git diff --check
+  ```
+
+- Exit code: all commands `0`.
+- Key output: `empty_scene=false`, `esdf_scene=false`, `self_collision_disabled=true`, `right_arm_only=true`; q_current/q_pregrasp environment ESDF collision both false with positive clearance, but self collision pair count is `1` with max penetration `0.000251334 m`, pair linear index `2576`.
+- Conclusion: the observed endpoint blocker is dominated by cuRobo self-collision false positive / model semantics, not by filtered ESDF scene collision or right-arm-only environment collision.
+
+## 2026-08-19 22:55 +08:00 -- Route B formal collision policy wiring
+
+- Purpose: enforce Route B policy `environment_collision=true`, `self_collision=false` at cuRobo MotionPlanner config/runtime level.
+- Conda environment: `curobo_v2`.
+- Working directory: `/home/lin/Projects/DexGraspNet2_Wuji2`
+- Commands:
+
+  ```bash
+  conda run -n curobo_v2 python -m py_compile 08_dual_arm_scene_layout/isaaclab_control/curobo_motion_planning_routeB/routeB_adapter.py 08_dual_arm_scene_layout/isaaclab_control/curobo_motion_planning_routeB/test_current_to_pregrasp.py 08_dual_arm_scene_layout/isaaclab_control/curobo_motion_planning_routeB/test_collision_audit.py 08_dual_arm_scene_layout/isaaclab_control/curobo_motion_planning_routeB/tests/test_import.py
+  conda run -n curobo_v2 python 08_dual_arm_scene_layout/isaaclab_control/curobo_motion_planning_routeB/test_current_to_pregrasp.py --capture-dir 08_dual_arm_scene_layout/isaaclab_control/outputs/closed_loop_sessions/20260819_174407/cycle_001/capture --route-plan 08_dual_arm_scene_layout/isaaclab_control/outputs/closed_loop_sessions/20260819_174407/cycle_001/scratch/final_planning/rank_0001/closedloop_r0001_cand0676/07_arm_execution/flexible_route_plan.npz
+  PYTHONPATH=08_dual_arm_scene_layout/isaaclab_control conda run -n curobo_v2 python -m unittest -v 08_dual_arm_scene_layout/isaaclab_control/curobo_motion_planning_routeB/tests/test_import.py
+  git diff --check
+  ```
+
+- Exit code: py_compile/unittest/diff-check `0`; standalone Route B planning command exited `2` because MotionPlanner success remained false.
+- Key output: old `Start or End state in collision` message no longer appeared. Report says `collision_policy={'environment_collision': true, 'self_collision': false}`, `all_self_collision_rollouts_disabled=true`, `environment_scene_collision_cfg_present=true`, `graph.enabled_in_this_run=false`, start matches q_current true, end matches q_pregrasp true, trajectory shape `(0, 35)`.
+- Conclusion: Route B self-collision is disabled across IK, TrajOpt, and Graph rollout configs while environment ESDF remains enabled. The new blocker is TrajOpt failure to produce a successful C-space trajectory, not the previous self-collision start/end rejection.
+
+## 2026-08-19 23:18 +08:00 -- Route B MotionPlanner failure mode audit
+
+- Purpose: classify Route B `plan_cspace()` failure after endpoint collision and self-collision were ruled out.
+- Conda environment: `curobo_v2`.
+- Working directory: `/home/lin/Projects/DexGraspNet2_Wuji2`
+- Commands:
+
+  ```bash
+  conda run -n curobo_v2 python -m py_compile 08_dual_arm_scene_layout/isaaclab_control/curobo_motion_planning_routeB/test_motion_planner_failure_audit.py
+  conda run -n curobo_v2 python 08_dual_arm_scene_layout/isaaclab_control/curobo_motion_planning_routeB/test_motion_planner_failure_audit.py --capture-dir 08_dual_arm_scene_layout/isaaclab_control/outputs/closed_loop_sessions/20260819_174407/cycle_001/capture --route-plan 08_dual_arm_scene_layout/isaaclab_control/outputs/closed_loop_sessions/20260819_174407/cycle_001/scratch/final_planning/rank_0001/closedloop_r0001_cand0676/07_arm_execution/flexible_route_plan.npz
+  PYTHONPATH=08_dual_arm_scene_layout/isaaclab_control conda run -n curobo_v2 python -m unittest -v 08_dual_arm_scene_layout/isaaclab_control/curobo_motion_planning_routeB/tests/test_import.py
+  git diff --check
+  ```
+
+- Exit code: all diagnostic/static commands `0`.
+- Key output: `graph_instance_present=true`; configured `enable_graph_attempt=1000000`, `max_attempts=2`, so both plan attempts were ordinary TrajOpt and graph fallback did not occur. Direct graph `find_path()` returned `success=false`, `debug_info=Start or End state in collision`. Linear q_current->q_pregrasp ESDF sweep with 151 samples was collision-free, min clearance `0.075222 m`. TrajOpt success count `0`; endpoint errors were near zero (`position_error=3.88e-08`, `rotation_error=2.73e-08`), but `seed_cost=1e16`.
+- Conclusion: current blocker is D/E: ordinary TrajOpt failed while graph fallback was not used in configured Route B; direct graph is present but fails its own start/end feasibility path. The linear ESDF path is free, so the failure is not explained by environment collision along the simple joint interpolation.
+
+## 2026-08-19 23:43 +08:00 -- Route B TrajOpt feasibility constraint audit
+
+- Purpose: locate the concrete cuRobo feasibility constraint behind Route B `TrajOptSolverResult.success=false`.
+- Conda environment: `curobo_v2`.
+- Working directory: `/home/lin/Projects/DexGraspNet2_Wuji2`
+- Commands:
+
+  ```bash
+  conda run -n curobo_v2 python -m py_compile 08_dual_arm_scene_layout/isaaclab_control/curobo_motion_planning_routeB/test_trajopt_feasibility_audit.py
+  conda run -n curobo_v2 python 08_dual_arm_scene_layout/isaaclab_control/curobo_motion_planning_routeB/test_trajopt_feasibility_audit.py --capture-dir 08_dual_arm_scene_layout/isaaclab_control/outputs/closed_loop_sessions/20260819_174407/cycle_001/capture --route-plan 08_dual_arm_scene_layout/isaaclab_control/outputs/closed_loop_sessions/20260819_174407/cycle_001/scratch/final_planning/rank_0001/closedloop_r0001_cand0676/07_arm_execution/flexible_route_plan.npz
+  PYTHONPATH=08_dual_arm_scene_layout/isaaclab_control conda run -n curobo_v2 python -m unittest -v 08_dual_arm_scene_layout/isaaclab_control/curobo_motion_planning_routeB/tests/test_import.py
+  git diff --check
+  ```
+
+- Exit code: all final commands `0`.
+- Key output: audit report written to `.../cycle_001/capture/curobo_test_result/trajopt_feasibility_audit.json`. Recomputed raw and interpolated metrics both report feasible `false`; failed constraints are `scene_collision` and `cspace`. `scene_collision` dominates with max `169.164154`, worst timestep `[0,76,112]`, sphere `112`, link `arm_r_link_7`. `cspace` is tiny numerical positive max `5.80343e-08`. Project-side ESDF post-check of the returned trajectory reports no collision, min clearance `0.078266 m`; acceleration/jerk are under configured limits.
+- Conclusion: cuRobo TrajOpt success=false is caused by cuRobo's own `scene_collision` constraint plus a negligible `cspace` bound residual, while the project ESDF post-check does not reproduce an actual collision on the returned trajectory.
+
+## 2026-08-20 00:16 +08:00 -- Route B cuRobo scene_collision semantics one-to-one audit
+
+- Purpose: compare the same returned TrajOpt trajectory sphere samples between project `query_spheres` and cuRobo `SceneCollisionCost`/raw checker.
+- Conda environment: `curobo_v2`.
+- Working directory: `/home/lin/Projects/DexGraspNet2_Wuji2`
+- Commands:
+
+  ```bash
+  conda run -n curobo_v2 python -m py_compile 08_dual_arm_scene_layout/isaaclab_control/curobo_motion_planning_routeB/test_scene_collision_semantics_audit.py
+  conda run -n curobo_v2 python 08_dual_arm_scene_layout/isaaclab_control/curobo_motion_planning_routeB/test_scene_collision_semantics_audit.py --capture-dir 08_dual_arm_scene_layout/isaaclab_control/outputs/closed_loop_sessions/20260819_174407/cycle_001/capture --route-plan 08_dual_arm_scene_layout/isaaclab_control/outputs/closed_loop_sessions/20260819_174407/cycle_001/scratch/final_planning/rank_0001/closedloop_r0001_cand0676/07_arm_execution/flexible_route_plan.npz
+  PYTHONPATH=08_dual_arm_scene_layout/isaaclab_control conda run -n curobo_v2 python -m unittest -v 08_dual_arm_scene_layout/isaaclab_control/curobo_motion_planning_routeB/tests/test_import.py
+  git diff --check
+  ```
+
+- Exit code: all final commands `0`.
+- Key output: `scene_collision_semantics_audit.json` written under `capture/curobo_test_result/`. Worst sample `t=76`, sphere `112`, link `arm_r_link_7`: project signed distance `0.143382 m`, project clearance `0.112177 m`, cuRobo rollout/raw cost `169.164154`, unit-weight penetration `0.0338328 m`, inferred cuRobo signed distance `-0.0026277 m`. First positive sample `t=61`, sphere `184`, link `r_wrist`: project clearance `0.096531 m`, cuRobo cost `0.368715`, inferred signed distance `0.0151378 m`. Project-min-clearance sample `t=64`, sphere `185`, link `r_wrist`: project clearance `0.078266 m`, cuRobo cost `4.716897`, inferred signed distance `0.0254433 m`.
+- Conclusion: cuRobo raw scene collision checker and rollout constraint agree exactly; the mismatch is between cuRobo's SceneCollision voxel query and the project `query_spheres` interpretation of the VoxelGrid. Activation distance is `0`, weight is `5000`, and the formula is `constraint = weight * max(radius - signed_distance, 0)`.
+
+## 2026-08-20 00:38 +08:00 -- Route B ESDF filtered-depth ground-truth audit
+
+- Purpose: use original `filtered_depth` surface points as a third-party truth source to decide whether project ESDF query or cuRobo VoxelData query is correct.
+- Conda environment: `curobo_v2`.
+- Working directory: `/home/lin/Projects/DexGraspNet2_Wuji2`
+- Commands:
+
+  ```bash
+  conda run -n curobo_v2 python -m py_compile 08_dual_arm_scene_layout/isaaclab_control/curobo_motion_planning_routeB/test_esdf_ground_truth_audit.py
+  conda run -n curobo_v2 python 08_dual_arm_scene_layout/isaaclab_control/curobo_motion_planning_routeB/test_esdf_ground_truth_audit.py --capture-dir 08_dual_arm_scene_layout/isaaclab_control/outputs/closed_loop_sessions/20260819_174407/cycle_001/capture
+  PYTHONPATH=08_dual_arm_scene_layout/isaaclab_control conda run -n curobo_v2 python -m unittest -v 08_dual_arm_scene_layout/isaaclab_control/curobo_motion_planning_routeB/tests/test_import.py
+  git diff --check
+  ```
+
+- Exit code: all final commands `0`.
+- Key output: `esdf_ground_truth_audit.json` written under `capture/curobo_test_result/`. Project query uses `grid_sample` order `zyx`, `align_corners=True`, tensor shape `[nx,ny,nz]`. On 500 filtered-depth surface points, project median/p90 abs SDF are `0.002678/0.003372 m`; cuRobo VoxelData semantic query median/p90 abs SDF are `0.168801/0.278765 m`. Voxel-center direct-read median error: project `1.49e-08 m`, cuRobo semantic query `0.071903 m`.
+- Conclusion: verdict `CUROBO_SCENE_REPRESENTATION_WRONG`. Root cause is `VoxelData.params` dimension precision: params dims are `[36.0, 55.0000038, 26.9999981]`; cuRobo Warp kernel casts with `wp.int32()`, producing `[36,55,26]`, while the actual feature tensor shape is `[36,55,27]`. This corrupts X-slowest/Z-fastest flat indexing.
+
+## 2026-08-20 01:06 +08:00 -- Route B VoxelData discrete dimension contract fix
+
+- Purpose: fix Route B cuRobo `VoxelData.params[...,0:3]` to use authoritative `scene_grid.feature_tensor.shape`.
+- Conda environment: `curobo_v2`.
+- Working directory: `/home/lin/Projects/DexGraspNet2_Wuji2`
+- Commands:
+
+  ```bash
+  conda run -n curobo_v2 python -m py_compile 08_dual_arm_scene_layout/isaaclab_control/curobo_motion_planning_routeB/routeB_adapter.py 08_dual_arm_scene_layout/isaaclab_control/curobo_motion_planning_routeB/test_current_to_pregrasp.py 08_dual_arm_scene_layout/isaaclab_control/curobo_motion_planning_routeB/test_esdf_ground_truth_audit.py
+  conda run -n curobo_v2 python 08_dual_arm_scene_layout/isaaclab_control/curobo_motion_planning_routeB/test_esdf_ground_truth_audit.py --capture-dir 08_dual_arm_scene_layout/isaaclab_control/outputs/closed_loop_sessions/20260819_174407/cycle_001/capture
+  conda run -n curobo_v2 python 08_dual_arm_scene_layout/isaaclab_control/curobo_motion_planning_routeB/test_scene_collision_semantics_audit.py --capture-dir 08_dual_arm_scene_layout/isaaclab_control/outputs/closed_loop_sessions/20260819_174407/cycle_001/capture --route-plan 08_dual_arm_scene_layout/isaaclab_control/outputs/closed_loop_sessions/20260819_174407/cycle_001/scratch/final_planning/rank_0001/closedloop_r0001_cand0676/07_arm_execution/flexible_route_plan.npz
+  conda run -n curobo_v2 python 08_dual_arm_scene_layout/isaaclab_control/curobo_motion_planning_routeB/test_current_to_pregrasp.py --capture-dir 08_dual_arm_scene_layout/isaaclab_control/outputs/closed_loop_sessions/20260819_174407/cycle_001/capture --route-plan 08_dual_arm_scene_layout/isaaclab_control/outputs/closed_loop_sessions/20260819_174407/cycle_001/scratch/final_planning/rank_0001/closedloop_r0001_cand0676/07_arm_execution/flexible_route_plan.npz
+  conda run -n curobo_v2 python 08_dual_arm_scene_layout/isaaclab_control/curobo_motion_planning_routeB/test_trajopt_feasibility_audit.py --capture-dir 08_dual_arm_scene_layout/isaaclab_control/outputs/closed_loop_sessions/20260819_174407/cycle_001/capture --route-plan 08_dual_arm_scene_layout/isaaclab_control/outputs/closed_loop_sessions/20260819_174407/cycle_001/scratch/final_planning/rank_0001/closedloop_r0001_cand0676/07_arm_execution/flexible_route_plan.npz
+  PYTHONPATH=08_dual_arm_scene_layout/isaaclab_control conda run -n curobo_v2 python -m unittest -v 08_dual_arm_scene_layout/isaaclab_control/curobo_motion_planning_routeB/tests/test_import.py
+  git diff --check
+  ```
+
+- Exit code: py_compile/ground-truth audit/scene-collision audit/feasibility audit/unittest/diff-check `0`; `test_current_to_pregrasp.py` still exits `2` because only `cspace` remains.
+- Key output: `VoxelData.params` changed from `[[[36.0, 55.0000038, 26.9999981, 0.02]]]` to `[[[36.0, 55.0, 27.0, 0.02]]]` before warmup/solve. Feature shape `[36,55,27]`; feature count `53460`; dims/inv_pose/features unchanged. Ground-truth cuRobo surface median/p90 abs SDF improved from `0.168801/0.278765 m` to `0.002678/0.003372 m`; voxel-center median error from `0.071903 m` to `0`. Scene-collision constraint positive count is now `0`; timestep76 sphere112 project/curobo SDF differ by `1.68e-08 m`.
+- Conclusion: Route B scene_collision false positive is fixed. `plan_cspace` still returns success=false due only to `cspace` residual max `5.80343e-08` and tiny left-arm bound residual; scene_collision is no longer a blocker.
+
+## 2026-08-20 01:42 +08:00 -- Route B cspace numerical-bound sanitization
+
+- Purpose: fix the final Route B `cspace` feasibility residual without changing joint limits, cspace thresholds, TrajOpt, graph, ESDF, collision spheres, or Route A.
+- Conda environment: `curobo_v2`.
+- Working directory: `/home/lin/Projects/DexGraspNet2_Wuji2`
+- Commands:
+
+  ```bash
+  python -m py_compile 08_dual_arm_scene_layout/isaaclab_control/curobo_motion_planning_routeB/routeB_adapter.py 08_dual_arm_scene_layout/isaaclab_control/curobo_motion_planning_routeB/test_trajopt_feasibility_audit.py 08_dual_arm_scene_layout/isaaclab_control/curobo_motion_planning_routeB/test_scene_collision_semantics_audit.py 08_dual_arm_scene_layout/isaaclab_control/curobo_motion_planning_routeB/test_current_to_pregrasp.py
+  conda run -n curobo_v2 python 08_dual_arm_scene_layout/isaaclab_control/curobo_motion_planning_routeB/test_trajopt_feasibility_audit.py --capture-dir 08_dual_arm_scene_layout/isaaclab_control/outputs/closed_loop_sessions/20260819_174407/cycle_001/capture --route-plan 08_dual_arm_scene_layout/isaaclab_control/outputs/closed_loop_sessions/20260819_174407/cycle_001/scratch/final_planning/rank_0001/closedloop_r0001_cand0676/07_arm_execution/flexible_route_plan.npz
+  conda run -n curobo_v2 python 08_dual_arm_scene_layout/isaaclab_control/curobo_motion_planning_routeB/test_current_to_pregrasp.py --capture-dir 08_dual_arm_scene_layout/isaaclab_control/outputs/closed_loop_sessions/20260819_174407/cycle_001/capture --route-plan 08_dual_arm_scene_layout/isaaclab_control/outputs/closed_loop_sessions/20260819_174407/cycle_001/scratch/final_planning/rank_0001/closedloop_r0001_cand0676/07_arm_execution/flexible_route_plan.npz
+  git diff --check
+  ```
+
+- Exit code: all final commands `0`.
+- Key output: Route B now sanitizes only tiny pre-planning numeric joint-bound residuals with tolerance `1e-5 rad` and interior margin `1e-6 rad`, using MotionPlanner rollout position bounds. Corrections were limited to static left-arm DOF: `arm_l_joint_2` `-7.394e-08 -> +1.0e-06` and `arm_l_joint_4` `+4.818e-06 -> -1.0e-06`, applied to both `q_current_planning` and `q_pregrasp_planning`. Max original violation `4.818e-06 rad`; no large violation.
+- Conclusion: feasibility audit now reports raw/interpolated `scene_collision=0`, `cspace=0`, no failed constraints, and min environment clearance `0.075290 m`. `test_current_to_pregrasp.py` returns `success=True`, `trajectory_point_count=41`, planning time `1.863 s`; returned trajectory postcheck reports environment collision false, min clearance `0.075290 m`, joint-limit violations `0`.
+
+## 2026-08-20 02:18 +08:00 -- Route B true right-arm-only current-to-PREGRASP integration
+
+- Purpose: wire ChatGPT-provided `right_arm_only_core` into local Route B without rewriting its algorithm, and prove `current -> PREGRASP` is a true 7DOF cuRobo MotionPlanner solve.
+- Conda environment: `curobo_v2`.
+- Working directory: `/home/lin/Projects/DexGraspNet2_Wuji2`
+- Commands:
+
+  ```bash
+  conda run -n curobo_v2 python -m py_compile 08_dual_arm_scene_layout/isaaclab_control/curobo_motion_planning_routeB/routeB_adapter.py 08_dual_arm_scene_layout/isaaclab_control/curobo_motion_planning_routeB/test_current_to_pregrasp_right_arm_only.py 08_dual_arm_scene_layout/isaaclab_control/curobo_motion_planning_routeB/routeB_right_arm_only_core_v1/right_arm_only_core/*.py
+  PYTHONPATH=08_dual_arm_scene_layout/isaaclab_control/curobo_motion_planning_routeB/routeB_right_arm_only_core_v1 conda run -n curobo_v2 python -m unittest -v right_arm_only_core.test_contract
+  conda run -n curobo_v2 python 08_dual_arm_scene_layout/isaaclab_control/curobo_motion_planning_routeB/test_current_to_pregrasp_right_arm_only.py --capture-dir 08_dual_arm_scene_layout/isaaclab_control/outputs/closed_loop_sessions/20260819_174407/cycle_001/capture --route-plan 08_dual_arm_scene_layout/isaaclab_control/outputs/closed_loop_sessions/20260819_174407/cycle_001/scratch/final_planning/rank_0001/closedloop_r0001_cand0676/07_arm_execution/flexible_route_plan.npz
+  PYTHONPATH=08_dual_arm_scene_layout/isaaclab_control conda run -n curobo_v2 python -m unittest -v 08_dual_arm_scene_layout/isaaclab_control/curobo_motion_planning_routeB/tests/test_import.py
+  git diff --check
+  ```
+
+- Exit code: all final commands `0`.
+- Key output: `trajectory_right_arm.npz` and `report_right_arm.json` generated under `capture/curobo_test_result/`. `MotionPlanner success=True`, `planner.action_dim=7`, active joints exactly `arm_r_joint_1..7`, locked joint count `28`, `raw_result.solution.shape=[1,1,16,7]`, trajectory shape `[41,7]`, dt `0.02500000037 s`, duration `1.0000000149 s`.
+- Conclusion: true 7DOF Route B `current -> PREGRASP` planning is working. Postcheck reports environment collision false, min clearance `0.075289 m`, `scene_collision=0`, `cspace=0`, joint-limit PASS, velocity/acceleration/jerk finite PASS. Route A was not modified.
+
 
 ## 2026-08-17 16:18:00 +0800 - final worktree cleanup
 - Purpose: clean generated outputs/history in `/home/lin/Projects/DexGraspNet2_Wuji2`, preserve vendor submodule gitlinks, retain compact candidate5989 evidence.

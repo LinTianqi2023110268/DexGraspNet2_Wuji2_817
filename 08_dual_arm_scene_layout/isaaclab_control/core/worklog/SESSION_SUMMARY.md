@@ -175,3 +175,92 @@ Run `./run_closed_loop.sh --planning-only` from a GPU-visible terminal using `sc
 - Modified files: `closed_loop/orchestrator.py`, worklog files.
 - Test results: orchestrator py_compile PASS; `isaaclab22_sim50` closed-loop CPU unit tests PASS 9/9; `git diff --check` PASS.
 - Environment: no Isaac Sim, DGN2, RFS, cuRobo, retarget, full closed-loop, or physical simulation was run.
+
+## 2026-08-19 - Standalone cuRobo RobotSegmenter capture adapter
+- Current phase: local engineering adapter only; no baseline planner integration.
+- Completed: added `isaaclab_control/perception/robot_segmentation/` with a standalone RobotDepthCleaner and CLI for existing capture folders.
+- Current conclusion: `RobotSegmenter` import works in `curobo_v2`; the adapter maps `T_world_camera` to `T_base_camera = inv(T_world_base) @ T_world_camera`, adds the `[1,H,W]` batch depth shape, maps all 35 measured robot joints by name, and writes planning outputs under `capture/planning/`.
+- Current blockers: none for standalone use; planner integration intentionally not performed.
+- Modified files: new `perception/robot_segmentation` package and worklogs.
+- Test results: py_compile PASS; CLI help PASS; standalone RobotSegmenter run PASS on `20260819_174407/cycle_001/capture`; `git diff --check` PASS.
+- Environment: `curobo_v2`; no Isaac app, DGN2, retarget, baseline planner, or execution was run.
+
+## 2026-08-19 - Route B current-to-PREGRASP MotionPlanner adapter
+
+- Current phase: Route B phase-1 standalone backend integration.
+- Completed: added `isaaclab_control/curobo_motion_planning_routeB/` with config, adapter, README, import test, and `test_current_to_pregrasp.py`; adapter builds ESDF from `capture/planning/filtered_depth.npy`, converts camera pose into `arm_base_link` frame, creates `MotionPlanner`, and calls `plan_cspace(q_current, q_pregrasp)`.
+- Current conclusion: Route A remains untouched and is still the default via `use_legacy_keypoint_route: true`; Route B import/API wiring reaches cuRobo MotionPlanner.
+- Current blocker: standalone test on `20260819_174407/cycle_001` returns `Start or End state in collision` from MotionPlanner with the filtered ESDF; no IK/retarget/Route A logic was changed to mask this.
+- Modified files: new `08_dual_arm_scene_layout/isaaclab_control/curobo_motion_planning_routeB/` package plus worklogs.
+- Test results: cuRobo MotionPlanner/Mapper import PASS; Route B py_compile PASS; Route B import unittest PASS; `git diff --check` PASS; standalone Route B smoke FAIL at MotionPlanner endpoint collision.
+- Environment: `curobo_v2`; no Isaac app, DGN2, retarget, full closed-loop, or physical execution was run.
+
+## 2026-08-19 - Route B formal collision policy wiring
+
+- Current phase: enforce official Route B collision policy.
+- Completed: Route B config now records `collision.environment_collision=true` and `collision.self_collision=false`; adapter explicitly disables self-collision on IK metrics/optimizer rollouts, TrajOpt metrics/optimizer rollouts, and Graph metrics rollout before constructing `MotionPlanner`; graph seed is disabled by default for phase-1 C-space TrajOpt planning to avoid the separate PRM start/end feasibility path.
+- Current conclusion: environment ESDF collision remains enabled (`scene_collision_cfg_present=true`); self-collision is confirmed disabled across all Route B rollout configs (`all_self_collision_rollouts_disabled=true`); Route A remains untouched/default.
+- Current blocker: same `current -> PREGRASP` command no longer emits `Start or End state in collision`, but MotionPlanner still returns `success=false` with zero trajectory points. This is now a TrajOpt planning failure under ESDF ON / self OFF, not the prior self-collision pair 2576 endpoint rejection.
+- Modified files: `curobo_motion_planning_routeB/routeB_adapter.py`, `config_example.yaml`, `test_current_to_pregrasp.py`, `test_collision_audit.py`, and worklogs.
+- Test results: Route B py_compile PASS; import unittest PASS; `git diff --check` PASS; standalone MotionPlanner run FAIL with new status `success=false`, `trajectory_points=0`, no start/end collision message.
+- Environment: `curobo_v2`; no Isaac app, DGN2, retarget, full closed-loop, or physical execution was run.
+
+## 2026-08-19 - Route B TrajOpt feasibility constraint audit
+
+- Current phase: diagnose Route B `current -> PREGRASP` TrajOpt success=false without changing planning parameters.
+- Completed: added standalone `test_trajopt_feasibility_audit.py`; recomputed cuRobo raw/interpolated metrics from the returned top trajectory; independently checked project ESDF clearance, joint position bounds, acceleration, and jerk.
+- Current conclusion: raw and interpolated cuRobo metrics are both infeasible because `scene_collision` is strongly positive and `cspace` is tiny positive. Worst cuRobo scene-collision entry is timestep `[0,76,112]`, sphere `112`, link `arm_r_link_7`, value `169.164154`. Project ESDF post-check over the same returned trajectory reports no environment collision and min clearance `0.078266 m`; acceleration and jerk are within YAML limits.
+- Current blocker: mismatch between cuRobo TrajOpt `scene_collision` metric feasibility and the project-side ESDF sphere query for the same trajectory.
+- Modified files: new `curobo_motion_planning_routeB/test_trajopt_feasibility_audit.py`, worklogs.
+- Test results: py_compile PASS; Route B import unittest PASS; `git diff --check` PASS.
+- Environment: `curobo_v2`; no Isaac app, DGN2, retarget, full closed-loop, or physical execution was run.
+
+## 2026-08-20 - Route B cuRobo scene_collision semantics audit
+
+- Current phase: one-to-one diagnose cuRobo `scene_collision` vs project ESDF query for the same returned TrajOpt trajectory samples.
+- Completed: added standalone `test_scene_collision_semantics_audit.py`; compared samples `t=76/sphere112`, `t=61/sphere184`, and `t=64/sphere185`; recorded cuRobo cost config, activation rule, VoxelData metadata, project ESDF query, cuRobo raw checker cost, and rollout constraint.
+- Current conclusion: cuRobo raw checker and rollout constraint agree exactly, so the mismatch is not TrajOpt postprocessing. For `t=76/sphere112`, project query reports signed distance `0.143382 m` and clearance `0.112177 m`, while cuRobo raw checker implies signed distance `-0.002628 m` and penetration `0.033833 m`. Activation distance is `0`, weight is `5000`, and `constraint = weight * max(radius - signed_distance, 0)`.
+- Current blocker: cuRobo SceneCollision/VoxelData query semantics or scene representation does not match the project `query_spheres` interpretation of the same `VoxelGrid`.
+- Modified files: new `curobo_motion_planning_routeB/test_scene_collision_semantics_audit.py`, worklogs.
+- Test results: py_compile PASS; Route B import unittest PASS; `git diff --check` PASS.
+- Environment: `curobo_v2`; no Isaac app, DGN2, retarget, full closed-loop, or physical execution was run.
+
+## 2026-08-20 - Route B ESDF filtered-depth ground-truth audit
+
+- Current phase: decide project ESDF query vs cuRobo VoxelData query using original `filtered_depth` surface points.
+- Completed: added standalone `test_esdf_ground_truth_audit.py`; sampled 500 valid filtered-depth surface points in `arm_base_link`; compared project `query_esdf_distance`, a CPU reproduction of cuRobo VoxelData sampling semantics, cuRobo radius-0 raw collision probe, and 20 direct voxel-center reads.
+- Current conclusion: project query is correct for the current VoxelGrid. It uses `grid_sample` order `zyx`, `align_corners=True`, `[nx,ny,nz]`, and gives surface median/p90 abs SDF `0.002678/0.003372 m`; voxel-center direct-read median error is `1.49e-08 m`. cuRobo VoxelData semantic query gives surface median/p90 abs SDF `0.168801/0.278765 m` and voxel-center median error `0.071903 m`.
+- Current blocker: `CUROBO_SCENE_REPRESENTATION_WRONG`. `VoxelData.params` stores dims as floats `[36.0, 55.0000038, 26.9999981]`; cuRobo Warp kernel truncates with `wp.int32()` to `[36,55,26]`, while feature tensor shape is `[36,55,27]`, corrupting Z-fastest indexing.
+- Modified files: new `curobo_motion_planning_routeB/test_esdf_ground_truth_audit.py`, worklogs.
+- Test results: py_compile PASS; Route B import unittest PASS; `git diff --check` PASS.
+- Environment: `curobo_v2`; no Isaac app, DGN2, retarget, full closed-loop, or physical execution was run.
+
+## 2026-08-20 - Route B VoxelData dimension contract fix
+
+- Current phase: fix Route B cuRobo VoxelData discrete voxel count contract after ground-truth audit.
+- Completed: `RouteBMotionPlannerAdapter` now normalizes shared cuRobo `VoxelData.params[...,0:3]` from authoritative `scene_grid.feature_tensor.shape` after `MotionPlanner(cfg)` and before `warmup/plan_cspace`; report plumbing records `voxel_shape_contract`.
+- Current conclusion: scene-collision false positive is fixed. Params changed from `[[[36.0,55.0000038,26.9999981,0.02]]]` to `[[[36.0,55.0,27.0,0.02]]]`; feature shape `[36,55,27]`, feature count `53460`; dims/inv_pose/features unchanged. Ground-truth cuRobo surface median/p90 abs SDF improved to `0.002678/0.003372 m`, matching project query; voxel center median error is `0`.
+- Current blocker: `plan_cspace` still returns success=false, but feasibility audit now reports only `cspace` constraint, max `5.80343e-08`; environment collision is false and min clearance is `0.075243 m`.
+- Modified files: `curobo_motion_planning_routeB/routeB_adapter.py`, `test_current_to_pregrasp.py`, `test_scene_collision_semantics_audit.py`, worklogs.
+- Test results: py_compile PASS; ESDF ground-truth audit PASS; scene_collision semantics audit PASS; Route B import unittest PASS; `git diff --check` PASS; current-to-PREGRASP standalone still FAIL due only to cspace residual.
+- Environment: `curobo_v2`; no Isaac app, DGN2, retarget, full closed-loop, or physical execution was run.
+
+## 2026-08-20 - Route B cspace numerical-bound residual fix
+
+- Current phase: finish Route B phase-1 `current -> PREGRASP` standalone MotionPlanner feasibility.
+- Completed: added Route B-only pre-planning joint-state numerical-bound sanitization in `RouteBMotionPlannerAdapter`; raw `robot_state.json` and raw route plan are not modified. The sanitizer uses the MotionPlanner rollout's actual position bounds, fixes only violations within `1e-5 rad`, moves corrected values `1e-6 rad` inside bounds, and raises on larger violations.
+- Current conclusion: the previous `cspace` residual was caused by tiny static left-arm bound residuals, not by right-arm motion or environment collision. Corrected DOF are `arm_l_joint_2` and `arm_l_joint_4` for both `q_current_planning` and `q_pregrasp_planning`; max original violation `4.818e-06 rad`.
+- Current blocker: none for standalone Route B `current -> PREGRASP`; formal closed-loop Route B wiring is still a future step.
+- Modified files: `curobo_motion_planning_routeB/routeB_adapter.py`, `test_trajopt_feasibility_audit.py`, `test_scene_collision_semantics_audit.py`, `test_current_to_pregrasp.py`, and worklogs.
+- Test results: py_compile PASS; feasibility audit PASS with `scene_collision=0`, `cspace=0`, no failed constraints, min clearance `0.075290 m`; standalone `test_current_to_pregrasp.py` PASS with `success=True`, `trajectory_point_count=41`, planning time `1.863 s`; returned trajectory postcheck PASS with environment collision false and joint-limit violations `0`; `git diff --check` PASS.
+- Environment: `curobo_v2`; no Isaac app, DGN2, retarget, full closed-loop, or physical execution was run.
+
+## 2026-08-20 - Route B true right-arm-only current-to-PREGRASP
+
+- Current phase: integrate ChatGPT-provided `right_arm_only_core` into local Route B as a standalone test path.
+- Completed: added `test_current_to_pregrasp_right_arm_only.py`; reused existing Route B `MotionPlannerCfg`/SceneCfg parameters, collision policy `environment=true/self=false`, VoxelData feature-shape fix, and postchecks. The 35DOF adapter is used only to build the scene and sanitized full q contract; it does not generate a 35DOF trajectory.
+- Current conclusion: true right-arm-only cuRobo MotionPlanner succeeds for `current -> PREGRASP`. Planner action_dim is `7`; active joints are exactly `arm_r_joint_1..7`; locked joint count is `28`; raw optimizer solution shape is `[1,1,16,7]`; dense trajectory is `[41,7]`.
+- Current blocker: none for standalone right-arm-only phase-1 test. Production closed-loop Route B wiring remains a future step.
+- Modified files: `curobo_motion_planning_routeB/routeB_adapter.py`, new `test_current_to_pregrasp_right_arm_only.py`, and worklogs.
+- Test results: right-arm-only core contract unittest PASS; Route B import unittest PASS; py_compile PASS; `git diff --check` PASS; generated `trajectory_right_arm.npz` and `report_right_arm.json`; postcheck PASS with environment collision false, min clearance `0.075289 m`, `scene_collision=0`, `cspace=0`, joint limits PASS, velocity/acceleration/jerk finite PASS.
+- Environment: `curobo_v2`; no Isaac app, DGN2, retarget, full closed-loop, or physical execution was run.

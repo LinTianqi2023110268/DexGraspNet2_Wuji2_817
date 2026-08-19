@@ -1,0 +1,63 @@
+Use the extracted `right_arm_only_core/` as authoritative core logic.
+
+Your job is ONLY local integration/adaptation.
+
+1. Put/import the package under:
+   08_dual_arm_scene_layout/isaaclab_control/curobo_motion_planning_routeB/
+
+2. In the existing Route B adapter, expose three thin adapters:
+
+   A. planner_factory(locked_robot_cfg)
+      Reuse the exact current Route B MotionPlannerCfg settings and current SceneCfg.
+      Do not change planner parameters.
+
+   B. planner_fixup(planner)
+      Reuse the existing local hooks that already:
+        - keep environment_collision=true
+        - keep self_collision=false in all relevant rollouts
+        - normalize VoxelData.params[:3] from feature_tensor.shape
+      Return their report dict.
+
+   C. trajectory_postcheck(traj, contract, planner, raw_result)
+      Reuse current project postchecks for:
+        - environment collision / min clearance
+        - scene_collision
+        - cspace
+        - joint limits
+        - acceleration
+        - jerk
+        - measured velocity
+      Return a compact dict with boolean PASS fields and values.
+
+3. Create:
+   test_current_to_pregrasp_right_arm_only.py
+
+   It must reuse the exact same capture and flexible_route_plan inputs as the
+   currently passing full-DOF test, then call:
+
+      right_arm_only_core.plan_right_arm_only(...)
+
+4. Keep running/fixing local API/path mismatches until BOTH exist:
+
+   capture/curobo_test_result/trajectory_right_arm.npz
+   capture/curobo_test_result/report_right_arm.json
+
+5. Do not redesign or duplicate the core algorithm. If the core has a real bug,
+   stop and show the exact traceback/diff needed; otherwise continue local wiring.
+
+6. Never:
+   - modify Route A
+   - modify PREGRASP/COVER IK
+   - modify ESDF/pose/thresholds/limits
+   - modify TrajOpt/graph parameters
+   - enable self collision
+   - use a free 35DOF plan and slice it after the fact
+   - add quintic re-interpolation
+   - git add/commit/push
+
+Final answer only after artifact generation, reporting:
+MotionPlanner success; action_dim; active joints; locked count;
+trajectory path/shape/points/dt/duration; start/end error;
+locked max deviation; min environment clearance;
+scene_collision max; cspace max; joint-limit/acceleration/jerk status;
+and confirmation Route A was untouched.

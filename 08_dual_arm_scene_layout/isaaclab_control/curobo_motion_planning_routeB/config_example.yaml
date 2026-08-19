@@ -1,0 +1,26 @@
+use_legacy_keypoint_route: true
+
+routeB:
+  enabled: false
+  collision:
+    environment_collision: true
+    self_collision: false
+  stage1_current_to_pregrasp: true
+  robot_file: 08_dual_arm_scene_layout/isaaclab_control/core/generated/dual_arm_right_wuji2_curobo.yml
+  layout_json: 08_dual_arm_scene_layout/config/manual_layout_calibrated.json
+  device: cuda:0
+  use_cuda_graph: false
+  self_collision_check: false
+  num_ik_seeds: 32
+  num_trajopt_seeds: 4
+  max_attempts: 2
+  # Keep Route B phase-1 on TrajOpt C-space planning.  PRM graph seeding has
+  # its own start/end feasibility path and is not used for this first stage.
+  enable_graph_attempt: 1000000
+  interpolation_dt_s: 0.025
+
+  mapper:
+    voxel_size_m: 0.01
+    esdf_voxel_size_m: 0.02
+    depth_min_m: 0.05
+    depth_max_m: 3.0

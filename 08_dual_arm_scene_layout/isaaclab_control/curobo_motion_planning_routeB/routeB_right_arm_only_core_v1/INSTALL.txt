@@ -1,0 +1,1 @@
+Extract the right_arm_only_core directory into the existing 08_dual_arm_scene_layout/isaaclab_control/curobo_motion_planning_routeB/ directory, then give CODEX_INTEGRATION_PROMPT.txt to Codex.
